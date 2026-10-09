@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="slice" x1="64" y1="8" x2="110" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E07A5F"/>
+      <stop offset="1" stop-color="#D4A373"/>
+    </linearGradient>
+  </defs>
+  <!-- outer ring -->
+  <circle cx="64" cy="64" r="58" stroke="#1B2A4A" stroke-width="4" fill="#FBF7F2"/>
+  <circle cx="64" cy="64" r="50" stroke="#1B2A4A" stroke-width="1.5" stroke-opacity="0.25" fill="none"/>
+  <!-- compass rose points (subtle) -->
+  <path d="M64 14 L70 64 L64 52 L58 64 Z" fill="#2A3F66" opacity="0.35"/>
+  <path d="M64 114 L58 64 L64 76 L70 64 Z" fill="#2A3F66" opacity="0.25"/>
+  <path d="M14 64 L64 58 L52 64 L64 70 Z" fill="#2A3F66" opacity="0.25"/>
+  <path d="M114 64 L64 70 L76 64 L64 58 Z" fill="#2A3F66" opacity="0.25"/>
+  <!-- highlighted NE slice (heading) -->
+  <path d="M64 64 L64 16 A48 48 0 0 1 102 40 Z" fill="url(#slice)" opacity="0.92"/>
+  <path d="M64 64 L64 16 A48 48 0 0 1 102 40 Z" stroke="#C45D42" stroke-width="1.5" fill="none"/>
+  <!-- cardinal ticks -->
+  <circle cx="64" cy="18" r="2.5" fill="#1B2A4A"/>
+  <circle cx="110" cy="64" r="2" fill="#1B2A4A" opacity="0.5"/>
+  <circle cx="64" cy="110" r="2" fill="#1B2A4A" opacity="0.5"/>
+  <circle cx="18" cy="64" r="2" fill="#1B2A4A" opacity="0.5"/>
+  <!-- learner at center -->
+  <circle cx="64" cy="64" r="14" fill="#1B2A4A"/>
+  <circle cx="64" cy="58" r="4.5" fill="#FBF7F2"/>
+  <path d="M54.5 74c2.5-6 16.5-6 19 0" stroke="#FBF7F2" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <!-- center accent dot -->
+  <circle cx="64" cy="64" r="3" fill="#E07A5F"/>
+</svg>
