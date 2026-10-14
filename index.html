@@ -362,8 +362,33 @@ body.is-app .toast {
 }
 
 </style>
+<style id="cc-gate-css">
+body:not(.cc-unlocked)>*:not(#cc-gate){display:none!important}
+body.cc-unlocked #cc-gate{display:none}
+#cc-gate{position:fixed;inset:0;z-index:99999;background:#1B2A4A;display:flex;align-items:center;justify-content:center;padding:24px;font-family:'DM Sans',system-ui,sans-serif;color:#fff}
+#cc-gate .box{width:100%;max-width:360px;text-align:center}
+#cc-gate img{width:220px;max-width:70vw;height:auto;margin-bottom:18px}
+#cc-gate h1{font-family:'Fraunces',Georgia,serif;font-size:24px;margin:0 0 6px;color:#E3BD7E}
+#cc-gate p{opacity:.8;font-size:15px;margin:0 0 20px}
+#cc-gate input{width:100%;box-sizing:border-box;padding:14px;border-radius:10px;border:2px solid #C9974A;background:#fff;color:#1B2A4A;font-size:17px}
+#cc-gate button{width:100%;margin-top:12px;padding:14px;border:0;border-radius:10px;background:#C9974A;color:#1B2A4A;font-weight:700;font-size:17px;cursor:pointer}
+#cc-gate .err{color:#E07A5F;font-weight:600;min-height:22px;margin-top:12px;font-size:14px}
+</style>
 </head>
 <body>
+<div id="cc-gate"><form class="box" id="cc-gate-form" autocomplete="off">
+<img src="brand/primary-dark-bg.svg" alt="Course &amp; Calling"/>
+<h1>Welcome</h1><p>Enter the access password to continue.</p>
+<input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div>
+</form></div>
+<script>
+(function(){var H='5197ebd5d2c687a104c17e435283b3f04b73ffa3f3986c7dfeea7b8e6a641c9f',K='cc_gate_ok';
+try{if(localStorage.getItem(K)===H){document.body.classList.add('cc-unlocked');}}catch(e){}
+async function sha(t){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')}
+document.getElementById('cc-gate-form').addEventListener('submit',async function(e){e.preventDefault();var i=document.getElementById('cc-gate-pw'),er=document.getElementById('cc-gate-err');
+if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body.classList.add('cc-unlocked');er.textContent=''}else{er.textContent='Incorrect password. Please try again.';i.value='';i.focus()}});})();
+</script>
 
 <div class="phone-shell">
 <div class="phone-screen" id="phone">
