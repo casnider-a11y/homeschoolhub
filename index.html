@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="hsh-version" content="v6-1"/>
+<meta name="hsh-version" content="v7-1"/>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 
@@ -9,13 +9,17 @@
 <meta name="theme-color" content="#1B2A4A" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="HomeSchoolHub" />
+<meta name="apple-mobile-web-app-title" content="Course&amp;Calling" />
 <meta name="mobile-web-app-capable" content="yes" />
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
-<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="icons/ios_180.png" />
+<link rel="icon" href="favicon.ico" sizes="any" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512.png" />
 
-<title>HomeSchoolHub — Learning Compass Demo v6</title>
+<title>Course &amp; Calling — a Learning Compass company (v7)</title>
+<meta name="description" content="Course &amp; Calling: self-directed learning and career discovery. Set your course. Find your calling."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet"/>
@@ -23,7 +27,7 @@
 
 :root {
   --navy:#1B2A4A; --navy-deep:#122038; --navy-mid:#2A3F66;
-  --coral:#E07A5F; --coral-dark:#C45D42; --gold:#D4A373; --gold-light:#F2D6B3;
+  --coral:#E07A5F; --coral-dark:#C45D42; --gold:#C9974A; --gold-light:#E3BD7E;
   --cream:#FBF7F2; --cream-dark:#F0E8DC; --sage:#81B29A;
   --text:#1B2A4A; --text-muted:#5C6B85; --border:#E5DDD2; --white:#FFFFFF;
   --success:#2D6A4F; --safe-bottom:env(safe-area-inset-bottom,0px);
@@ -151,7 +155,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 .illus-stem{background:linear-gradient(135deg,#3D5A80,#98C1D9)}
 .illus-arts{background:linear-gradient(135deg,#9B2226,#E07A5F)}
 .illus-lang{background:linear-gradient(135deg,#2D6A4F,#81B29A)}
-.illus-pe{background:linear-gradient(135deg,#BC6C25,#D4A373)}
+.illus-pe{background:linear-gradient(135deg,#BC6C25,#C9974A)}
 .illus-coop{background:linear-gradient(135deg,#5E548E,#9F86C0)}
 .illus-micro{background:linear-gradient(135deg,#1B2A4A,#4A6FA5)}
 .illus-space{background:linear-gradient(135deg,#6D597A,#B56576)}
@@ -176,7 +180,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 .progress-steps .ps.done{background:var(--coral)}
 .progress-steps .ps.cur{background:var(--gold)}
 
-.logo-svg{display:block}
+.logo-svg{display:block;margin:0 auto}
 .logo-sm .logo-svg{width:28px;height:28px}
 .logo-lg .logo-svg{width:88px;height:88px}
 .logo-md .logo-svg{width:48px;height:48px}
@@ -319,8 +323,8 @@ body.is-app .toast {
 .inv-legend .c::before{background:#E07A5F;}
 .inv-legend .r::before{background:#2A3F66;}
 .inv-legend .s::before{background:#81B29A;}
-.inv-seg.p{background:#D4A373;}
-.inv-legend .p::before{background:#D4A373;}
+.inv-seg.p{background:#C9974A;}
+.inv-legend .p::before{background:#C9974A;}
 .cat-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;color:var(--navy);background:#EEF1F6;padding:3px 8px;border-radius:6px}
 .pay-note{font-size:12px;line-height:1.45;color:var(--text-muted);background:#FFF8EC;border:1px solid #F1DDB8;border-radius:12px;padding:10px 12px;margin-top:10px}
 .pay-card{border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;background:var(--white)}
@@ -373,9 +377,10 @@ body.is-app .toast {
 <!-- SPLASH -->
 <div class="screen active" id="screen-splash">
   <div class="scroll" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;text-align:center;">
-    <div class="logo-lg" id="splashLogo" style="margin-bottom:20px;animation:pulse 2s ease infinite;"></div>
-    <div style="font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold-light);margin-bottom:8px;">Learning Compass</div>
-    <h1 style="font-family:'Fraunces',Georgia,serif;font-size:30px;font-weight:700;margin-bottom:10px;color:white;">HomeSchoolHub</h1>
+    <img src="brand/primary-dark-bg.svg" alt="" style="width:210px;height:auto;margin-bottom:6px;animation:pulse 2s ease infinite;"/>
+    <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Course &amp; Calling</h1>
+    <div style="font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:14px;color:var(--gold-light);margin-bottom:10px;">a Learning Compass company</div>
+    <div style="font-size:13px;font-weight:600;letter-spacing:0.04em;color:rgba(255,255,255,0.85);margin-bottom:8px;">Set your course. Find your calling.</div>
     <p style="font-size:15px;line-height:1.5;color:rgba(255,255,255,0.7);max-width:290px;margin-bottom:28px;">Self-directed learning marketplace — find classes, tutors, spaces &amp; rides. Use ESA for classes &amp; tutoring. Own your direction.</p>
     <button class="btn btn-primary btn-block" style="max-width:280px;" onclick="go('onboarding')">Get Started</button>
     <button class="btn btn-ghost" style="margin-top:8px;color:rgba(255,255,255,0.55);" onclick="skipToApp()">Skip to demo</button>
@@ -465,7 +470,7 @@ body.is-app .toast {
   <div class="scroll" style="display:flex;flex-direction:column;padding:24px 20px 32px;">
     <div style="text-align:center;margin-bottom:16px;">
       <div class="logo-md" id="compassIntroLogo" style="margin:0 auto 12px;"></div>
-      <span class="demo-pill" style="background:rgba(255,255,255,0.15);color:#F2D6B3;">Working name · Demo</span>
+      <span class="demo-pill" style="background:rgba(255,255,255,0.15);color:#E3BD7E;">Working name · Demo</span>
       <h1 style="font-family:'Fraunces',Georgia,serif;font-size:26px;color:white;margin:12px 0 8px;">Compass Profile™</h1>
       <p style="font-size:14px;line-height:1.5;color:rgba(255,255,255,0.72);">Discover natural strengths through Personality, Interests, and real aptitude problem-solving — then get a heading for learning and careers.</p>
     </div>
@@ -805,43 +810,13 @@ body.is-app .toast {
 </nav>
 </div>
 </div>
-<div class="desk-hint">HomeSchoolHub · Learning Compass · Add to Home Screen on your phone</div>
+<div class="desk-hint">Course &amp; Calling · a Learning Compass company · Add to Home Screen on your phone</div>
 
 <script>
 
-const LOGO_SVG_LIGHT = `<svg class="logo-svg" viewBox="0 0 128 128" fill="none">
-  <defs><linearGradient id="sliceGL" x1="64" y1="8" x2="110" y2="64" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#E07A5F"/><stop offset="1" stop-color="#D4A373"/></linearGradient></defs>
-  <circle cx="64" cy="64" r="58" stroke="rgba(255,255,255,0.85)" stroke-width="4" fill="rgba(255,255,255,0.08)"/>
-  <circle cx="64" cy="64" r="50" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" fill="none"/>
-  <path d="M64 14 L70 64 L64 52 L58 64 Z" fill="rgba(255,255,255,0.35)"/>
-  <path d="M64 114 L58 64 L64 76 L70 64 Z" fill="rgba(255,255,255,0.2)"/>
-  <path d="M14 64 L64 58 L52 64 L64 70 Z" fill="rgba(255,255,255,0.2)"/>
-  <path d="M114 64 L64 70 L76 64 L64 58 Z" fill="rgba(255,255,255,0.2)"/>
-  <path d="M64 64 L64 16 A48 48 0 0 1 102 40 Z" fill="url(#sliceGL)" opacity="0.95"/>
-  <circle cx="64" cy="64" r="14" fill="rgba(255,255,255,0.95)"/>
-  <circle cx="64" cy="58" r="4.5" fill="#1B2A4A"/>
-  <path d="M54.5 74c2.5-6 16.5-6 19 0" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-  <circle cx="64" cy="64" r="3" fill="#E07A5F"/>
-</svg>`;
+const LOGO_SVG_LIGHT = `<img class="logo-svg" src="brand/mark-dark-bg.svg" alt="Course &amp; Calling"/>`;
 
-const LOGO_SVG = `<svg class="logo-svg" viewBox="0 0 128 128" fill="none">
-  <defs><linearGradient id="sliceG" x1="64" y1="8" x2="110" y2="64" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#E07A5F"/><stop offset="1" stop-color="#D4A373"/></linearGradient></defs>
-  <circle cx="64" cy="64" r="58" stroke="#1B2A4A" stroke-width="4" fill="#FBF7F2"/>
-  <circle cx="64" cy="64" r="50" stroke="#1B2A4A" stroke-width="1.5" stroke-opacity="0.25" fill="none"/>
-  <path d="M64 14 L70 64 L64 52 L58 64 Z" fill="#2A3F66" opacity="0.35"/>
-  <path d="M64 114 L58 64 L64 76 L70 64 Z" fill="#2A3F66" opacity="0.25"/>
-  <path d="M14 64 L64 58 L52 64 L64 70 Z" fill="#2A3F66" opacity="0.25"/>
-  <path d="M114 64 L64 70 L76 64 L64 58 Z" fill="#2A3F66" opacity="0.25"/>
-  <path d="M64 64 L64 16 A48 48 0 0 1 102 40 Z" fill="url(#sliceG)" opacity="0.92"/>
-  <path d="M64 64 L64 16 A48 48 0 0 1 102 40 Z" stroke="#C45D42" stroke-width="1.5" fill="none"/>
-  <circle cx="64" cy="18" r="2.5" fill="#1B2A4A"/>
-  <circle cx="64" cy="64" r="14" fill="#1B2A4A"/>
-  <circle cx="64" cy="58" r="4.5" fill="#FBF7F2"/>
-  <path d="M54.5 74c2.5-6 16.5-6 19 0" stroke="#FBF7F2" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-  <circle cx="64" cy="64" r="3" fill="#E07A5F"/>
-</svg>`;
+const LOGO_SVG = `<img class="logo-svg" src="brand/mark-light-bg.svg" alt="Course &amp; Calling"/>`;
 
 function injectLogos(){
   const lightEls=['splashLogo','compassIntroLogo'];
@@ -863,7 +838,7 @@ const INTERESTS=['STEM','Arts','Languages','PE / Sports','Music','Life skills','
 const CATEGORIES=[
   {label:'Classes',emoji:'📚'},{label:'Tutors',emoji:'🧑‍🏫'},{label:'Directory',emoji:'🤝',go:'directory'},{label:'Extra',emoji:'🏟️',go:'extra'},{label:'Spaces',emoji:'🏠',go:'spaces'},{label:'My reach',emoji:'📍',go:'reach'},{label:'Rides',emoji:'🚗',go:'rides'}
 ];
-const CHILD_COLORS=['#E07A5F','#2A3F66','#81B29A','#D4A373','#5E548E'];
+const CHILD_COLORS=['#E07A5F','#2A3F66','#81B29A','#C9974A','#5E548E'];
 const ROLES=[
   {id:'parent',label:'Parents',short:'Parent'},
   {id:'learner',label:'Learners',short:'Learner'},
@@ -1078,7 +1053,7 @@ const DRIVERS=[
 ];
 
 const ONBOARDING=[
-  {title:'Own your direction',body:'Self-directed learners pursue their own path. HomeSchoolHub connects you to local classes, tutors, co-ops, microschools, and spaces — you choose.',icon:'🧭'},
+  {title:'Own your direction',body:'Self-directed learners pursue their own path. Course & Calling connects you to local classes, tutors, co-ops, microschools, and spaces — you choose.',icon:'🧭'},
   {title:'ESA for classes & tutoring',body:'Pay for courses, classes and tutoring with Arizona Empowerment Scholarship Account funds (illustrative). Rides and space rentals are paid by card. Transparent balances. Educational freedom in practice.',icon:'💳'},
   {title:'Compass Profile™ + progress',body:'Discover your heading with Personality, Interests & Aptitude — then track hours and portfolio for personal and career success.',icon:'📈'},
 ];
@@ -1544,7 +1519,7 @@ function startAnalyzeAnimation(done){
       <line x1="50" y1="50" x2="50" y2="18" stroke="#E07A5F" stroke-width="2.5" stroke-linecap="round"/>
     </g>
     <g id="needleHand" style="transform-origin:50px 50px;">
-      <polygon points="50,22 54,50 50,46 46,50" fill="#D4A373"/>
+      <polygon points="50,22 54,50 50,46 46,50" fill="#C9974A"/>
     </g>
     <circle cx="50" cy="50" r="5" fill="#1B2A4A"/>
     <circle cx="50" cy="50" r="2.5" fill="#E07A5F"/>
@@ -2851,7 +2826,7 @@ function renderHome(){
         <div style="font-family:'Fraunces',Georgia,serif;font-size:32px;font-weight:700;margin-bottom:4px;">${money(state.esaRemaining)}</div>
         <div style="font-size:13px;opacity:0.7;">of ${money(state.esaTotal)} remaining · illustrative · Phoenix pilot</div>
         <div style="margin-top:14px;height:6px;background:rgba(255,255,255,0.15);border-radius:999px;overflow:hidden;">
-          <div style="height:100%;width:${(state.esaRemaining/state.esaTotal)*100}%;background:linear-gradient(90deg,#E07A5F,#D4A373);border-radius:999px;"></div>
+          <div style="height:100%;width:${(state.esaRemaining/state.esaTotal)*100}%;background:linear-gradient(90deg,#E07A5F,#C9974A);border-radius:999px;"></div>
         </div>
         <div style="font-size:11px;opacity:.7;margin-top:10px;">ESA pays for classes, courses &amp; tutoring · rides and spaces by card</div>
       </div>
@@ -2880,7 +2855,7 @@ function renderHome(){
         <span style="color:var(--coral);font-weight:700;">→</span>
       </div>
       <div class="card" style="margin-top:12px;cursor:pointer;display:flex;gap:12px;align-items:center;" onclick="state.extraMuni=state.municipality||'Phoenix';go('extra')">
-        <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#BC6C25,#D4A373);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🏟️</div>
+        <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#BC6C25,#C9974A);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🏟️</div>
         <div style="flex:1;">
           <div style="font-weight:700;font-size:15px;">Extracurriculars in ${state.municipality||'Phoenix'}</div>
           <div style="font-size:12px;color:var(--text-muted);line-height:1.35;">Public-school sports, art, music &amp; performing arts · eligibility varies by district · Demo</div>
@@ -3770,7 +3745,7 @@ function renderProfile(){
       <button onclick="go('compass')" style="width:100%;text-align:left;padding:14px 16px;border:none;background:none;border-bottom:1px solid var(--border);font-family:inherit;font-size:14px;cursor:pointer;">Compass Profile™</button>
       <button onclick="go('investor')" style="width:100%;text-align:left;padding:14px 16px;border:none;background:none;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;color:var(--coral);">Investor view <span style="font-size:11px;opacity:.7;">(demo)</span></button>
     </div>
-    <p style="font-size:12px;color:var(--text-muted);text-align:center;line-height:1.5;">Learning Compass · HomeSchoolHub v6<br/>Self-directed learning · Educational freedom<br/>All figures illustrative demo data.</p>`;
+    <p style="font-size:12px;color:var(--text-muted);text-align:center;line-height:1.5;">Course &amp; Calling v7 · a Learning Compass company<br/>Self-directed learning · Educational freedom<br/>All figures illustrative demo data.</p>`;
 }
 
 function invUnlocked(){
@@ -3835,8 +3810,9 @@ function renderInvestor(){
     document.getElementById('investorContent').innerHTML=`
       <div class="card inv-lock">
         <div class="logo-md" style="margin:0 auto 12px;" id="invLogoLock">${LOGO_SVG}</div>
-        <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Learning Compass</div>
-        <h2 style="font-family:'Fraunces',Georgia,serif;font-size:22px;margin:8px 0;">Investor Dashboard</h2>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Course &amp; Calling</div>
+        <h2 style="font-family:'Fraunces',Georgia,serif;font-size:22px;margin:8px 0 2px;">Investor Dashboard</h2>
+        <div style="font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:12px;color:var(--text-muted);margin-bottom:8px;">a Learning Compass company</div>
         <p style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:16px;">Phoenix lean + Compass Plus view of the Oct 2026 pro forma (Base) — password-gated for demo sharing.</p>
         <div class="field" style="text-align:left;">
           <label>Password</label>
@@ -3962,7 +3938,7 @@ function invSandboxOutHTML(){
       <div class="inv-bar-label">Yr ${x.y}<br/>${invFmt(tot)}</div></div>`;
   }).join('');
   const mixTot=y3.rev||1;
-  const mix=[['c','Courses',y3.revCourse,'#E07A5F'],['r','Rides',y3.revRide,'#2A3F66'],['s','Spaces',y3.revSpace,'#81B29A'],['p','Compass Plus',y3.revPlus,'#D4A373']];
+  const mix=[['c','Courses',y3.revCourse,'#E07A5F'],['r','Rides',y3.revRide,'#2A3F66'],['s','Spaces',y3.revSpace,'#81B29A'],['p','Compass Plus',y3.revPlus,'#C9974A']];
   function sens(mut){ return computeSandbox(Object.assign({},m,mut),v)[2].rev; }
   const baseY3=y3.rev;
   const torn=[
@@ -4174,7 +4150,7 @@ function invSet(key, val){
 }
 function invCopySummary(){
   const v=state.invView, m=state.invModel;
-  const lines=['HomeSchoolHub / Learning Compass — Investor snapshot (Base, Oct 2026 pro forma)',''];
+  const lines=['Course & Calling (a Learning Compass company) — Investor snapshot (Base, Oct 2026 pro forma)',''];
   WB_FP.forEach(f=>{const x=wbRow(f.id,v); lines.push(`${f.label}: with Compass Plus ${wbBE(x.bp)} · peak ${invFmt(x.pp)} · raise ${invFmt(wbRaise(x.pp))} | marketplace only ${wbBE(x.bm)} · peak ${invFmt(x.pm)}`);});
   lines.push('', `Federal credit setting: ${v.credit}${v.azOptIn?' (AZ opts in — what-if)':''}. Arizona has not opted in for 2027.`);
   lines.push('Take rates: courses 15% · rides 20% (own TNC, AZ) · spaces 15%.');
@@ -4385,7 +4361,7 @@ applyHash();
   }
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=6-1').catch(()=>{});
+      navigator.serviceWorker.register('./sw.js?v=7-1').catch(()=>{});
     });
   }
   // Android beforeinstallprompt
@@ -4403,7 +4379,7 @@ applyHash();
     b.id = 'a2hs';
     b.className = 'a2hs-banner';
     b.innerHTML = android
-      ? `<div style="flex:1"><strong>Install HomeSchoolHub</strong><br/>Add this app to your home screen for the full experience.</div>
+      ? `<div style="flex:1"><strong>Install Course &amp; Calling</strong><br/>Add this app to your home screen for the full experience.</div>
          <button id="a2hsInstall">Install</button><button class="a2hs-x" id="a2hsX">✕</button>`
       : `<div style="flex:1"><strong>Add to Home Screen</strong><br/>On iPhone: tap Share → Add to Home Screen for fullscreen app mode.</div>
          <button class="a2hs-x" id="a2hsX">Got it</button>`;

@@ -1,4 +1,4 @@
-const CACHE = 'hsh-v6-1';
+const CACHE = 'hsh-v7-1';
 const CORE = [
   './',
   './index.html',
@@ -7,7 +7,19 @@ const CORE = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-512-maskable.png',
-  './icons/apple-touch-icon.png'
+  './icons/apple-touch-icon.png',
+  './icons/pwa-192.png',
+  './icons/pwa-512.png',
+  './icons/pwa-maskable-512.png',
+  './icons/ios_180.png',
+  './favicon.ico',
+  './favicon.svg',
+  './favicon-32.png',
+  './brand/mark-light-bg.svg',
+  './brand/mark-dark-bg.svg',
+  './brand/primary-dark-bg.svg',
+  './brand/primary-light-bg.svg',
+  './brand/horizontal-light-bg.svg'
 ];
 
 self.addEventListener('install', (e) => {
