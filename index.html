@@ -1233,23 +1233,32 @@ function paperFoldItems(){
      opts:[[[0.5,0.15],[0.15,0.5],[0.85,0.5],[0.5,0.85]],[[0.15,0.5],[0.5,0.85]],[[0.15,0.15],[0.85,0.15],[0.15,0.85],[0.85,0.85]],[[0.5,0.15],[0.15,0.5],[0.5,0.85]]], correct:0},
   ];
 }
+function mrRot(c,k){let r=c;for(let i=0;i<k;i++)r=r.map(([x,y])=>[-y,x]);return mrNorm(r);}
+function mrMir(c){return mrNorm(c.map(([x,y])=>[-x,y]));}
+function mrNorm(c){const mx=Math.min(...c.map(p=>p[0])),my=Math.min(...c.map(p=>p[1]));return c.map(([x,y])=>[x-mx,y-my]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);}
 function mentalRotItems(){
+  // Shapes are grid cells [x,y]. Each option: m=mirror first (1/0), r=quarter turns clockwise, alt=use a near-miss shape instead of the target.
+  // Exactly one option is a true rotation (m:0, no alt); the rest are mirror images or slightly altered shapes.
+  const F=[[1,0],[2,0],[0,1],[1,1],[1,2]], Fa=[[1,0],[2,0],[0,1],[1,1],[2,1]];
+  const L=[[0,0],[0,1],[0,2],[0,3],[1,3]], La=[[0,0],[0,1],[0,2],[1,2],[1,3]];
+  const N=[[0,0],[0,1],[1,1],[1,2],[1,3]], Na=[[0,0],[0,1],[1,1],[1,2],[2,2]];
+  const mk=(target,spec,correct)=>({target:mrNorm(target),correct,opts:spec.map(s=>{const base=s.alt||target;return mrRot(s.m?mrMir(base):base,s.r);})});
   return [
-    {target:'L-shape', correct:2, rots:[0,90,180,270]},
-    {target:'Z-shape', correct:1, rots:[0,90,180,270]},
-    {target:'T-shape', correct:3, rots:[0,90,180,270]},
+    mk(F,[{m:1,r:1},{m:1,r:3},{m:0,r:1},{m:0,r:2,alt:Fa}],2),
+    mk(L,[{m:0,r:3},{m:1,r:2},{m:1,r:1},{m:0,r:1,alt:La}],0),
+    mk(N,[{m:1,r:2},{m:0,r:1,alt:Na},{m:1,r:3},{m:0,r:2}],3),
   ];
 }
 function inductiveItems(){
   return [
     {syms:['▲','▲','●','▲','■','●'], rule:'three triangles', correct:[0,1,3]},
-    {syms:['1','A','2','B','3','C'], rule:'letters', correct:[1,3,5]},
+    {syms:['A','7','E','K','I','■'], rule:'vowels', correct:[0,2,4]},
     {syms:['◆','○','◆','□','◆','△'], rule:'diamonds', correct:[0,2,4]},
   ];
 }
 function analyticalItems(){
   return [
-    {steps:['Put on shoes','Open the door','Walk outside','Lock the door'], correct:[0,3,1,2]},
+    {steps:['Walk outside','Lock the door','Put on shoes','Open the door'], correct:[2,3,0,1]},
     {steps:['Mix batter','Preheat oven','Bake','Cool on rack'], correct:[1,0,2,3]},
     {steps:['Read the question','Plan an approach','Solve','Check your work'], correct:[0,1,2,3]},
   ];
@@ -1919,32 +1928,22 @@ function answerPaperFold(choice){
   advanceAptitude();
 }
 
-function shapeSVG(kind, rot){
-  const shapes={
-    'L-shape':'M30 20 H50 V60 H70 V80 H30 Z',
-    'Z-shape':'M20 25 H50 V45 H60 V75 H30 V55 H20 Z',
-    'T-shape':'M25 20 H75 V40 H55 V80 H45 V40 H25 Z',
-  };
-  return `<svg viewBox="0 0 100 100" width="70" height="70"><g transform="rotate(${rot} 50 50)"><path d="${shapes[kind]}" fill="#2A3F66"/></g></svg>`;
+function shapeSVG(cells){
+  const s=17,w=Math.max(...cells.map(p=>p[0]))+1,h=Math.max(...cells.map(p=>p[1]))+1;
+  const ox=50-w*s/2,oy=50-h*s/2;
+  return `<svg viewBox="0 0 100 100" width="84" height="84">${cells.map(([x,y])=>`<rect x="${ox+x*s}" y="${oy+y*s}" width="${s}" height="${s}" fill="#2A3F66" stroke="#FBF7F2" stroke-width="1.5"/>`).join('')}</svg>`;
 }
 function renderMentalRot(st, si){
   const item=st.items[si];
-  // options: one correct rotation, others wrong shape or mirror-ish
-  const opts=[0,1,2,3].map(i=>{
-    const rot=item.rots[i];
-    const kind=i===item.correct?item.target:(i%2? 'L-shape':'Z-shape');
-    const useKind=i===item.correct?item.target: (item.target==='L-shape'?'T-shape':item.target==='T-shape'?'Z-shape':'L-shape');
-    return {i, svg:shapeSVG(i===item.correct?item.target:useKind, rot)};
-  });
   document.getElementById('assessContent').innerHTML=`
     <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Item ${si+1} of ${st.items.length}</div>
     <div class="card" style="text-align:center;margin-bottom:12px;">
       <div style="font-size:12px;margin-bottom:6px;color:var(--text-muted);">Target</div>
-      ${shapeSVG(item.target,0)}
+      ${shapeSVG(item.target)}
     </div>
-    <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Which is a rotation of the target?</div>
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Which is the target turned, not flipped?</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      ${opts.map(o=>`<button class="fold-opt" onclick="answerMentalRot(${o.i})">${o.svg}</button>`).join('')}
+      ${item.opts.map((o,i)=>`<button class="fold-opt" aria-label="Option ${'ABCD'[i]}" onclick="answerMentalRot(${i})"><div style="font-size:11px;color:var(--text-muted);text-align:left;">${'ABCD'[i]}</div>${shapeSVG(o)}</button>`).join('')}
     </div>`;
 }
 function answerMentalRot(choice){
