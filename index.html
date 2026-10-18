@@ -53,7 +53,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 .scroll::-webkit-scrollbar{width:0}
 .tab-bar{display:none;height:calc(64px + var(--safe-bottom));padding-bottom:var(--safe-bottom);background:var(--white);border-top:1px solid var(--border);flex-shrink:0;z-index:40}
 .tab-bar.visible{display:flex}
-.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:none;background:none;color:var(--text-muted);font-size:9px;font-weight:500;font-family:inherit;cursor:pointer;padding:6px 2px}
+.tab{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:none;background:none;color:var(--text-muted);font-size:9px;font-weight:500;font-family:inherit;cursor:pointer;padding:6px 2px}
 .tab.active{color:var(--coral)}
 .tab svg{width:20px;height:20px}
 .tab .dot{width:4px;height:4px;border-radius:50%;background:var(--coral);opacity:0}
@@ -2756,21 +2756,7 @@ function go(screen){
   if(state.screen!==screen) state.prevScreen=state.screen;
   state.screen=screen;
 
-  const tabBar=document.getElementById('tabBar');
-  const showTabs = state.role==='learner' && (TAB_SCREENS.has(screen) || ['compass-intro','compass-results','compass-assess'].includes(screen) || screen==='home');
-  // Show tabs on main learner screens
-  const tabMap={home:'home',explore:'explore',rides:'rides',spaces:'spaces','compass-intro':'compass','compass-results':'compass','compass-assess':'compass',progress:'home'};
-  if(state.role==='learner' && (TAB_SCREENS.has(screen) || screen.startsWith('compass') || screen==='extra' || screen==='extra-detail' || screen==='vocab')){
-    tabBar.classList.add('visible');
-    const key = screen.startsWith('compass') ? 'compass' : (screen==='extra'||screen==='extra-detail' ? 'explore' : screen);
-    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===key));
-  } else if(state.role!=='learner' && screen==='portal'){
-    tabBar.classList.remove('visible');
-  } else {
-    tabBar.classList.remove('visible');
-  }
-  // For other roles on portal, hide tabs
-  if(state.role!=='learner') tabBar.classList.remove('visible');
+  updateTabBar(screen);
 
   const sb=document.getElementById('statusBar');
   if(['splash','onboarding','compass-intro'].includes(screen)){sb.style.color='white';sb.style.background='transparent';}
@@ -2812,9 +2798,7 @@ function go(screen){
 }
 
 function tabGo(tab){
-  if(state.role!=='learner'){ setRole('learner'); }
-  if(tab==='compass') go('compass');
-  else go(tab);
+  if(tab==='compass') go('compass'); else go(tab);
 }
 
 function goHomeOrPortal(){
@@ -3078,10 +3062,11 @@ function listingCardHTML(l){
 }
 
 function renderExplore(){
-  const subjects=['All','STEM','Trades','Arts','Languages','PE / Sports','Music','On heading','Extracurriculars','Directory'];
+  const subjects=['All','STEM','Trades','Arts','Languages','PE / Sports','Music','On heading','Extracurriculars','Spaces','Directory'];
   document.getElementById('filterBar').innerHTML=subjects.map(s=>{
     if(s==='Extracurriculars') return `<button class="chip" onclick="state.extraMuni=state.municipality||'Phoenix';go('extra')">Extracurriculars</button>`;
     if(s==='Directory') return `<button class="chip" onclick="go('directory')">Directory</button>`;
+    if(s==='Spaces') return `<button class="chip" onclick="go('spaces')">Spaces</button>`;
     return `<button class="chip ${state.filterSubject===s?'selected':''}" onclick="state.filterSubject='${s}';renderExplore()">${s==='On heading'&&state.compass.done?'On heading':s}</button>`;
   }).join('');
   document.getElementById('exploreCity').textContent=state.city;
@@ -4038,6 +4023,57 @@ function renderOrientation(){
     <p style="font-size:11px;color:var(--text-muted);line-height:1.45;margin-top:10px;">General information, not legal advice. Sources checked Oct 2026.</p>`;
 }
 
+
+/* ===== v9: role-aware bottom tab bar ===== */
+const TAB_ICONS={
+  home:'<path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z"/>',
+  explore:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><path d="M12 12l5-5"/>',
+  rides:'<path d="M5 17h14v2a1 1 0 01-1 1H6a1 1 0 01-1-1v-2z"/><path d="M5 17l2-7h10l2 7"/><circle cx="7.5" cy="19.5" r="1.5"/><circle cx="16.5" cy="19.5" r="1.5"/>',
+  spaces:'<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8V6a2 2 0 012-2h6a2 2 0 012 2v2"/>',
+  resources:'<path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2V5z"/><path d="M4 19a2 2 0 012-2h13"/>',
+  school:'<path d="M3 10l9-6 9 6-9 6-9-6z"/><path d="M7 12.5V17c0 1.5 2.5 3 5 3s5-1.5 5-3v-4.5"/>',
+  guide:'<path d="M12 21c-4-3-7-6.5-7-10a7 7 0 0114 0c0 3.5-3 7-7 10z"/><path d="M12 8v5M9.5 10.5h5"/>',
+  profile:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+  dash:'<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/>',
+};
+const TAB_SETS={
+  learner:[['home','Home','home'],['explore','Explore','explore'],['compass','Compass','compass'],['rides','Rides','rides'],['resources','Resources','resources']],
+  parent:[['portal','Home','home'],['explore','Explore','explore'],['school-policy','School','school'],['resources','Resources','resources'],['orientation','Guide','guide']],
+  instructor:[['portal','Dashboard','dash'],['explore','Marketplace','explore'],['resources','Resources','resources'],['portal-form','Profile','profile']],
+  space:[['portal','Dashboard','dash'],['spaces','Spaces','spaces'],['resources','Resources','resources'],['portal-form','Profile','profile']],
+  driver:[['portal','Dashboard','dash'],['rides','Rides','rides'],['resources','Resources','resources'],['portal-form','Profile','profile']],
+};
+const TAB_HIDE=new Set(['splash','onboarding','setup','journey','investor','compass-analyze','compass-section','compass-sec-results','detail','extra-detail','plus','booking','confirm','space-book','ride-flow']);
+function tabKeyFor(screen, role){
+  if(role==='learner'){
+    if(screen.startsWith('compass')||screen==='vocab') return 'compass';
+    if(['extra','directory','spaces','reach'].includes(screen)) return 'explore';
+    if(screen==='progress'||screen==='portal'||screen==='profile') return 'home';
+    if(screen==='school-policy'||screen==='orientation') return 'resources';
+    return screen;
+  }
+  if(role==='parent'){
+    if(['portal','portal-form','reach','funding','profile','progress'].includes(screen)) return 'portal';
+    if(['extra','directory','spaces','rides'].includes(screen)) return 'explore';
+    return screen;
+  }
+  if(screen==='profile') return 'portal-form';
+  if(['directory','school-policy','orientation'].includes(screen)) return 'resources';
+  return screen;
+}
+function updateTabBar(screen){
+  const bar=document.getElementById('tabBar'); if(!bar) return;
+  const role=state.role||'learner'; const set=TAB_SETS[role]||TAB_SETS.learner;
+  if(bar.dataset.role!==role){
+    bar.innerHTML=set.map(([sc,label,ic])=>`<button class="tab" data-tab="${sc}" onclick="tabGo('${sc}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${TAB_ICONS[ic]}</svg>${label}<div class="dot"></div></button>`).join('');
+    bar.dataset.role=role;
+  }
+  const show=!TAB_HIDE.has(screen);
+  bar.classList.toggle('visible',show);
+  const key=tabKeyFor(screen,role);
+  bar.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===key));
+}
 /* ===== EXTRACURRICULARS (AZ municipalities) ===== */
 function setMunicipality(v){
   state.municipality=v;
@@ -4838,7 +4874,7 @@ applyHash();
   }
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=8-5').catch(()=>{});
+      navigator.serviceWorker.register('./sw.js?v=9-1').catch(()=>{});
     });
   }
   // Android beforeinstallprompt
