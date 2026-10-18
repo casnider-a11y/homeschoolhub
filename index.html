@@ -395,6 +395,19 @@ body.is-app .toast {
 .sec-title{font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 8px}
 .journey-opt{display:block;width:100%;text-align:left;margin-bottom:8px}.journey-opt.sel{border-color:#C9974A!important;background:#FBF4E8!important;box-shadow:0 0 0 2px #C9974A inset}
 .checklist li{margin-bottom:6px}
+
+.ob-top{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 4px;color:#fff}
+.ob-back,.ob-skip{background:none;border:none;color:rgba(255,255,255,.7);font:600 14px 'DM Sans',sans-serif;cursor:pointer;padding:8px}
+.ob-step{font-size:12px;color:rgba(255,255,255,.6);font-weight:600}
+.ob-prog{height:4px;margin:0 20px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
+.ob-prog-fill{height:100%;background:var(--gold,#C9974A);transition:width .3s}
+.ob-parent-btn{font-size:18px;padding:18px}
+.ob-other-h{text-align:center;font-size:12px;color:rgba(255,255,255,.55);margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em}
+.ob-other{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ob-other button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:10px;font:600 13px 'DM Sans',sans-serif;cursor:pointer}
+.ob-opt{display:block;width:100%;text-align:left;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.ob-opt strong{display:block;font-size:15px}.ob-opt span{font-size:12px;color:rgba(255,255,255,.65)}
+.ob-opt.sel{border-color:#C9974A;background:rgba(201,151,74,.18)}
 </style>
 <style id="cc-gate-css">
 body:not(.cc-unlocked)>*:not(#cc-gate){display:none!important}
@@ -440,21 +453,20 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
     <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Course &amp; Calling</h1>
     <div style="font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:14px;color:var(--gold-light);margin-bottom:10px;">a Learning Compass company</div>
     <div style="font-size:13px;font-weight:600;letter-spacing:0.04em;color:rgba(255,255,255,0.85);margin-bottom:8px;">Set your course. Find your calling.</div>
-    <p style="font-size:15px;line-height:1.5;color:rgba(255,255,255,0.7);max-width:290px;margin-bottom:28px;">Self-directed learning marketplace — find classes, tutors, spaces &amp; rides. Use ESA for classes &amp; tutoring. Own your direction.</p>
-    <button class="btn btn-primary btn-block" style="max-width:280px;" onclick="go('onboarding')">Get Started</button>
-    <button class="btn btn-ghost" style="margin-top:8px;color:rgba(255,255,255,0.55);" onclick="skipToApp()">Skip to demo</button>
+    <p style="font-size:15px;line-height:1.5;color:rgba(255,255,255,0.7);max-width:290px;margin-bottom:28px;">For parents guiding self-directed learning: find your child’s direction, then the classes, tutors, spaces and rides to get there.</p>
+    <button class="btn btn-primary btn-block" style="max-width:280px;" onclick="state.obIndex=0;go('onboarding')">Get Started</button>
+    <button class="btn btn-ghost" style="margin-top:8px;color:rgba(255,255,255,0.55);" onclick="obToDashboard()">Skip to the parent dashboard</button>
   </div>
 </div>
 
 <!-- ONBOARDING -->
 <div class="screen" id="screen-onboarding">
+  <div class="ob-top"><button class="ob-back" id="obBack" onclick="prevOnboarding()" aria-label="Back">‹ Back</button><div class="ob-step" id="obStep"></div><button class="ob-skip" id="obSkip" onclick="skipOnboarding()">Skip</button></div>
+  <div class="ob-prog"><div class="ob-prog-fill" id="obProg"></div></div>
   <div class="scroll" style="display:flex;flex-direction:column;justify-content:center;">
     <div id="obContent" class="ob-card"></div>
     <div class="ob-dots" id="obDots"></div>
-    <div style="padding:8px 28px 32px;">
-      <button class="btn btn-primary btn-block" id="obNext" onclick="nextOnboarding()">Continue</button>
-      <button class="btn btn-ghost btn-block" style="color:rgba(255,255,255,0.5);margin-top:4px;" onclick="go('setup')">Skip</button>
-    </div>
+    <div style="padding:8px 28px 32px;" id="obActions"></div>
   </div>
 </div>
 
@@ -2749,6 +2761,7 @@ function go(screen){
     if(state.compass.done) screen='compass-results';
     else screen='compass-intro';
   }
+  if(screen==='journey'){ state.obIndex=OB_INTRO.findIndex(x=>x.k==='journey'); screen='onboarding'; }
   const el=document.getElementById('screen-'+screen);
   if(!el){console.warn('missing',screen);return;}
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -2836,6 +2849,7 @@ function skipCompass(){ go('home'); toast('You can build Compass Profile™ anyt
 
 function setRole(role){
   state.role=role;
+  try{localStorage.setItem('cc_role',role);}catch(e){}
   hideRoleMenus();
   const r=ROLES.find(x=>x.id===role);
   document.getElementById('roleLabel').textContent=r.short;
@@ -2869,16 +2883,82 @@ function renderRoleMenus(){
   });
 }
 
+const OB_INTRO=[
+  {k:'info',icon:'🧭',title:'Welcome, parents',body:'Course &amp; Calling is a <strong>navigation tool</strong> and a <strong>marketplace</strong> in one. It helps you find a direction for your child, then find the classes and people to get there.'},
+  {k:'info',icon:'🧠',title:'The Compass Profile',body:'A short set of personality, interest and aptitude activities shows your child’s strengths and stretch areas, so every choice starts from who they are.'},
+  {k:'info',icon:'📚',title:'Book what you need',body:'Classes, tutors, co-ops, microschools, learning spaces and even rides, all near home and all in one place.'},
+  {k:'info',icon:'💳',title:'Pay with ESA funds',body:'Use your Arizona Empowerment Scholarship Account for eligible classes and tutoring. You approve every booking.'},
+  {k:'role'},
+  {k:'journey'},
+];
+const OB_BEGIN=[
+  {k:'info',icon:'🏟️',title:'Learning happens all around you',body:'Established classrooms, studios, stages and fields are open to your child. Your <strong>local public school</strong> lets homeschooled learners try out for teams, band, choir and theater (A.R.S. §15-802.01). Add city rec sports, arts and music programs, libraries, museums, community colleges and the trades.'},
+  {k:'info',icon:'🤝',title:'…and in classes you build together',body:'Parents and learners just like you assemble classes and pods through this marketplace: <strong>microschools, co-ops, independent instructors and space hosts</strong>. Join one, or start your own.'},
+  {k:'info',icon:'🧭',title:'The Compass points the way',body:'Your child’s Compass Profile gives every class a <strong>Fit %</strong> and suggests paths worth exploring, plus areas to support. It’s a guide, not a grade.'},
+  {k:'info',icon:'🌱',title:'You can do this',body:'No teaching degree needed. Start small: <strong>1)</strong> choose ESA or a homeschool affidavit, <strong>2)</strong> take the Compass Profile together, <strong>3)</strong> book one class and join one local group. Adjust as you go.'},
+  {k:'finish'},
+];
+const OB_FIRST=[
+  {k:'info',icon:'🗺️',title:'Make the most of year one',body:'Mix marketplace classes and pods with free community options: local school teams and arts (A.R.S. §15-802.01), city rec, libraries and museums. Variety builds momentum.'},
+  {k:'info',icon:'🧭',title:'Let the Compass guide you',body:'The Compass Profile adds a Fit % to every class, so you spend time and ESA funds where they’ll count most.'},
+  {k:'finish'},
+];
+function obSlides(){
+  const j=state.journey;
+  const branch=(!j||j==='exploring'||j==='soon')?OB_BEGIN:(j==='first'?OB_FIRST:[]);
+  return OB_INTRO.concat(branch);
+}
 function renderOnboarding(){
-  const o=ONBOARDING[state.obIndex];
-  document.getElementById('obContent').innerHTML=`<div class="ob-icon"><span style="font-size:40px">${o.icon}</span></div><h2>${o.title}</h2><p>${o.body}</p>`;
-  document.getElementById('obDots').innerHTML=ONBOARDING.map((_,i)=>`<div class="ob-dot ${i===state.obIndex?'active':''}"></div>`).join('');
-  document.getElementById('obNext').textContent=state.obIndex===ONBOARDING.length-1?'Set up profile':'Continue';
+  const sl=obSlides(); if(state.obIndex>=sl.length) state.obIndex=sl.length-1; if(state.obIndex<0) state.obIndex=0;
+  const o=sl[state.obIndex], n=sl.length, i=state.obIndex;
+  const c=document.getElementById('obContent'), act=document.getElementById('obActions');
+  const roleIdx=OB_INTRO.findIndex(x=>x.k==='role');
+  document.getElementById('obStep').textContent=`${i+1} of ${n}`;
+  document.getElementById('obProg').style.width=Math.round((i+1)/n*100)+'%';
+  document.getElementById('obBack').style.visibility=i>0?'visible':'hidden';
+  document.getElementById('obSkip').style.visibility=(o.k==='role'||o.k==='journey'||o.k==='finish')?'hidden':'visible';
+  document.getElementById('obDots').innerHTML=sl.map((_,k)=>`<div class="ob-dot ${k===i?'active':''}"></div>`).join('');
+  if(o.k==='info'){
+    c.innerHTML=`<div class="ob-icon"><span style="font-size:40px">${o.icon}</span></div><h2>${o.title}</h2><p>${o.body}</p>`;
+    act.innerHTML=`<button class="btn btn-primary btn-block" onclick="nextOnboarding()">Next</button>`;
+  } else if(o.k==='role'){
+    c.innerHTML=`<h2>How will you use Course &amp; Calling?</h2><p>Most families start here as a parent. You can add learners and switch views any time.</p>`;
+    act.innerHTML=`<button class="btn btn-primary btn-block ob-parent-btn" onclick="obPickRole('parent')">👪 I’m a parent</button>
+      <div class="ob-other-h">Other ways to join</div>
+      <div class="ob-other">${[['learner','🎒 Learner'],['instructor','🧑‍🏫 Instructor'],['space','🏠 Space host'],['driver','🚗 Driver']].map(([r,l])=>`<button onclick="obPickRole('${r}')">${l}</button>`).join('')}</div>`;
+  } else if(o.k==='journey'){
+    c.innerHTML=`<h2>Where are you on your educational freedom journey?</h2><p>There’s no wrong answer. We’ll tailor what comes next.</p>`;
+    act.innerHTML=JOURNEY_OPTS.map(x=>`<button class="ob-opt ${state.journey===x.k?'sel':''}" onclick="pickJourney('${x.k}')"><strong>${x.t}</strong><span>${x.d}</span></button>`).join('')+
+      `<button class="btn btn-primary btn-block" style="margin-top:10px;" ${state.journey?'':'disabled'} onclick="obAfterJourney()">Next</button>`;
+  } else {
+    c.innerHTML=`<div class="ob-icon"><span style="font-size:40px">✨</span></div><h2>You’re ready to begin</h2><p>Next, tell us a little about your family and set up your learner’s profile. It takes about two minutes.</p>`;
+    act.innerHTML=`<button class="btn btn-primary btn-block" onclick="go('setup')">Set up my learner’s profile</button>
+      <button class="btn btn-ghost btn-block" style="color:rgba(255,255,255,.6);margin-top:4px;" onclick="obToDashboard()">Go to my dashboard</button>`;
+  }
 }
-function nextOnboarding(){
-  if(state.obIndex<ONBOARDING.length-1){state.obIndex++;renderOnboarding();}
-  else go('journey');
+function nextOnboarding(){ const n=obSlides().length; if(state.obIndex<n-1){state.obIndex++;renderOnboarding();} else go('setup'); }
+function prevOnboarding(){ if(state.obIndex>0){state.obIndex--;renderOnboarding();} }
+function skipOnboarding(){
+  const roleIdx=OB_INTRO.findIndex(x=>x.k==='role');
+  if(state.obIndex<roleIdx){ state.obIndex=roleIdx; renderOnboarding(); }
+  else go('setup');
 }
+function obPickRole(r){
+  try{localStorage.setItem('cc_role',r);}catch(e){}
+  if(r==='parent'){ state.role='parent'; state.obIndex=OB_INTRO.findIndex(x=>x.k==='journey'); renderOnboarding(); }
+  else if(r==='learner'){ skipToApp(); }
+  else { setRole(r); }
+}
+function obAfterJourney(){
+  if(state.journey==='experienced'){ obToDashboard(); return; }
+  state.obIndex++; renderOnboarding();
+}
+function obToDashboard(){
+  try{localStorage.setItem('cc_role','parent');}catch(e){}
+  if(!state.compass.done) seedDemoCompassReport();
+  state.role='parent'; setRole('parent');
+}
+function replayOrientation(){ state.obIndex=0; go('onboarding'); }
 
 function updateEsaSetup(){
   document.getElementById('esaProgramName').textContent=esaName();
@@ -3458,10 +3538,7 @@ function portalParent(){
       </div>
       <p style="font-size:11px;color:var(--text-muted);margin:8px 0 0;">Other states vary. This applies to Arizona.</p>
     </div>
-    <div class="card" style="margin-bottom:14px;cursor:pointer;" onclick="state.orientNext=null;go('orientation')">
-      <div style="font-weight:700;">🌱 Getting Started guide</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">New to this? First steps in Arizona, the Compass Profile, local options and a 30-day checklist ›</div>
-    </div>
+    <div style="text-align:right;margin:-6px 0 12px;"><button class="link-more" style="font-size:12px;" onclick="replayOrientation()">↺ Replay orientation</button> · <button class="link-more" style="font-size:12px;" onclick="go('orientation')">Getting Started guide</button></div>
     <div class="card" style="margin-bottom:14px;cursor:pointer;" onclick="go('resources')">
       <div style="font-weight:700;">📚 Resources</div>
       <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">City rec sports, youth arts, self-directed learning organizations, parent groups, libraries &amp; museums ›</div>
@@ -3943,10 +4020,6 @@ function renderResources(){
   document.getElementById('resourcesContent').innerHTML=`
     ${tipHTML('Why this page exists','Self-directed learning works best when you draw on your whole community: city rec leagues, youth theaters, libraries, museums and other families. Here they are by category. Most are free or low-cost, and none require enrolling in a school.','why')}
     <div class="chip-row" style="margin-bottom:12px;">${cats.map(c=>`<button class="chip ${cat===c?'selected':''}" onclick="state.resCat='${c.replace(/'/g,"\\'")}';renderResources()">${c==='All'?'All':short[c]}</button>`).join('')}</div>
-    <div class="card" style="margin-bottom:8px;padding:12px;cursor:pointer;" onclick="state.orientNext=null;go('orientation')">
-      <div style="font-weight:700;font-size:14px;">🌱 Getting Started guide</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">First steps in Arizona and a 30-day checklist ›</div>
-    </div>
     <div class="card" style="margin-bottom:12px;padding:12px;cursor:pointer;" onclick="go('school-policy')">
       <div style="font-weight:700;font-size:14px;">🏫 Local public school activities</div>
       <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Arizona lets homeschooled learners try out for school teams, band, choir and theater. See how ›</div>
@@ -3978,7 +4051,7 @@ function renderJourney(){
     ${JOURNEY_OPTS.map(o=>`<button class="q-card journey-opt ${cur===o.k?'sel':''}" onclick="pickJourney('${o.k}')"><div style="font-weight:700;color:#1B2A4A;">${o.t}</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${o.d}</div></button>`).join('')}
     <button class="btn btn-primary btn-block" style="margin-top:12px;" ${cur?'':'disabled'} onclick="continueJourney()">Continue</button>`;
 }
-function pickJourney(k){ state.journey=k; try{localStorage.setItem('cc_journey',k);}catch(e){} renderJourney(); }
+function pickJourney(k){ state.journey=k; try{localStorage.setItem('cc_journey',k);}catch(e){} if(state.screen==='onboarding') renderOnboarding(); else renderJourney(); }
 function continueJourney(){
   if(state.journey==='exploring'||state.journey==='soon'){ state.orientNext='setup'; go('orientation'); }
   else if(state.journey==='experienced'){ skipToApp(); go('explore'); toast('Welcome back · straight to the marketplace'); }
@@ -4861,6 +4934,8 @@ document.addEventListener('click', (e)=>{
 });
 injectLogos();
 applyHash();
+(function(){ if(location.hash) return; let r=null; try{r=localStorage.getItem('cc_role');}catch(e){}
+  if(!r) return; if(r==='learner'){ skipToApp(); } else { if(r==='parent'&&!state.compass.done) seedDemoCompassReport(); setRole(r); } })();
 
 /* PWA boot */
 (function(){
@@ -4874,7 +4949,7 @@ applyHash();
   }
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=9-1').catch(()=>{});
+      navigator.serviceWorker.register('./sw.js?v=9-2').catch(()=>{});
     });
   }
   // Android beforeinstallprompt
