@@ -1213,11 +1213,24 @@ function aptBattery(){
 }
 
 function paperFoldItems(){
-  // correct index among 4 options; simple geometric demos
+  // Coordinates are fractions of the square sheet (0..1, y down).
+  // folds: reflection lines [x1,y1,x2,y2], applied in order; the paper on the "from" side is laid onto the other side.
+  // panels: what the learner sees for each step. opts: holes in the fully unfolded sheet. correct = index of matching option.
   return [
-    {folds:'triangle-fold + center hole', correct:1, opts:[0,1,2,3]},
-    {folds:'half-fold + corner hole', correct:2, opts:[0,1,2,3]},
-    {folds:'quarter-fold + mid hole', correct:0, opts:[0,1,2,3]},
+    {folds:[[0.5,0,0.5,1]], punch:[0.75,0.25],
+     panels:[{poly:[[0,0],[1,0],[1,1],[0,1]],line:[0.5,0,0.5,1],arrow:[0.22,0.55,0.78,0.55]}],
+     final:[[0.5,0],[1,0],[1,1],[0.5,1]],
+     opts:[[[0.75,0.25]],[[0.25,0.25],[0.75,0.25]],[[0.75,0.25],[0.75,0.75]],[[0.25,0.75],[0.75,0.25]]], correct:1},
+    {folds:[[0,0.5,1,0.5],[0.5,0,0.5,1]], punch:[0.8,0.7],
+     panels:[{poly:[[0,0],[1,0],[1,1],[0,1]],line:[0,0.5,1,0.5],arrow:[0.5,0.2,0.5,0.8]},
+             {poly:[[0,0.5],[1,0.5],[1,1],[0,1]],line:[0.5,0.5,0.5,1],arrow:[0.2,0.75,0.8,0.75]}],
+     final:[[0.5,0.5],[1,0.5],[1,1],[0.5,1]],
+     opts:[[[0.2,0.7],[0.8,0.7]],[[0.6,0.6],[0.8,0.6],[0.6,0.8],[0.8,0.8]],[[0.2,0.3],[0.8,0.3],[0.8,0.7]],[[0.2,0.3],[0.8,0.3],[0.2,0.7],[0.8,0.7]]], correct:3},
+    {folds:[[0,0,1,1],[0,1,0.5,0.5]], punch:[0.5,0.85],
+     panels:[{poly:[[0,0],[1,0],[1,1],[0,1]],line:[0,0,1,1],arrow:[0.78,0.22,0.22,0.78]},
+             {poly:[[0,0],[1,1],[0,1]],line:[0,1,0.5,0.5],arrow:[0.12,0.5,0.5,0.88]}],
+     final:[[0,1],[1,1],[0.5,0.5]],
+     opts:[[[0.5,0.15],[0.15,0.5],[0.85,0.5],[0.5,0.85]],[[0.15,0.5],[0.5,0.85]],[[0.15,0.15],[0.85,0.15],[0.15,0.85],[0.85,0.85]],[[0.5,0.15],[0.15,0.5],[0.5,0.85]]], correct:0},
   ];
 }
 function mentalRotItems(){
@@ -1862,31 +1875,39 @@ function submitFreelist(st){
   nextSubtest();
 }
 
-function foldSVG(variant){
-  // simplified patterns: dots representing holes after unfold
-  const patterns={
-    0:`<rect x="10" y="10" width="60" height="60" fill="#FBF7F2" stroke="#1B2A4A" stroke-width="2"/><circle cx="40" cy="40" r="5" fill="#1B2A4A"/>`,
-    1:`<rect x="10" y="10" width="60" height="60" fill="#FBF7F2" stroke="#1B2A4A" stroke-width="2"/><circle cx="25" cy="25" r="4" fill="#1B2A4A"/><circle cx="55" cy="25" r="4" fill="#1B2A4A"/><circle cx="25" cy="55" r="4" fill="#1B2A4A"/><circle cx="55" cy="55" r="4" fill="#1B2A4A"/>`,
-    2:`<rect x="10" y="10" width="60" height="60" fill="#FBF7F2" stroke="#1B2A4A" stroke-width="2"/><circle cx="40" cy="25" r="4" fill="#1B2A4A"/><circle cx="40" cy="55" r="4" fill="#1B2A4A"/>`,
-    3:`<rect x="10" y="10" width="60" height="60" fill="#FBF7F2" stroke="#1B2A4A" stroke-width="2"/><circle cx="25" cy="40" r="4" fill="#1B2A4A"/><circle cx="55" cy="40" r="4" fill="#1B2A4A"/>`,
-  };
-  return `<svg viewBox="0 0 80 80" width="72" height="72">${patterns[variant]||patterns[0]}</svg>`;
+function pfPt(p){return (8+p[0]*64).toFixed(1)+' '+(8+p[1]*64).toFixed(1);}
+function pfPanel(inner){return `<svg viewBox="0 0 80 80" width="64" height="64" aria-hidden="true"><rect x="8" y="8" width="64" height="64" fill="none" stroke="#C9CFDA" stroke-width="1" stroke-dasharray="2 2"/>${inner}</svg>`;}
+function pfPoly(poly){return `<path d="M${poly.map(pfPt).join(' L')} Z" fill="#F0E8DC" stroke="#1B2A4A" stroke-width="2" stroke-linejoin="round"/>`;}
+function pfStepSVG(p){
+  const [x1,y1,x2,y2]=p.line,[ax,ay,bx,by]=p.arrow;
+  const s=pfPt([ax,ay]).split(' '),e=pfPt([bx,by]).split(' ');
+  const mx=(+s[0]+ +e[0])/2,my=(+s[1]+ +e[1])/2,dx=+e[0]-s[0],dy=+e[1]-s[1];
+  const cx=mx+dy*0.35,cy=my-dx*0.35; // curved arrow
+  return pfPanel(pfPoly(p.poly)+
+    `<line x1="${pfPt([x1,y1]).split(' ')[0]}" y1="${pfPt([x1,y1]).split(' ')[1]}" x2="${pfPt([x2,y2]).split(' ')[0]}" y2="${pfPt([x2,y2]).split(' ')[1]}" stroke="#1B2A4A" stroke-width="1.5" stroke-dasharray="4 3"/>`+
+    `<path d="M${s[0]} ${s[1]} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${e[0]} ${e[1]}" fill="none" stroke="#E07A5F" stroke-width="2" marker-end="url(#pfArrow)"/>`);
+}
+function pfFinalSVG(item){
+  const c=pfPt(item.punch).split(' ');
+  return pfPanel(pfPoly(item.final)+`<circle cx="${c[0]}" cy="${c[1]}" r="4" fill="#1B2A4A"/>`);
+}
+function foldSVG(holes){
+  return `<svg viewBox="0 0 80 80" width="72" height="72"><rect x="8" y="8" width="64" height="64" fill="#FBF7F2" stroke="#1B2A4A" stroke-width="2"/>${holes.map(h=>{const c=pfPt(h).split(' ');return `<circle cx="${c[0]}" cy="${c[1]}" r="4" fill="#1B2A4A"/>`;}).join('')}</svg>`;
 }
 function renderPaperFold(st, si){
   const item=st.items[si];
+  const sep='<span style="color:#5C6B85;font-size:16px;">→</span>';
+  const steps=item.panels.map(pfStepSVG).concat([pfFinalSVG(item)]);
   document.getElementById('assessContent').innerHTML=`
+    <svg width="0" height="0" style="position:absolute"><defs><marker id="pfArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#E07A5F"/></marker></defs></svg>
     <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Item ${si+1} of ${st.items.length} · Paper Folding</div>
     <div class="card" style="text-align:center;margin-bottom:12px;">
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Folded paper (demo diagram)</div>
-      <svg viewBox="0 0 100 100" width="100" height="100">
-        <path d="M20 80 L50 20 L80 80 Z" fill="#F0E8DC" stroke="#1B2A4A" stroke-width="2"/>
-        <circle cx="50" cy="55" r="5" fill="#E07A5F"/>
-        <text x="50" y="95" text-anchor="middle" font-size="8" fill="#5C6B85">${item.folds}</text>
-      </svg>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Fold along the dashed line${item.panels.length>1?'s, in order':''}, then punch the hole</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;">${steps.join(sep)}</div>
     </div>
-    <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Which unfolded pattern?</div>
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px;">Which shows the paper unfolded?</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      ${item.opts.map(o=>`<button class="fold-opt" onclick="answerPaperFold(${o})">${foldSVG(o)}</button>`).join('')}
+      ${item.opts.map((o,i)=>`<button class="fold-opt" aria-label="Option ${'ABCD'[i]}" onclick="answerPaperFold(${i})"><div style="font-size:11px;color:var(--text-muted);text-align:left;">${'ABCD'[i]}</div>${foldSVG(o)}</button>`).join('')}
     </div>`;
 }
 function answerPaperFold(choice){
