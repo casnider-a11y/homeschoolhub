@@ -1081,6 +1081,18 @@ const DIRECTORY=[
 
 
 const LISTINGS=[
+  {id:'l20',type:'class',subject:'Trades',heading:'Engineering & Design',illus:'illus-stem',emoji:'⚡',title:'Intro to Electrical — Ages 12–17',provider:'Valley Trades Lab (sample)',bio:'Safe, low-voltage circuits, reading schematics, and wiring a practice panel board. A taste of the electrician pathway, with a visit from an apprentice.',
+    lat:33.4655,lng:-112.0730,address:'1520 E Indianola Ave, Phoenix, AZ 85014',distance:4.1,grade:'7–12',age:'12–17',price:95,unit:'session',rating:4.8,reviews:17,esa:true,
+    sessions:[{id:'s20a',day:'Wed',date:'Oct 21',time:'1:00–3:00 PM',spots:5},{id:'s20b',day:'Sat',date:'Oct 24',time:'9:00–11:00 AM',spots:3}],
+    reviewList:[{name:'Dana R.',stars:5,text:'My son finally found something he loves to do with his hands.'}]},
+  {id:'l21',type:'class',subject:'Trades',heading:'Engineering & Design',illus:'illus-pe',emoji:'🔥',title:'Shop & Welding Basics — Ages 14–18',provider:'Desert Forge Studio (sample)',bio:'Shop safety, measuring, cutting, and supervised MIG welding on small projects. Learners leave with a finished piece and an understanding of the welding and fabrication trades.',
+    lat:33.4480,lng:-112.0780,address:'535 W Van Buren St, Phoenix, AZ 85003',distance:5.6,grade:'9–12',age:'14–18',price:140,unit:'session',rating:4.9,reviews:11,esa:true,
+    sessions:[{id:'s21a',day:'Tue',date:'Oct 20',time:'2:00–4:30 PM',spots:4},{id:'s21b',day:'Thu',date:'Oct 22',time:'2:00–4:30 PM',spots:2}],
+    reviewList:[{name:'Marcus T.',stars:5,text:'Instructor is a certified welder. Safety first, and real skills.'}]},
+  {id:'l22',type:'class',subject:'Trades',heading:'Engineering & Design',illus:'illus-stem',emoji:'🪚',title:'Carpentry & Home Repair Lab',provider:'Build It Phoenix (sample)',bio:'Hand and power tool safety, framing a small wall, basic plumbing fixes and a sawhorse build. Great for spatial thinkers who like seeing results.',
+    lat:33.4940,lng:-111.9260,address:'7380 E 2nd St, Scottsdale, AZ 85251',distance:3.0,grade:'6–12',age:'11–17',price:85,unit:'session',rating:4.7,reviews:22,esa:true,
+    sessions:[{id:'s22a',day:'Mon',date:'Oct 19',time:'10:00 AM–12:00 PM',spots:6},{id:'s22b',day:'Fri',date:'Oct 23',time:'1:00–3:00 PM',spots:4}],
+    reviewList:[{name:'Elena V.',stars:5,text:'Built a bench we actually use. Confidence boost!'}]},
   {id:'l1',type:'class',subject:'STEM',heading:'Engineering & Design',illus:'illus-stem',emoji:'🔬',title:'Robotics Lab — Ages 8–12',provider:'Desert Makers Studio',bio:'Hands-on robotics and coding for curious minds. Small groups, real kits, portfolio projects. Self-directed challenges with mentor support.',
     lat:33.5092,lng:-112.032,address:'2145 E Camelback Rd, Phoenix, AZ 85016',lat:33.5092,lng:-112.032,distance:2.4,grade:'3–7',age:'8–12',price:185,unit:'session',rating:4.9,reviews:42,esa:true,
     sessions:[{id:'s1',day:'Tue',date:'Oct 14',time:'10:00–11:30 AM',spots:4},{id:'s2',day:'Thu',date:'Oct 16',time:'10:00–11:30 AM',spots:2},{id:'s3',day:'Sat',date:'Oct 18',time:'1:00–2:30 PM',spots:6}],
@@ -3066,7 +3078,7 @@ function listingCardHTML(l){
 }
 
 function renderExplore(){
-  const subjects=['All','STEM','Arts','Languages','PE / Sports','Music','On heading','Extracurriculars','Directory'];
+  const subjects=['All','STEM','Trades','Arts','Languages','PE / Sports','Music','On heading','Extracurriculars','Directory'];
   document.getElementById('filterBar').innerHTML=subjects.map(s=>{
     if(s==='Extracurriculars') return `<button class="chip" onclick="state.extraMuni=state.municipality||'Phoenix';go('extra')">Extracurriculars</button>`;
     if(s==='Directory') return `<button class="chip" onclick="go('directory')">Directory</button>`;
@@ -3756,6 +3768,7 @@ const FIT_TAGS={
   'Music':{ints:['A','S'],apts:['pitchDisc','numMemory','memDesign']},
   'PE / Sports':{ints:['R','S'],apts:['mentalRot','percSpeed','foresight']},
   'Sports':{ints:['R','S','E'],apts:['mentalRot','percSpeed','foresight']},
+  'Trades':{ints:['R','I','C'],apts:['paperFold','mentalRot','analytical','inductive']},
   'Performing Arts':{ints:['A','S','E'],apts:['ideaphoria','vocab','wordLearn','pitchDisc']},
 };
 function fitBreakdown(subject, type){
@@ -3893,6 +3906,23 @@ const RESOURCES=[
     {n:'Mesa Arts Center',u:'https://www.mesaartscenter.com/',d:'Studio art, music and performing arts classes for youth.'},
     {n:'Scottsdale Arts',u:'https://scottsdalearts.org/',d:'Arts education, museum and performance programs.'},
   ]},
+  {cat:'Trades & apprenticeships',icon:'🔧',why:'Electricians, plumbers, pipefitters, HVAC techs, welders and carpenters learn while they earn. Registered apprenticeships pay a wage during training, and many start at 18 with a high school diploma or GED. High schoolers can begin with career and technical education (CTE).',items:[
+    {n:'Phoenix Electrical JATC (IBEW Local 640)',u:'https://pejatc.org/',d:'Union electrician apprenticeship. Inside wireman applications typically close mid-March. Must be 18 to start.'},
+    {n:'IBEW Local 640',u:'https://www.ibew640.com/',d:'Electrical workers union for Maricopa County and most of Arizona.'},
+    {n:'Arizona Pipe Trades Apprenticeship',u:'https://pipetrades.org/',d:'Plumbers, pipefitters/steamfitters and HVAC techs; 5-year paid program. Check for open application windows.'},
+    {n:'UA Local 469 · Apprenticeship',u:'https://ualocal469.org/apprenticeship-training/',d:'Plumbers and pipefitters union, Phoenix. Requirements: ID, diploma or GED, entrance exam.'},
+    {n:'Western States Carpenters',u:'https://wscarpenters.org/',d:'Union carpenter training and apprenticeship in the western states.'},
+    {n:'GateWay Community College · Welding',u:'https://www.gatewaycc.edu/degrees-certificates/welding',d:'Maricopa Community Colleges welding certificates; GateWay also sponsors electrician and HVAC apprenticeships.'},
+    {n:'EVIT · Apprenticeships',u:'https://www.evit.edu/programs/apprenticeships',d:'East Valley CTE district (Mesa): electrical, HVAC-R, plumbing and welding pre-apprenticeships for high schoolers and adults.'},
+    {n:'EVIT · Welding Technologies (high school)',u:'https://www.evit.edu/programs/welding-technologies-high-school',d:'AWS certifications and OSHA 10 for high-school students.'},
+    {n:'West-MEC',u:'https://www.west-mec.edu/',d:'West Valley CTE district: trades and technical programs for high schoolers and adults.'},
+    {n:'Arizona Apprenticeship Program (DES)',u:'https://des.az.gov/services/employment/apprenticeship-program',d:'The state registration agency for apprenticeships. Find registered programs across Arizona.'},
+    {n:'ABC Central Arizona',u:'https://abcaz.org/',d:'Associated Builders and Contractors: merit-shop craft training and apprenticeships.'},
+    {n:'IEC Arizona',u:'https://iecaz.org/',d:'Independent Electrical Contractors: merit-shop electrical apprenticeship.'},
+    {n:'Apprenticeship.gov · Job Finder',u:'https://www.apprenticeship.gov/apprenticeship-job-finder',d:'U.S. Department of Labor search for registered apprenticeships near you.'},
+    {n:'NCCER',u:'https://www.nccer.org/',d:'National craft curriculum and credentials used by many training programs.'},
+    {n:'Build Your Future (NCCER)',u:'https://www.byf.org/',d:'Career explorer for construction trades, written for teens and parents.'},
+  ]},
   {cat:'Self-directed & homeschool organizations',icon:'🧭',why:'These groups explain the law, connect you with other families, and advocate for educational freedom. They’re a good first call when you have a question.',items:[
     {n:'Arizona Families for Home Education (AFHE)',u:'https://afhe.org/',d:'Statewide nonprofit: getting started, the annual convention, legislative updates.'},
     {n:'HSLDA · Arizona',u:'https://hslda.org/legal/arizona',d:'Arizona homeschool law summary from the Home School Legal Defense Association.'},
@@ -3923,7 +3953,7 @@ const RESOURCES=[
 function renderResources(){
   const cat=state.resCat||'All';
   const cats=['All',...RESOURCES.map(r=>r.cat)];
-  const short={ 'City youth recreation & sports':'Rec sports','Youth arts, music & theater':'Arts & music','Self-directed & homeschool organizations':'Organizations','Parent groups, co-ops & pods':'Parent groups','Libraries & museums with learning programs':'Libraries & museums'};
+  const short={ 'City youth recreation & sports':'Rec sports','Youth arts, music & theater':'Arts & music','Trades & apprenticeships':'Trades','Self-directed & homeschool organizations':'Organizations','Parent groups, co-ops & pods':'Parent groups','Libraries & museums with learning programs':'Libraries & museums'};
   const groups=RESOURCES.filter(r=>cat==='All'||r.cat===cat);
   document.getElementById('resourcesContent').innerHTML=`
     ${tipHTML('Why this page exists','Self-directed learning works best when you draw on your whole community: city rec leagues, youth theaters, libraries, museums and other families. Here they are by category. Most are free or low-cost, and none require enrolling in a school.','why')}
@@ -3990,7 +4020,8 @@ function renderOrientation(){
     <div class="card policy-sec"><h3>3 · How the Compass Profile helps</h3>
       <p>A short set of personality, interest and aptitude activities produces your child’s <strong>Compass Profile</strong>. It shows strengths to build on and stretch areas to plan around, and it powers the <strong>Fit %</strong> on every class.</p></div>
     <div class="card policy-sec"><h3>4 · Using the marketplace + your local school</h3>
-      <p><strong>Explore</strong> lists à la carte classes, tutors, co-ops and microschools, sorted by fit and distance. Many are ESA-eligible. <strong>Local public school programs</strong> (teams, band, choir, theater, art) charge no tuition, and Arizona law lets homeschooled learners try out (${L('https://www.azleg.gov/ars/15/00802-01.htm','A.R.S. §15-802.01')}). <strong>Spaces</strong> and <strong>Rides</strong> handle the where and how.</p></div>
+      <p><strong>Explore</strong> lists à la carte classes, tutors, co-ops and microschools, sorted by fit and distance. Many are ESA-eligible. <strong>Local public school programs</strong> (teams, band, choir, theater, art) charge no tuition, and Arizona law lets homeschooled learners try out (${L('https://www.azleg.gov/ars/15/00802-01.htm','A.R.S. §15-802.01')}). <strong>Spaces</strong> and <strong>Rides</strong> handle the where and how.</p>
+      <p style="margin-top:6px;"><strong>Careers come in many shapes.</strong> College is one path among many. Skilled trades like electrician, plumber, pipefitter, HVAC, welding and carpentry are learned through <em>paid</em> apprenticeships, and Phoenix-area CTE districts such as EVIT and West-MEC serve high schoolers. Learners strong in spatial and mechanical aptitudes often see a high Fit % on trades classes. See <a href="#" onclick="state.resCat='Trades & apprenticeships';go('resources');return false;">Trades &amp; apprenticeships</a>.</p></div>
     <div class="card policy-sec"><h3>✅ Your first 30 days</h3>
       <ol class="checklist">
         <li>Week 1: Decide ESA vs independent homeschool. Apply for the ESA or file the affidavit.</li>
@@ -4006,7 +4037,10 @@ function renderOrientation(){
         <li>Homeschooled students typically score <strong>15 to 25 percentile points above</strong> public-school students on standardized achievement tests, and above average on the SAT and ACT. Source: ${L('https://www.nheri.org/research-facts-on-homeschooling/','NHERI, Research Facts on Homeschooling (Ray)')}.</li>
         <li>A peer-reviewed review found a positive effect on achievement in <strong>11 of 14</strong> studies, and positive adult or college outcomes in <strong>11 of 16</strong>. Source: ${L('https://doi.org/10.1080/15582159.2017.1395638','Ray (2017), Journal of School Choice 11(4)')}.</li>
         <li>NHERI reports that home-educated students go to college at a similar rate to the general population and succeed there at an equal or higher rate. Source: ${L('https://www.nheri.org/research-facts-on-homeschooling/','NHERI')}.</li>
-        <li>A Harvard study of 12,288 young people found homeschooled students later <strong>volunteered more</strong> and showed <strong>greater forgiveness</strong>, but were <strong>23% less likely to finish a college degree</strong>. Source: ${L('https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0258723','Pearson, Chen et al. (2021), PLOS ONE · Harvard Human Flourishing Program')}.</li>
+        <li>A Harvard study of 12,288 young people (187 of them homeschooled) found homeschooled students later <strong>volunteered more</strong> and showed <strong>greater forgiveness</strong>, but were <strong>23% less likely to finish a college degree</strong>. <em>What it didn’t measure:</em> income, employment, occupation and entrepreneurship weren’t among its outcomes (income appears only as a family background control), so it says nothing about career success. Source: ${L('https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0258723','Pearson, Chen et al. (2021), PLOS ONE · Harvard Human Flourishing Program')}.</li>
+        <li><strong>Life and career, the Cardus Education Survey</strong> (a nationally representative sample of U.S. adults aged 24–39, 2023): long-term homeschoolers (8+ years) reported the <strong>highest optimism, gratitude and life satisfaction</strong> and the <strong>least depression and anxiety</strong> of any group. On the other side, all homeschooled groups were <strong>less likely to work full-time or have above-median household income</strong>. Long-term homeschoolers also more often ended their schooling with a high school diploma (41% vs 27% of those never homeschooled). Source: ${L('https://www.cardus.ca/research/diverse-outcomes-for-a-diverse-population/','Cardus (2025), Diverse Outcomes for a Diverse Population')}.</li>
+        <li><strong>Homeschooled adults</strong> (Ray 2004, HSLDA-commissioned, 5,000+ respondents homeschooled 7+ years, self-selected): 59% said they were “very happy” and 39% “pretty happy” with life; 71% took part in an ongoing community service activity. Jobs ranged widely, including small-business owners and contractors (2.5%) and tradespeople (1.5%), though 49% were still full-time students. Source: ${L('https://hslda.org/docs/librariesprovider2/public/homeschooling-grows-up.pdf','HSLDA, Homeschooling Grows Up (PDF)')}.</li>
+        <li><strong>College is one path among many.</strong> A degree is one route to a good life. Skilled trades, apprenticeships, entrepreneurship and service are others, and degree rates alone don’t measure success.</li>
       </ul>
       <p style="font-size:12px;margin-top:6px;"><em>A fair caveat:</em> results vary across studies. Many use volunteer, self-selected samples, and none prove that homeschooling <em>causes</em> these outcomes. Family involvement matters a lot whatever the setting.</p></div>
     ${next?`<button class="btn btn-primary btn-block" onclick="state.orientNext=null;go('setup')">I’m ready · set up our profile</button>`
@@ -4815,7 +4849,7 @@ applyHash();
   }
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=8-1').catch(()=>{});
+      navigator.serviceWorker.register('./sw.js?v=8-2').catch(()=>{});
     });
   }
   // Android beforeinstallprompt
