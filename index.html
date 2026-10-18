@@ -3475,7 +3475,7 @@ function portalParent(){
     </div>
     <div class="card" style="margin-bottom:14px;cursor:pointer;" onclick="state.orientNext=null;go('orientation')">
       <div style="font-weight:700;">🌱 Getting Started guide</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">New to this? First steps in Arizona, the Compass Profile, a 30-day checklist and what the research says ›</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">New to this? First steps in Arizona, the Compass Profile, local options and a 30-day checklist ›</div>
     </div>
     <div class="card" style="margin-bottom:14px;cursor:pointer;" onclick="go('resources')">
       <div style="font-weight:700;">📚 Resources</div>
@@ -3960,7 +3960,7 @@ function renderResources(){
     <div class="chip-row" style="margin-bottom:12px;">${cats.map(c=>`<button class="chip ${cat===c?'selected':''}" onclick="state.resCat='${c.replace(/'/g,"\\'")}';renderResources()">${c==='All'?'All':short[c]}</button>`).join('')}</div>
     <div class="card" style="margin-bottom:8px;padding:12px;cursor:pointer;" onclick="state.orientNext=null;go('orientation')">
       <div style="font-weight:700;font-size:14px;">🌱 Getting Started guide</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">First steps, a 30-day checklist and what the research says ›</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">First steps in Arizona and a 30-day checklist ›</div>
     </div>
     <div class="card" style="margin-bottom:12px;padding:12px;cursor:pointer;" onclick="go('school-policy')">
       <div style="font-weight:700;font-size:14px;">🏫 Local public school activities</div>
@@ -4006,7 +4006,7 @@ function renderOrientation(){
     <div class="card" style="background:linear-gradient(135deg,#1B2A4A,#2A3D63);color:#fff;border:none;margin-bottom:12px;">
       <div style="font-size:12px;color:#C9974A;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Getting started</div>
       <div style="font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:700;margin:4px 0 6px;">You can do this.</div>
-      <p style="font-size:13px;line-height:1.55;opacity:.9;margin:0;">Taking the leap feels big, and nearly every family feels that way at first. You don’t need to be a teacher or have it all figured out. Course &amp; Calling is a <strong>marketplace</strong> of classes, tutors, spaces and rides, and it’s also a <strong>guide to getting started</strong>. Here’s the whole picture in five minutes.</p>
+      <p style="font-size:13px;line-height:1.55;opacity:.9;margin:0;">Taking the leap feels big, and nearly every family feels that way at first. You don’t need to be a teacher or have it all figured out. Course &amp; Calling is a <strong>marketplace</strong> of classes, tutors, spaces and rides, and it’s also a <strong>guide to getting started</strong>. Here’s the whole picture in a few minutes.</p>
     </div>
     <div class="card policy-sec"><h3>1 · What is self-directed learning?</h3>
       <p>Your family takes the lead on what, how and when your child learns. That can mean learning at home, a microschool, a co-op, à la carte classes, local school activities, or a mix. You choose the mix, and the learner gets a growing voice in it.</p></div>
@@ -4021,7 +4021,7 @@ function renderOrientation(){
       <p>A short set of personality, interest and aptitude activities produces your child’s <strong>Compass Profile</strong>. It shows strengths to build on and stretch areas to plan around, and it powers the <strong>Fit %</strong> on every class.</p></div>
     <div class="card policy-sec"><h3>4 · Using the marketplace + your local school</h3>
       <p><strong>Explore</strong> lists à la carte classes, tutors, co-ops and microschools, sorted by fit and distance. Many are ESA-eligible. <strong>Local public school programs</strong> (teams, band, choir, theater, art) charge no tuition, and Arizona law lets homeschooled learners try out (${L('https://www.azleg.gov/ars/15/00802-01.htm','A.R.S. §15-802.01')}). <strong>Spaces</strong> and <strong>Rides</strong> handle the where and how.</p>
-      <p style="margin-top:6px;"><strong>Careers come in many shapes.</strong> College is one path among many. Skilled trades like electrician, plumber, pipefitter, HVAC, welding and carpentry are learned through <em>paid</em> apprenticeships, and Phoenix-area CTE districts such as EVIT and West-MEC serve high schoolers. Learners strong in spatial and mechanical aptitudes often see a high Fit % on trades classes. See <a href="#" onclick="state.resCat='Trades & apprenticeships';go('resources');return false;">Trades &amp; apprenticeships</a>.</p></div>
+      <p style="margin-top:6px;"><strong>Careers come in many shapes.</strong> College is one path among many, and a degree is just one route to a good life. Entrepreneurship, service and the skilled trades are others. Trades like electrician, plumber, pipefitter, HVAC, welding and carpentry are learned through <em>paid</em> apprenticeships, and Phoenix-area CTE districts such as EVIT and West-MEC serve high schoolers. Learners strong in spatial and mechanical aptitudes often see a high Fit % on trades classes. See <a href="#" onclick="state.resCat='Trades & apprenticeships';go('resources');return false;">Trades &amp; apprenticeships</a>.</p></div>
     <div class="card policy-sec"><h3>✅ Your first 30 days</h3>
       <ol class="checklist">
         <li>Week 1: Decide ESA vs independent homeschool. Apply for the ESA or file the affidavit.</li>
@@ -4032,17 +4032,6 @@ function renderOrientation(){
         <li>Week 3: Check the next sign-up season at your local public school.</li>
         <li>Week 4: Review together: what lit your learner up? Adjust and keep going.</li>
       </ol></div>
-    <div class="card policy-sec"><h3>📊 What the research says</h3>
-      <ul>
-        <li><strong>Academics:</strong> homeschooled students typically score <strong>15 to 25 percentile points above</strong> public-school students on standardized achievement tests, and above average on the SAT and ACT, regardless of parents’ education or income. Source: ${L('https://www.nheri.org/research-facts-on-homeschooling/','NHERI, Research Facts on Homeschooling')}.</li>
-        <li><strong>Peer-reviewed evidence:</strong> a positive effect on achievement in <strong>11 of 14</strong> studies, and positive adult or college outcomes in <strong>11 of 16</strong>. Source: ${L('https://doi.org/10.1080/15582159.2017.1395638','Ray (2017), Journal of School Choice 11(4)')}.</li>
-        <li><strong>College:</strong> home-educated students go to college at a similar rate to the general population and succeed there at an equal or higher rate. Source: ${L('https://www.nheri.org/research-facts-on-homeschooling/','NHERI')}.</li>
-        <li><strong>Work and self-reliance:</strong> in a Canadian study of 226 home-educated adults, <strong>32% had self-employment income vs 4%</strong> of same-age Canadians, and <strong>96% were satisfied with their work</strong> (vs 88%). Source: ${L('https://www.naturalchild.org/articles/research/fifteen_years_later.pdf','Van Pelt, Allison & Allison (2009), Fifteen Years Later, Canadian Centre for Home Education')}.</li>
-        <li><strong>Well-being:</strong> in a nationally representative U.S. survey of adults aged 24–39, those homeschooled 8+ years reported the <strong>highest optimism, gratitude and life satisfaction</strong> and the <strong>least depression and anxiety</strong> of any group. Source: ${L('https://www.cardus.ca/research/diverse-outcomes-for-a-diverse-population/','Cardus Education Survey (2025)')}.</li>
-        <li><strong>Life satisfaction:</strong> among 5,000+ adults homeschooled 7+ years, 59% were “very happy” and 39% “pretty happy” with life, and 71% took part in ongoing community service. Source: ${L('https://hslda.org/docs/librariesprovider2/public/homeschooling-grows-up.pdf','HSLDA, Homeschooling Grows Up (Ray 2004)')}.</li>
-        <li><strong>College is one path among many.</strong> A degree is one route to a good life. Skilled trades, apprenticeships, entrepreneurship and service are others.</li>
-      </ul>
-      <p style="font-size:12px;margin-top:6px;"><em>A fair caveat:</em> studies vary, many rely on volunteer or self-selected samples, and none prove that homeschooling <em>causes</em> these outcomes. Family involvement matters in any setting.</p></div>
     ${next?`<button class="btn btn-primary btn-block" onclick="state.orientNext=null;go('setup')">I’m ready · set up our profile</button>`
           :`<button class="btn btn-primary btn-block" onclick="go('explore')">Browse the marketplace</button>`}
     <button class="btn btn-secondary btn-block" style="margin-top:8px;" onclick="go('resources')">Resources &amp; local groups</button>
@@ -4849,7 +4838,7 @@ applyHash();
   }
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=8-4').catch(()=>{});
+      navigator.serviceWorker.register('./sw.js?v=8-5').catch(()=>{});
     });
   }
   // Android beforeinstallprompt
