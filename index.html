@@ -365,6 +365,36 @@ body.is-app .toast {
   .inv-no-print{display:none!important;}
 }
 
+
+.orient-tip{background:#FBF7F2;border-left:4px solid var(--gold,#C9974A);border-radius:12px;padding:10px 12px;margin-bottom:12px}
+.orient-tip-h{font-size:12px;font-weight:700;color:#1B2A4A;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+.orient-tip-b{font-size:13px;line-height:1.5;color:var(--text-muted)}
+.fit-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.fit-hi{background:#1B2A4A;color:#fff}.fit-mid{background:#C9974A;color:#fff}.fit-lo{background:#F3E1DA;color:#A4452C}.fit-none{background:#EEE;color:#666;font-weight:600}
+.school-badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;background:#2F7D5B;color:#fff}
+.school-card{border:2px solid #2F7D5B33}
+.school-law a,.policy-sec a{color:#1B2A4A;font-weight:600}
+.season-row{padding:8px 0;border-top:1px solid var(--border)}
+.season-h{font-weight:700;font-size:14px;color:#1B2A4A}.season-h span{font-weight:600;font-size:11px;color:#E07A5F;margin-left:6px}
+.season-row ul{margin:4px 0 0;padding-left:18px;font-size:12px;line-height:1.5;color:var(--text-muted)}
+.policy-sec h3{font-family:'Fraunces',Georgia,serif;font-size:17px;margin:0 0 6px;color:#1B2A4A}
+.policy-sec p,.policy-sec li{font-size:13px;line-height:1.5;color:var(--text-muted)}
+.policy-sec ul,.policy-sec ol{margin:0;padding-left:18px}.policy-sec li{margin-bottom:6px}
+.policy-sec{margin-bottom:12px}
+.sum-grid{display:grid;gap:8px}
+.sum-row{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;background:#FBF7F2}
+.sum-ic{font-size:20px;line-height:1}.sum-k{font-size:11px;font-weight:700;text-transform:uppercase;color:#C9974A;letter-spacing:.04em}
+.sum-v{font-weight:700;color:#1B2A4A;font-size:15px}.sum-d{font-size:12px;color:var(--text-muted);line-height:1.45;margin-top:2px}
+.apt-chip{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;margin:3px 4px 0 0}
+.apt-hi{background:#1B2A4A;color:#fff}.apt-lo{background:#F3E1DA;color:#A4452C}
+.pct-marker.lo{background:#E07A5F}.pct-marker.hi{background:#1B2A4A}
+.res-group{margin-bottom:18px}.res-group h3{font-family:'Fraunces',Georgia,serif;font-size:18px;color:#1B2A4A;margin:0 0 4px}
+.res-why{font-size:12px;color:var(--text-muted);line-height:1.45;margin:0 0 8px}
+.res-item{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:6px}
+.res-n{font-weight:700;font-size:14px;color:#1B2A4A}.res-d{font-size:12px;color:var(--text-muted);margin-top:2px;line-height:1.4}
+.sec-title{font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 8px}
+.journey-opt{display:block;width:100%;text-align:left;margin-bottom:8px}.journey-opt.sel{border-color:#C9974A!important;background:#FBF4E8!important;box-shadow:0 0 0 2px #C9974A inset}
+.checklist li{margin-bottom:6px}
 </style>
 <style id="cc-gate-css">
 body:not(.cc-unlocked)>*:not(#cc-gate){display:none!important}
@@ -572,7 +602,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
 <div class="screen" id="screen-compass-results">
   <div class="top-header">
     <button class="back-btn" onclick="go('home')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <h1 style="flex:1;font-size:18px;">Compass Profile™</h1>
+    <h1 id="compassTitle" style="flex:1;font-size:18px;">Compass Profile™</h1>
     <button class="btn btn-sm btn-secondary" onclick="window.print()">Export</button>
   </div>
   <div class="report-tabs-wrap"><div class="mode-toggle report-tabs" id="reportTabs"></div></div>
@@ -812,6 +842,34 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
   <div class="scroll section-pad" id="directoryContent"></div>
 </div>
 
+<div class="screen" id="screen-school-policy">
+  <div class="top-header">
+    <button class="back-btn" onclick="go(state.prevScreen&&state.prevScreen!=='school-policy'?state.prevScreen:'portal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1 style="flex:1;">School activities · AZ</h1>
+  </div>
+  <div class="scroll section-pad" id="schoolPolicyContent"></div>
+</div>
+<div class="screen" id="screen-resources">
+  <div class="top-header">
+    <button class="back-btn" onclick="goHomeOrPortal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1 style="flex:1;">Resources</h1>
+  </div>
+  <div class="scroll section-pad" id="resourcesContent"></div>
+</div>
+<div class="screen" id="screen-journey">
+  <div class="top-header">
+    <button class="back-btn" onclick="go('onboarding')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1 style="flex:1;">Your journey</h1>
+  </div>
+  <div class="scroll section-pad" id="journeyContent"></div>
+</div>
+<div class="screen" id="screen-orientation">
+  <div class="top-header">
+    <button class="back-btn" onclick="go(state.prevScreen&&state.prevScreen!=='orientation'?state.prevScreen:'portal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1 style="flex:1;">Getting Started</h1>
+  </div>
+  <div class="scroll section-pad" id="orientationContent"></div>
+</div>
 </div><!-- app -->
 
 
@@ -835,6 +893,10 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
   <button class="tab" data-tab="spaces" onclick="tabGo('spaces')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8V6a2 2 0 012-2h6a2 2 0 012 2v2"/></svg>
     Spaces<div class="dot"></div>
+  </button>
+  <button class="tab" data-tab="resources" onclick="tabGo('resources')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2V5z"/><path d="M4 19a2 2 0 012-2h13"/></svg>
+    Resources<div class="dot"></div>
   </button>
 </nav>
 </div>
@@ -1419,13 +1481,13 @@ function seedDemoCompassReport(){
   state.compass.sectionIndex=0; scoreCurrentSection();
   state.compass.sectionIndex=1; scoreCurrentSection();
   state.compass.answers.aptitude={
-    paperFold:{correct:2,total:3}, mentalRot:{correct:2,total:3},
-    ideaphoria:{count:14,text:'demo'}, foresight:{count:9,text:'demo'},
-    inductive:{correct:2,total:3}, analytical:{correct:2,total:3},
-    numSeries:{correct:3,total:4}, numFacility:{correct:5,total:6}, numMemory:{correct:2,total:3},
-    percSpeed:{correct:6,total:8}, memDesign:{correct:2,total:3},
-    colorDisc:{orderOk:true,correct:1,total:1}, pitchDisc:{correct:3,total:4},
-    wordLearn:{correct:4,total:5},
+    paperFold:{correct:3,total:3}, mentalRot:{correct:11,total:12},
+    ideaphoria:{count:9,text:'demo'}, foresight:{count:8,text:'demo'},
+    inductive:{correct:9,total:10}, analytical:{correct:3,total:4},
+    numSeries:{correct:3,total:4}, numFacility:{correct:2,total:6}, numMemory:{correct:1,total:3},
+    percSpeed:{correct:2,total:8}, memDesign:{correct:2,total:3},
+    colorDisc:{orderOk:false,correct:0,total:1}, pitchDisc:{correct:1,total:4},
+    wordLearn:{correct:2,total:5},
     vocab:{correct:7,total:10,missed:['ambiguous','ephemeral','meticulous'],guessed:['obscure']}
   };
   state.compass.vocabFrontier=['ambiguous','ephemeral','meticulous','obscure','pragmatic'];
@@ -2292,6 +2354,7 @@ function renderCompassResults(){
     ['scores','Scores'],['pattern','Core Pattern'],['discuss','Discussion'],['reco','Recommendation'],['whatnow','What now'],['about','About tests']
   ].map(([id,label])=>`<button class="${tab===id?'active':''}" onclick="state.compass.reportTab='${id}';renderCompassResults()">${label}</button>`).join('');
   const box=document.getElementById('compassResults');
+  const ct=document.getElementById('compassTitle'); if(ct) ct.textContent=profileTitle();
   if(tab==='scores') box.innerHTML=reportScores();
   else if(tab==='pattern') box.innerHTML=reportPattern();
   else if(tab==='discuss') box.innerHTML=reportDiscuss();
@@ -2304,7 +2367,26 @@ function reportScores(){
   const apt=state.compass.scores.aptitude||{families:[],ranked:[],pct:{},narratives:[]};
   const pers=state.compass.scores.personality||{style:'Explorer',narrative:'Complete the personality section for a full narrative.'};
   const ints=state.compass.scores.interests||{code:['—'],narrative:'Complete the interests section for a full summary.',careers:[]};
+  const strengths=(apt.ranked||[]).filter(([k,v])=>v>=70).slice(0,3);
+  const stretches=(apt.ranked||[]).filter(([k,v])=>v<50).slice(-3).reverse();
+  const intNames=(ints.code||[]).filter(c=>INTEREST_LABELS[c]).map(c=>INTEREST_LABELS[c]);
+  const nm=learnerName()==='Your'?'This learner':learnerName();
+  const persLine=pers.style?`${pers.independent?'Recharges with solo focus':'Energized by teamwork'} · ${pers.specialist?'goes deep on one thing':'connects many things'} · ${pers.planner?'likes a plan':'works in bursts'}`:'';
   return `
+  <div class="card report-sec">
+    <div style="font-size:12px;color:var(--text-muted);">At a glance</div>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:21px;margin:2px 0 10px;">${profileTitle()}</h2>
+    <div class="sum-grid">
+      <div class="sum-row"><div class="sum-ic">🧑‍🤝‍🧑</div><div><div class="sum-k">Personality · how ${nm==='This learner'?'they':nm} work</div><div class="sum-v">${pers.style}</div><div class="sum-d">${persLine}</div></div></div>
+      <div class="sum-row"><div class="sum-ic">❤️</div><div><div class="sum-k">Interests · what energizes</div><div class="sum-v">${(ints.code||[]).join('')} · ${intNames.join(', ')}</div><div class="sum-d">${(ints.careers||[]).slice(0,4).join(' · ')}</div></div></div>
+      <div class="sum-row"><div class="sum-ic">⚡</div><div><div class="sum-k">Aptitudes · natural talents</div>
+        <div class="sum-d" style="margin-top:4px;"><strong style="color:#1B2A4A;">Strengths</strong><br>${strengths.map(([k,v])=>`<span class="apt-chip apt-hi">${APT_LABELS[k]} · ${v}</span>`).join('')||'—'}</div>
+        <div class="sum-d" style="margin-top:6px;"><strong style="color:#A4452C;">Stretch areas</strong><br>${stretches.map(([k,v])=>`<span class="apt-chip apt-lo">${APT_LABELS[k]} · ${v}</span>`).join('')||'—'}</div></div></div>
+      <div class="sum-row"><div class="sum-ic">🧭</div><div><div class="sum-k">Heading · where they meet</div><div class="sum-v">${state.compass.heading?.name||''}</div></div></div>
+    </div>
+  </div>
+  ${tipHTML('What this means','The Compass Profile is a navigation tool, not a grade. Personality shows <em>how</em> your learner likes to work, interests show <em>what</em> energizes them, and aptitudes show natural talents. Read all three together.')}
+  ${tipHTML('Why weaknesses matter too','Direction comes from weaknesses as much as strengths. A very high score points to outlets worth seeking. A low score helps rule things out, or tells you where tools, teammates or a different approach will help. Both narrow the path.','why')}
   <div class="card report-sec" style="text-align:center;">
     <span class="demo-pill">Compass Profile™ · working name</span>
     <div style="margin:12px 0;">${compassRoseSVG(state.compass.headingKey)}</div>
@@ -2323,7 +2405,7 @@ function reportScores(){
       <div style="margin-bottom:14px;">
         <div style="font-size:13px;font-weight:600;margin-bottom:6px;">${f.name} <span style="color:var(--text-muted);font-weight:500;">· ${f.avg}th %ile</span></div>
         ${f.tests.map(t=>`<div class="pct-row"><div class="pct-label">${APT_LABELS[t]}</div>
-          <div class="pct-track"><div class="pct-marker" style="left:${((f.scores[t]-5)/94)*100}%"></div></div>
+          <div class="pct-track"><div class="pct-marker ${f.scores[t]>=70?'hi':f.scores[t]<50?'lo':''}" style="left:${((f.scores[t]-5)/94)*100}%"></div></div>
           <div class="pct-val">${f.scores[t]}</div></div>`).join('')}
       </div>`).join('')}
     <p style="font-size:11px;color:var(--text-muted);">Hands-on dexterity & finger-speed tests: in-person add-ons, coming later.</p>
@@ -2549,6 +2631,7 @@ function vocabSaveSentence(){
 
 
 const state={
+  journey:(function(){try{return localStorage.getItem('cc_journey')}catch(e){return null}})(),
   screen:'splash', obIndex:0, city:'Phoenix', municipality:'Phoenix', role:'parent',
   parent:{name:'Alex Parent',email:'alex.parent@email.demo',phone:'(602) 555-0142',
     address:'4821 E Exeter Blvd, Phoenix, AZ 85018', lat:33.5115, lng:-111.9780},
@@ -2589,7 +2672,7 @@ const state={
   },
 };
 
-const TAB_SCREENS=new Set(['home','explore','compass','rides','spaces']);
+const TAB_SCREENS=new Set(['home','explore','compass','rides','spaces','resources']);
 const LEARNER_TABS=true;
 
 function money(n){return '$'+Number(n).toLocaleString('en-US',{maximumFractionDigits:0});}
@@ -2658,6 +2741,7 @@ function go(screen){
   if(!el){console.warn('missing',screen);return;}
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   el.classList.add('active');
+  if(state.screen!==screen) state.prevScreen=state.screen;
   state.screen=screen;
 
   const tabBar=document.getElementById('tabBar');
@@ -2708,6 +2792,10 @@ function go(screen){
   if(screen==='extra-detail') renderExtraDetail();
   if(screen==='reach') renderReach();
   if(screen==='directory') renderDirectory();
+  if(screen==='school-policy') renderSchoolPolicy();
+  if(screen==='resources') renderResources();
+  if(screen==='journey') renderJourney();
+  if(screen==='orientation') renderOrientation();
   el.querySelectorAll('.scroll').forEach(s=>{s.scrollTop=0;});
 }
 
@@ -2793,7 +2881,7 @@ function renderOnboarding(){
 }
 function nextOnboarding(){
   if(state.obIndex<ONBOARDING.length-1){state.obIndex++;renderOnboarding();}
-  else go('setup');
+  else go('journey');
 }
 
 function updateEsaSetup(){
@@ -2966,7 +3054,8 @@ function listingCardHTML(l){
       </div>
     </div>
     <div class="listing-body">
-      <h3>${l.title}</h3>
+      <div style="display:flex;justify-content:space-between;gap:6px;align-items:flex-start;"><h3 style="margin:0;">${l.title}</h3>${fitBadge(l.subject,l.type)}</div>
+      <div style="margin:4px 0;"><span class="cat-badge" style="font-size:10px;">À la carte · paid class</span></div>
       <div class="listing-meta">${l.provider}<br/>${distLabel(l)} · 📍 ${l.address.split(',')[0]}…</div>
       <div class="listing-footer">
         <span class="rating"><span class="star">★</span> ${l.rating}</span>
@@ -2996,6 +3085,10 @@ function renderExplore(){
     return true;
   });
   list=sortNearest(list);
+  if((state.exploreSort||'fit')==='fit' && state.compass.done) list=list.slice().sort((a,b)=>fitOf(b.subject,b.type)-fitOf(a.subject,a.type));
+  const sortBy=(state.exploreSort||'fit')==='fit'&&state.compass.done?'fit':'nearest';
+  const muni=state.municipality||'Phoenix';
+  const schoolCount=EXTRACURRICULARS.filter(e=>e.muni===muni).length;
   const reachNote = state.reach.mode==='miles'
     ? `within ${state.reach.miles} mi of home`
     : `within ~${state.reach.minutes} min drive`;
@@ -3003,12 +3096,20 @@ function renderExplore(){
   document.getElementById('exploreList').innerHTML=`
     <div class="card" style="margin-bottom:12px;padding:12px;">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
-        <div style="font-size:12px;color:var(--text-muted);">Sorted by nearest · ${reachNote} <button class="link-more" onclick="go('reach')">Edit reach</button></div>
+        <div style="font-size:12px;color:var(--text-muted);">Sort: <button class="chip ${sortBy==='fit'?'selected':''}" style="padding:3px 10px;font-size:11px;" onclick="state.exploreSort='fit';renderExplore()">Best fit</button> <button class="chip ${sortBy==='nearest'?'selected':''}" style="padding:3px 10px;font-size:11px;" onclick="state.exploreSort='nearest';renderExplore()">Nearest</button><br/>${reachNote} <button class="link-more" onclick="go('reach')">Edit reach</button></div>
         <label style="font-size:12px;display:flex;align-items:center;gap:6px;cursor:pointer;">
           <input type="checkbox" ${state.reach.showOutside?'checked':''} onchange="state.reach.showOutside=this.checked;renderExplore()"/> Show outside my reach
         </label>
       </div>
     </div>
+    ${tipHTML('Two kinds of programs','<strong>Local public school programs</strong> (teams, band, choir, theater, art) charge no tuition and Arizona law lets homeschooled learners try out. <strong>À la carte classes</strong> are paid classes from independent instructors that you pick one at a time, and many are ESA-eligible. Most families mix both.')}
+    <div class="card school-card" style="margin-bottom:12px;cursor:pointer;" onclick="state.extraMuni=muni;go('extra')">
+      <span class="school-badge">Public school · no tuition</span>
+      <div style="font-weight:700;font-size:15px;margin:6px 0 2px;">🏫 From your local public school</div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.45;">${schoolCount} sample programs in ${muni}: sports, band, choir, theater, art. See sign-up seasons ›</div>
+    </div>
+    ${state.compass.done?fitExplainHTML():tipHTML('See how well each class fits','Build the Compass Profile and every class gets a Fit % matched to your learner.','tip')}
+    <div class="sec-title">À la carte classes · ${list.length}</div>
     `+(list.length
     ? list.map(l=>`<div style="margin-bottom:12px;">${listingCardHTML(l)}</div>`).join('')
     : `<div class="empty-hint">No listings in reach. Expand My reach or show outside.</div>`);
@@ -3349,6 +3450,25 @@ function portalParent(){
       <div class="stat-card"><div class="label">ESA remaining</div><div class="value" style="font-size:18px;">${money(state.esaRemaining)}</div></div>
       <div class="stat-card"><div class="label">Pending approvals</div><div class="value">${pending.length}</div></div>
     </div>
+    ${tipHTML('New to self-directed learning?','This is your home base. Approve what your learner books, track ESA funds, and find out what’s available locally, including free activities at your neighborhood public school.','tip')}
+    <div class="card school-card" style="margin-bottom:14px;">
+      <span class="school-badge">Arizona law · A.R.S. §15-802.01</span>
+      <div style="font-weight:700;font-size:15px;margin:6px 0 4px;">🏫 Your learner can join public school teams &amp; activities</div>
+      <p style="font-size:13px;color:var(--text-muted);line-height:1.5;margin:0 0 8px;">Homeschooled learners can try out for sports, band, choir, theater and more at the public school whose attendance area you live in, on the <strong>same terms as enrolled students</strong>. You send a short note confirming passing grades and progress. ESA learners can ask too; for sports, access depends on the district’s policy.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-primary" onclick="go('school-policy')">Who qualifies &amp; how to ask</button>
+        <button class="btn btn-sm btn-secondary" onclick="state.extraMuni=state.municipality||'Phoenix';go('extra')">Programs &amp; sign-up dates</button>
+      </div>
+      <p style="font-size:11px;color:var(--text-muted);margin:8px 0 0;">Other states vary. This applies to Arizona.</p>
+    </div>
+    <div class="card" style="margin-bottom:14px;cursor:pointer;" onclick="state.orientNext=null;go('orientation')">
+      <div style="font-weight:700;">🌱 Getting Started guide</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">New to this? First steps in Arizona, the Compass Profile, a 30-day checklist and what the research says ›</div>
+    </div>
+    <div class="card" style="margin-bottom:14px;cursor:pointer;" onclick="go('resources')">
+      <div style="font-weight:700;">📚 Resources</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">City rec sports, youth arts, self-directed learning organizations, parent groups, libraries &amp; museums ›</div>
+    </div>
     <div style="font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;">Linked learners</div>
     ${state.children.map((c,i)=>`
       <div class="card" style="margin-bottom:8px;display:flex;gap:10px;align-items:center;padding:12px;">
@@ -3618,6 +3738,283 @@ function renderProgress(){
 }
 
 
+/* ===== v8: orientation helpers, fit %, school programs, resources ===== */
+function tipHTML(title, body, kind){
+  const k=kind||'what';
+  const icon=k==='why'?'🧭':k==='tip'?'💡':'ℹ️';
+  return `<div class="orient-tip"><div class="orient-tip-h">${icon} ${title}</div><div class="orient-tip-b">${body}</div></div>`;
+}
+function learnerName(){ const c=(state.children||[])[0]; return c?c.name:'Your'; }
+function profileTitle(){ const n=learnerName(); return n==='Your'?'Your Compass Profile':`${n}’s Compass Profile`; }
+
+/* Fit % heuristic: interests (up to 45) + aptitudes (up to 40) + personality (up to 15) */
+const FIT_TAGS={
+  'STEM':{ints:['I','R','C'],apts:['inductive','analytical','numSeries','paperFold','mentalRot']},
+  'Arts':{ints:['A'],apts:['memDesign','colorDisc','ideaphoria','paperFold']},
+  'Art':{ints:['A'],apts:['memDesign','colorDisc','ideaphoria','paperFold']},
+  'Languages':{ints:['S','A','I'],apts:['wordLearn','vocab','pitchDisc']},
+  'Music':{ints:['A','S'],apts:['pitchDisc','numMemory','memDesign']},
+  'PE / Sports':{ints:['R','S'],apts:['mentalRot','percSpeed','foresight']},
+  'Sports':{ints:['R','S','E'],apts:['mentalRot','percSpeed','foresight']},
+  'Performing Arts':{ints:['A','S','E'],apts:['ideaphoria','vocab','wordLearn','pitchDisc']},
+};
+function fitBreakdown(subject, type){
+  if(!state.compass.done||!state.compass.scores||!state.compass.scores.aptitude) return null;
+  const tags=FIT_TAGS[subject]||{ints:[],apts:[]};
+  const code=(state.compass.scores.interests?.code)||[];
+  const w=[45,30,18];
+  let intPts=0; tags.ints.forEach(c=>{ const i=code.indexOf(c); if(i>=0) intPts=Math.max(intPts,w[i]); });
+  const pct=state.compass.scores.aptitude.pct||{};
+  const vals=tags.apts.map(a=>pct[a]).filter(v=>v!=null).sort((a,b)=>b-a).slice(0,3);
+  const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:50;
+  const aptPts=Math.round(avg*0.40);
+  const p=state.compass.scores.personality||{};
+  let perPts=8;
+  if(type==='tutor') perPts=p.independent?15:7;
+  else if(type==='coop'||type==='micro'||subject==='Sports'||subject==='Performing Arts'||subject==='PE / Sports') perPts=p.independent?7:15;
+  else perPts=p.specialist?12:10;
+  const total=Math.max(12,Math.min(98,intPts+aptPts+perPts));
+  return {total,intPts,aptPts,perPts};
+}
+function fitBadge(subject,type){
+  const f=fitBreakdown(subject,type);
+  if(!f) return `<span class="fit-badge fit-none" title="Build the Compass Profile to see fit">Fit · take Compass</span>`;
+  const cls=f.total>=75?'fit-hi':f.total>=55?'fit-mid':'fit-lo';
+  return `<span class="fit-badge ${cls}" title="Interests ${f.intPts}/45 · Aptitudes ${f.aptPts}/40 · Personality ${f.perPts}/15">Fit ${f.total}%</span>`;
+}
+function fitOf(subject,type){ const f=fitBreakdown(subject,type); return f?f.total:0; }
+function fitExplainHTML(){
+  return tipHTML('What “Fit %” means', `Each class is scored against ${state.compass.done?learnerName()+'’s':'your learner’s'} Compass Profile: <strong>interests</strong> (up to 45 pts), <strong>aptitudes</strong> used by the subject (up to 40) and <strong>personality</strong>, such as 1:1 vs group work (up to 15). It’s a starting point for conversation, not a verdict. A lower-fit class can be exactly right for building a weaker area.`);
+}
+
+/* Season / sign-up timing for school programs (typical AZ windows, confirm with school) */
+const SCHOOL_SEASONS=[
+  {key:'Fall',icon:'🍂',when:'Sign-ups: late July – mid August',items:[
+    'Fall sports (football, volleyball, cross country, swim & dive, golf, badminton, girls flag football): physicals and AIA paperwork due before practice starts, typically late July or early August.',
+    'Band, choir, orchestra, theater and art clubs: sign up in August during the first weeks of school; fall play auditions in late August or September.',
+    'Clubs (robotics, speech & debate, chess): club fairs in August or September.']},
+  {key:'Winter',icon:'❄️',when:'Sign-ups: October – early November',items:[
+    'Winter sports (basketball, soccer, wrestling): tryouts typically late October to mid November. Get a current physical first.',
+    'Winter concerts and spring musical auditions: often November to January.']},
+  {key:'Spring',icon:'🌱',when:'Sign-ups: January – early February',items:[
+    'Spring sports (baseball, softball, track & field, tennis, boys volleyball, beach volleyball): tryouts typically late January to early February.',
+    'Spring arts festivals and solo/ensemble: register in January.',
+    'Fall planning: many schools post next year’s fall-sports and band-camp dates in April or May.']},
+];
+function extraSeason(e){
+  const n=(e.name||'').toLowerCase();
+  if(n.includes('(fall)')) return 'Fall'; if(n.includes('(winter)')) return 'Winter'; if(n.includes('(spring)')) return 'Spring';
+  if(e.cat==='Sports'){
+    if(/football|volley|cross country|swim|golf|badminton/.test(n)) return 'Fall';
+    if(/basket|soccer|wrestl|ski/.test(n)) return 'Winter';
+    if(/baseball|softball|track|tennis/.test(n)) return 'Spring';
+    return 'Fall';
+  }
+  return 'Fall';
+}
+function extraSignup(e){
+  const s=extraSeason(e);
+  if(e.cat==='Sports') return s==='Fall'?'Tryouts: late Jul – early Aug':s==='Winter'?'Tryouts: late Oct – mid Nov':'Tryouts: late Jan – early Feb';
+  return 'Sign-ups: August (some mid-year in January)';
+}
+function seasonCalendarHTML(){
+  return `<div class="card" style="margin-bottom:12px;">
+    <div style="font-weight:700;margin-bottom:4px;">📅 When to sign up · fall, winter, spring</div>
+    <p style="font-size:12px;color:var(--text-muted);line-height:1.45;margin:0 0 10px;">Typical Arizona windows. <strong>Confirm exact dates with your school’s athletic director or activities office.</strong> Start talking a month ahead so your learner has time to decide and prepare.</p>
+    ${SCHOOL_SEASONS.map(s=>`<div class="season-row"><div class="season-h">${s.icon} ${s.key} <span>${s.when}</span></div>
+      <ul>${s.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('')}
+  </div>`;
+}
+function azLawShortHTML(){
+  return `<div class="card school-law" style="margin-bottom:12px;">
+    <div style="font-weight:700;margin-bottom:4px;">⚖️ Arizona law: your learner can try out</div>
+    <p style="font-size:12px;line-height:1.5;color:var(--text-muted);margin:0 0 6px;">Under <a href="https://www.azleg.gov/ars/15/00802-01.htm" target="_blank" rel="noopener">A.R.S. §15-802.01</a>, a homeschooled child who lives in a public school’s attendance area may try out for its interscholastic activities <strong>the same way enrolled students do</strong>, with the same fees, physicals and rules. The parent sends a short written note confirming passing grades and satisfactory progress.</p>
+    <button class="btn btn-sm btn-secondary" onclick="go('school-policy')">How it works · ESA learners too</button>
+  </div>`;
+}
+
+function renderSchoolPolicy(){
+  const L=(u,t)=>`<a href="${u}" target="_blank" rel="noopener noreferrer">${t}</a>`;
+  document.getElementById('schoolPolicyContent').innerHTML=`
+    ${tipHTML('What this means','Choosing self-directed learning doesn’t mean giving up school teams, band, choir, theater or art. In Arizona, the public school whose attendance area you live in has to let a homeschooled learner try out for its interscholastic activities. Many families don’t know this.')}
+    <div class="card policy-sec"><h3>Who qualifies</h3>
+      <ul>
+        <li><strong>Homeschooled learners</strong> (you filed an affidavit of intent to homeschool with the county school superintendent under ${L('https://www.azleg.gov/ars/15/00802.htm','A.R.S. §15-802')}) who <strong>live in the school’s attendance area</strong>. Covered directly by ${L('https://www.azleg.gov/ars/15/00802-01.htm','A.R.S. §15-802.01')}.</li>
+        <li><strong>ESA learners</strong> (Arizona Empowerment Scholarship Account). ESA families agree <em>not</em> to file a homeschool affidavit (${L('https://www.azleg.gov/ars/15/02402.htm','A.R.S. §15-2402(B)(5)')}), so §15-802.01 doesn’t name them directly. The same statute does let ESA funds pay for “services provided by a public school, including individual classes and extracurricular programs” (§15-2402(B)(4)(k)). The AIA has no ESA-specific bylaw, so access to <em>interscholastic sports</em> depends on the district’s policy. Ask early.</li>
+        <li><strong>Timing rule:</strong> a learner who leaves a public, private or charter school mid-year can’t join interscholastic activities as a homeschooler for the rest of that school year (§15-802.01(B)).</li>
+      </ul></div>
+    <div class="card policy-sec"><h3>Same rules as enrolled students</h3>
+      <p>Registration, age eligibility, fees, insurance, transportation, physicals, qualifications, schedules, behavior standards and performance policies must match what the school requires of its own students. That means no extra hoops, but no shortcuts either. Tryouts are still tryouts.</p></div>
+    <div class="card policy-sec"><h3>Paperwork checklist</h3>
+      <ol>
+        <li>Proof you live in the school’s attendance area (utility bill or lease).</li>
+        <li>For homeschoolers, a copy of your county homeschool affidavit.</li>
+        <li><strong>Written verification from the parent or primary instructor</strong> that the learner (1) is passing each subject being taught and (2) is making satisfactory progress toward advancement (§15-802.01(A)). Schools usually ask for this each grading period or season.</li>
+        <li>Sports: a current pre-participation physical and the school’s AIA eligibility, concussion and consent forms, plus any activity fee. Arizona’s public school tax credit can offset these fees.</li>
+      </ol></div>
+    <div class="card policy-sec"><h3>How to ask the school</h3>
+      <ol>
+        <li>Find your attendance-area school (use your district’s school locator).</li>
+        <li>Email the <strong>athletic director</strong> (sports) or <strong>activities director or teacher</strong> (band, choir, theater, art) about a month before the season. Say your learner is homeschooled under A.R.S. §15-802.01, or an ESA learner, and ask for the sign-up packet.</li>
+        <li>Ask about practice times, fees and the grade-verification form and when it’s due.</li>
+        <li>Put tryout and audition dates on the family calendar (see <em>When to sign up</em>).</li>
+      </ol></div>
+    <div class="card policy-sec"><h3>About the AIA</h3>
+      <p>The ${L('https://aiaonline.org/','Arizona Interscholastic Association')} governs high-school (grades 9–12) sports and activities. Its Bylaw 15.3.1.1 makes an exception to the enrollment rule: a home school student may be eligible if they comply with A.R.S. §15-802.01. If a homeschooler makes a full, good-faith effort at their attendance-area school but the sport isn’t available, AIA guidance allows a Form 550 request for eligibility at another school. Middle-school activities follow district rules.</p>
+      <p style="margin-top:6px;">${L('https://aiaonline.org/files/65/article-15-student-eligibility-rules.pdf','AIA Article 15 · Student eligibility rules (PDF)')}</p></div>
+    ${tipHTML('Other states vary','This page covers Arizona. Some states guarantee access the way Arizona does (often called “Tim Tebow” laws), and others leave it to districts or don’t allow it. If you move, check that state’s law or HSLDA’s state page.','tip')}
+    ${seasonCalendarHTML()}
+    <p style="font-size:11px;color:var(--text-muted);line-height:1.45;">General information, not legal advice. Statutes checked Oct 2026 at azleg.gov and aiaonline.org.</p>
+    <button class="btn btn-primary btn-block" onclick="state.extraMuni=state.municipality||'Phoenix';go('extra')">See local school programs</button>
+    <button class="btn btn-secondary btn-block" style="margin-top:8px;" onclick="go('resources')">More resources</button>`;
+}
+
+const RESOURCES=[
+  {cat:'City youth recreation & sports',icon:'⚽',why:'City parks and rec leagues are low-cost, beginner-friendly, and open to every learner regardless of school type. They’re a great first team experience.',items:[
+    {n:'Phoenix Parks and Recreation',u:'https://www.phoenix.gov/administration/departments/parks.html',d:'Youth sports, classes, pools and camps citywide.'},
+    {n:'Mesa Youth Sports (Athletics)',u:'https://www.mesaaz.gov/Activities-Culture/Parks-Recreation-and-Community-Facilities/Athletics',d:'Seasonal clinics and leagues: flag football, basketball, volleyball, soccer.'},
+    {n:'Chandler Recreation',u:'https://www.chandleraz.gov/ParksAndRec',d:'Classes, camps, teen programs; Break Time activity guide.'},
+    {n:'Gilbert Youth Sports Leagues',u:'https://www.gilbertaz.gov/departments/parks-and-recreation/sports/youth-volleyball',d:'Rec volleyball and basketball with posted registration windows.'},
+    {n:'Scottsdale Parks & Recreation',u:'https://www.scottsdaleaz.gov/parks',d:'Youth leagues, aquatics and community centers.'},
+    {n:'Tempe Youth Sports',u:'https://www.tempe.gov/government/community-services/classes-leagues/sports-youth',d:'Ages 5–18: flag football, basketball, softball, golf, camps.'},
+    {n:'Glendale Youth Sports',u:'https://www.glendaleaz.gov/Explore/Parks-and-Recreation/Youth-Adult-Sports/Youth-Sports',d:'Volunteer-coached youth leagues; @Play recreation magazine.'},
+    {n:'Peoria Youth Sports',u:'https://www.peoriaaz.gov/government/departments/parks-recreation-and-community-facilities/recreation-programs/sports/youth-sports',d:'Basketball, flag football, soccer, t-ball, volleyball. Fall sign-ups open late July.'},
+    {n:'Surprise (city site)',u:'https://surpriseaz.gov/',d:'Recreation programs listed under Parks & Recreation.'},
+    {n:'Little League',u:'https://www.littleleague.org/',d:'Find your local Little League boundary and spring sign-ups.'},
+    {n:'Valley of the Sun YMCA',u:'https://valleyymca.org/',d:'Youth sports, swim lessons and camps across the Valley.'},
+    {n:'Boys & Girls Clubs of Arizona',u:'https://www.bgcaz.org/',d:'After-school programs, sports and arts.'},
+  ]},
+  {cat:'Youth arts, music & theater',icon:'🎭',why:'Community ensembles and youth theaters welcome self-directed learners. Many rehearse in the afternoon, which suits flexible schedules.',items:[
+    {n:'Childsplay',u:'https://childsplayaz.org/',d:'Professional theater for young audiences plus a theater academy (Tempe).'},
+    {n:'Valley Youth Theatre',u:'https://vyt.com/',d:'Youth productions, auditions and classes in downtown Phoenix.'},
+    {n:'Phoenix Children’s Chorus',u:'https://www.phoenixchildrenschorus.org/',d:'Auditioned choirs for young singers.'},
+    {n:'Phoenix Youth Symphony Orchestras',u:'https://pysorchestras.org/',d:'Auditioned youth orchestras and ensembles.'},
+    {n:'Phoenix Symphony',u:'https://www.phoenixsymphony.org/',d:'Youth concerts and education programs.'},
+    {n:'Mesa Arts Center',u:'https://www.mesaartscenter.com/',d:'Studio art, music and performing arts classes for youth.'},
+    {n:'Scottsdale Arts',u:'https://scottsdalearts.org/',d:'Arts education, museum and performance programs.'},
+  ]},
+  {cat:'Self-directed & homeschool organizations',icon:'🧭',why:'These groups explain the law, connect you with other families, and advocate for educational freedom. They’re a good first call when you have a question.',items:[
+    {n:'Arizona Families for Home Education (AFHE)',u:'https://afhe.org/',d:'Statewide nonprofit: getting started, the annual convention, legislative updates.'},
+    {n:'HSLDA · Arizona',u:'https://hslda.org/legal/arizona',d:'Arizona homeschool law summary from the Home School Legal Defense Association.'},
+    {n:'HSLDA',u:'https://hslda.org/',d:'National legal advocacy and state-by-state guides.'},
+    {n:'National Microschooling Center',u:'https://microschoolingcenter.org/',d:'Research, founder support and a national directory of microschools.'},
+    {n:'Arizona ESA program (ADE)',u:'https://www.azed.gov/ESA',d:'Apply, see allowable expenses and read the parent handbook.'},
+    {n:'Arizona Homeschool (azhomeschool.org)',u:'https://azhomeschool.org/',d:'Arizona homeschool information and events.'},
+    {n:'A.R.S. §15-802.01 (extracurricular law)',u:'https://www.azleg.gov/ars/15/00802-01.htm',d:'Full text of Arizona’s homeschool extracurricular law.'},
+    {n:'Arizona Interscholastic Association',u:'https://aiaonline.org/',d:'High-school sports and activities rules and calendars.'},
+    {n:'Arizona 4-H',u:'https://extension.arizona.edu/programs/4-h',d:'Hands-on clubs: animals, STEM, leadership.'},
+    {n:'Girl Scouts–Arizona Cactus-Pine',u:'https://www.girlscoutsaz.org/',d:'Troops welcome learners of all school types.'},
+  ]},
+  {cat:'Parent groups, co-ops & pods',icon:'🤝',why:'Most families find their footing through other families. Co-ops share teaching, pods share a tutor, and support groups share wisdom.',items:'DIRECTORY'},
+  {cat:'Libraries & museums with learning programs',icon:'🏛️',why:'Free or low-cost classrooms. Many host homeschool days, teen labs, and educator discounts. Ask for them by name.',items:[
+    {n:'Phoenix Public Library',u:'https://www.phoenixpubliclibrary.org/',d:'Free cards, MACC teen makerspace, tutoring and events.'},
+    {n:'Maricopa County Library District',u:'https://mcldaz.org/',d:'Branches across the county with youth programs and online learning.'},
+    {n:'Scottsdale Public Library',u:'https://www.scottsdalelibrary.org/',d:'Youth and teen programs, maker spaces.'},
+    {n:'Chandler Public Library',u:'https://chandlerlibrary.org/',d:'Storytimes, STEM and teen programming.'},
+    {n:'Arizona Science Center',u:'https://www.azscience.org/',d:'Hands-on science; homeschool days and camps.'},
+    {n:'Musical Instrument Museum (MIM)',u:'https://mim.org/',d:'World music galleries and family programs.'},
+    {n:'Heard Museum',u:'https://heard.org/',d:'American Indian art and culture; education programs.'},
+    {n:'Phoenix Art Museum',u:'https://phxart.org/',d:'Family days, youth art programs.'},
+    {n:'Children’s Museum of Phoenix',u:'https://childrensmuseumofphoenix.org/',d:'Play-based learning for younger kids.'},
+    {n:'Desert Botanical Garden',u:'https://dbg.org/',d:'Nature and science programs for youth.'},
+    {n:'Phoenix Zoo',u:'https://www.phoenixzoo.org/',d:'Education programs and camps.'},
+  ]},
+];
+function renderResources(){
+  const cat=state.resCat||'All';
+  const cats=['All',...RESOURCES.map(r=>r.cat)];
+  const short={ 'City youth recreation & sports':'Rec sports','Youth arts, music & theater':'Arts & music','Self-directed & homeschool organizations':'Organizations','Parent groups, co-ops & pods':'Parent groups','Libraries & museums with learning programs':'Libraries & museums'};
+  const groups=RESOURCES.filter(r=>cat==='All'||r.cat===cat);
+  document.getElementById('resourcesContent').innerHTML=`
+    ${tipHTML('Why this page exists','Self-directed learning works best when you draw on your whole community: city rec leagues, youth theaters, libraries, museums and other families. Here they are by category. Most are free or low-cost, and none require enrolling in a school.','why')}
+    <div class="chip-row" style="margin-bottom:12px;">${cats.map(c=>`<button class="chip ${cat===c?'selected':''}" onclick="state.resCat='${c.replace(/'/g,"\\'")}';renderResources()">${c==='All'?'All':short[c]}</button>`).join('')}</div>
+    <div class="card" style="margin-bottom:8px;padding:12px;cursor:pointer;" onclick="state.orientNext=null;go('orientation')">
+      <div style="font-weight:700;font-size:14px;">🌱 Getting Started guide</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">First steps, a 30-day checklist and what the research says ›</div>
+    </div>
+    <div class="card" style="margin-bottom:12px;padding:12px;cursor:pointer;" onclick="go('school-policy')">
+      <div style="font-weight:700;font-size:14px;">🏫 Local public school activities</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Arizona lets homeschooled learners try out for school teams, band, choir and theater. See how ›</div>
+    </div>
+    ${groups.map(g=>{
+      const items=g.items==='DIRECTORY'
+        ? DIRECTORY.filter(d=>!d.demo&&d.url).slice(0,10).map(d=>({n:d.name,u:d.url,d:`${d.type} · ${d.area}`}))
+        : g.items;
+      return `<div class="res-group"><h3>${g.icon} ${g.cat}</h3>
+        <p class="res-why">${g.why}</p>
+        ${items.map(i=>`<a class="res-item" href="${i.u}" target="_blank" rel="noopener noreferrer"><div><div class="res-n">${i.n} ↗</div><div class="res-d">${i.d}</div></div></a>`).join('')}
+        ${g.items==='DIRECTORY'?`<button class="btn btn-sm btn-secondary" style="margin-top:6px;" onclick="go('directory')">Open full co-op &amp; pod directory</button>`:''}
+      </div>`;}).join('')}
+    <p style="font-size:11px;color:var(--text-muted);line-height:1.45;margin-top:10px;">Listed for information only. No partnership or endorsement is implied. Links checked Oct 2026.</p>`;
+}
+
+/* ===== v8: parent journey + Getting Started orientation ===== */
+const JOURNEY_OPTS=[
+  {k:'exploring',t:'Just exploring',d:'We haven’t started yet'},
+  {k:'soon',t:'Planning to start soon',d:'We’ve mostly decided'},
+  {k:'first',t:'In our first year',d:'We’ve begun and we’re finding our way'},
+  {k:'experienced',t:'Experienced',d:'2+ years of self-directed learning'},
+];
+function renderJourney(){
+  const cur=state.journey;
+  document.getElementById('journeyContent').innerHTML=`
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:24px;color:#1B2A4A;margin:6px 0 6px;">Where are you on your educational freedom journey?</h2>
+    <p style="font-size:14px;color:var(--text-muted);line-height:1.5;margin:0 0 14px;">There’s no wrong answer. We’ll tailor the app to you: a gentle starting guide if you’re new, or straight to the marketplace if you’ve done this before.</p>
+    ${JOURNEY_OPTS.map(o=>`<button class="q-card journey-opt ${cur===o.k?'sel':''}" onclick="pickJourney('${o.k}')"><div style="font-weight:700;color:#1B2A4A;">${o.t}</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${o.d}</div></button>`).join('')}
+    <button class="btn btn-primary btn-block" style="margin-top:12px;" ${cur?'':'disabled'} onclick="continueJourney()">Continue</button>`;
+}
+function pickJourney(k){ state.journey=k; try{localStorage.setItem('cc_journey',k);}catch(e){} renderJourney(); }
+function continueJourney(){
+  if(state.journey==='exploring'||state.journey==='soon'){ state.orientNext='setup'; go('orientation'); }
+  else if(state.journey==='experienced'){ skipToApp(); go('explore'); toast('Welcome back · straight to the marketplace'); }
+  else go('setup');
+}
+function renderOrientation(){
+  const L=(u,t)=>`<a href="${u}" target="_blank" rel="noopener noreferrer">${t}</a>`;
+  const next=state.orientNext;
+  document.getElementById('orientationContent').innerHTML=`
+    <div class="card" style="background:linear-gradient(135deg,#1B2A4A,#2A3D63);color:#fff;border:none;margin-bottom:12px;">
+      <div style="font-size:12px;color:#C9974A;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Getting started</div>
+      <div style="font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:700;margin:4px 0 6px;">You can do this.</div>
+      <p style="font-size:13px;line-height:1.55;opacity:.9;margin:0;">Taking the leap feels big, and nearly every family feels that way at first. You don’t need to be a teacher or have it all figured out. Course &amp; Calling is a <strong>marketplace</strong> of classes, tutors, spaces and rides, and it’s also a <strong>guide to getting started</strong>. Here’s the whole picture in five minutes.</p>
+    </div>
+    <div class="card policy-sec"><h3>1 · What is self-directed learning?</h3>
+      <p>Your family takes the lead on what, how and when your child learns. That can mean learning at home, a microschool, a co-op, à la carte classes, local school activities, or a mix. You choose the mix, and the learner gets a growing voice in it.</p></div>
+    <div class="card policy-sec"><h3>2 · First steps in Arizona</h3>
+      <ol>
+        <li><strong>Pick your path: ESA or independent homeschool.</strong> They’re either/or. ESA families agree <em>not</em> to file a homeschool affidavit (${L('https://www.azleg.gov/ars/15/02402.htm','A.R.S. §15-2402')}).</li>
+        <li><strong>ESA:</strong> any Arizona K-12 student eligible to attend public school can apply for an Empowerment Scholarship Account. The state deposits about 90% of what it would have spent on your child, for approved education expenses. Apply at ${L('https://www.azed.gov/ESA','azed.gov/ESA')}.</li>
+        <li><strong>Independent homeschool:</strong> file an <strong>affidavit of intent</strong> with your county school superintendent within 30 days of starting (${L('https://www.azleg.gov/ars/15/00802.htm','A.R.S. §15-802')}). It’s a one-time filing unless you stop and restart.</li>
+        <li><strong>Choose an approach.</strong> Classical, Charlotte Mason, project-based, unschooling, microschool or eclectic. You can change it any time.</li>
+      </ol></div>
+    <div class="card policy-sec"><h3>3 · How the Compass Profile helps</h3>
+      <p>A short set of personality, interest and aptitude activities produces your child’s <strong>Compass Profile</strong>. It shows strengths to build on and stretch areas to plan around, and it powers the <strong>Fit %</strong> on every class.</p></div>
+    <div class="card policy-sec"><h3>4 · Using the marketplace + your local school</h3>
+      <p><strong>Explore</strong> lists à la carte classes, tutors, co-ops and microschools, sorted by fit and distance. Many are ESA-eligible. <strong>Local public school programs</strong> (teams, band, choir, theater, art) charge no tuition, and Arizona law lets homeschooled learners try out (${L('https://www.azleg.gov/ars/15/00802-01.htm','A.R.S. §15-802.01')}). <strong>Spaces</strong> and <strong>Rides</strong> handle the where and how.</p></div>
+    <div class="card policy-sec"><h3>✅ Your first 30 days</h3>
+      <ol class="checklist">
+        <li>Week 1: Decide ESA vs independent homeschool. Apply for the ESA or file the affidavit.</li>
+        <li>Week 1: Take the Compass Profile together (about 30–40 min).</li>
+        <li>Week 2: Join one local group from Resources (a co-op, support group or AFHE).</li>
+        <li>Week 2: Pick core math and reading materials. Keep it simple.</li>
+        <li>Week 3: Book one à la carte class with a high Fit %.</li>
+        <li>Week 3: Check the next sign-up season at your local public school.</li>
+        <li>Week 4: Review together: what lit your learner up? Adjust and keep going.</li>
+      </ol></div>
+    <div class="card policy-sec"><h3>📊 What the research says</h3>
+      <ul>
+        <li>Homeschooled students typically score <strong>15 to 25 percentile points above</strong> public-school students on standardized achievement tests, and above average on the SAT and ACT. Source: ${L('https://www.nheri.org/research-facts-on-homeschooling/','NHERI, Research Facts on Homeschooling (Ray)')}.</li>
+        <li>A peer-reviewed review found a positive effect on achievement in <strong>11 of 14</strong> studies, and positive adult or college outcomes in <strong>11 of 16</strong>. Source: ${L('https://doi.org/10.1080/15582159.2017.1395638','Ray (2017), Journal of School Choice 11(4)')}.</li>
+        <li>NHERI reports that home-educated students go to college at a similar rate to the general population and succeed there at an equal or higher rate. Source: ${L('https://www.nheri.org/research-facts-on-homeschooling/','NHERI')}.</li>
+        <li>A Harvard study of 12,288 young people found homeschooled students later <strong>volunteered more</strong> and showed <strong>greater forgiveness</strong>, but were <strong>23% less likely to finish a college degree</strong>. Source: ${L('https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0258723','Pearson, Chen et al. (2021), PLOS ONE · Harvard Human Flourishing Program')}.</li>
+      </ul>
+      <p style="font-size:12px;margin-top:6px;"><em>A fair caveat:</em> results vary across studies. Many use volunteer, self-selected samples, and none prove that homeschooling <em>causes</em> these outcomes. Family involvement matters a lot whatever the setting.</p></div>
+    ${next?`<button class="btn btn-primary btn-block" onclick="state.orientNext=null;go('setup')">I’m ready · set up our profile</button>`
+          :`<button class="btn btn-primary btn-block" onclick="go('explore')">Browse the marketplace</button>`}
+    <button class="btn btn-secondary btn-block" style="margin-top:8px;" onclick="go('resources')">Resources &amp; local groups</button>
+    <p style="font-size:11px;color:var(--text-muted);line-height:1.45;margin-top:10px;">General information, not legal advice. Sources checked Oct 2026.</p>`;
+}
+
 /* ===== EXTRACURRICULARS (AZ municipalities) ===== */
 function setMunicipality(v){
   state.municipality=v;
@@ -3633,13 +4030,17 @@ function renderExtra(){
   let list=EXTRACURRICULARS.filter(e=>e.muni===muni);
   if(cat!=='All') list=list.filter(e=>e.cat===cat);
   list=sortNearest(list.filter(withinReach));
+  const ord={Fall:0,Winter:1,Spring:2};
+  list=list.slice().sort((a,b)=>ord[extraSeason(a)]-ord[extraSeason(b)]);
   document.getElementById('extraScroll').innerHTML=`
     <div class="section-pad">
-      <div class="card" style="margin-bottom:12px;background:linear-gradient(135deg,#FFF8F5,#FBF7F2);">
-        <div style="font-size:12px;font-weight:600;color:var(--coral);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Arizona · public-school extras</div>
-        <p style="font-size:13px;color:var(--text-muted);line-height:1.45;margin:0;">Self-directed learners in Arizona can often participate in local public-school sports, art, music, and performing arts. <strong>Eligibility varies by district</strong> — confirm with the school. Sample data — not actual school offerings.</p>
-        <span class="demo-pill" style="margin-top:8px;">Demo</span>
+      <div class="card school-card" style="margin-bottom:12px;background:linear-gradient(135deg,#F2FAF6,#FBF7F2);">
+        <span class="school-badge">Public school · no tuition</span>
+        <div style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:700;color:#1B2A4A;margin:6px 0 4px;">Local public school programs</div>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.45;margin:0;">Sports, band, choir, orchestra, theater and art run by your neighborhood public school. Unlike à la carte classes there’s no tuition, though the school’s usual activity fees and physicals apply. Programs below are <strong>sample data</strong>. Check your school’s real list.</p>
       </div>
+      ${azLawShortHTML()}
+      ${seasonCalendarHTML()}
       <div class="field" style="margin-bottom:10px;">
         <label>Municipality</label>
         <select id="extraMuniSelect" onchange="state.extraMuni=this.value;renderExtra()">
@@ -3649,7 +4050,7 @@ function renderExtra(){
       <div class="chip-row" style="margin-bottom:12px;">
         ${EXTRA_CATS.map(c=>`<button class="chip ${cat===c?'selected':''}" onclick="state.extraCat='${c}';renderExtra()">${c}</button>`).join('')}
       </div>
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px;"><span id="extraCount">${list.length}</span> programs in ${muni}</div>
+      <div class="sec-title"><span id="extraCount">${list.length}</span> programs in ${muni} · fall first</div>
       ${list.length?list.map(extraCardHTML).join(''):`<div class="empty-hint">No sample programs for this filter yet.</div>`}
     </div>`;
 }
@@ -3673,14 +4074,15 @@ function extraEmoji(e){
 function extraCardHTML(e){
   const illus=EXTRA_ILLUS[e.cat]||'illus-pe';
   const emoji=extraEmoji(e);
-  return `<div class="listing-card" style="margin-bottom:12px;" onclick="openExtra('${e.id}')">
+  return `<div class="listing-card school-card" style="margin-bottom:12px;" onclick="openExtra('${e.id}')">
     <div class="listing-thumb ${illus}">
       <div class="thumb-icon">${emoji}</div>
       <span class="cat-badge thumb-badge">${e.cat}</span>
     </div>
     <div class="listing-body">
-      <h3>${e.name}</h3>
-      <div class="listing-meta">${e.school}<br/>📅 ${e.days} · ${e.time}<br/>${distLabel(e)} · 📍 ${e.address.split(',')[0]}…</div>
+      <div style="display:flex;justify-content:space-between;gap:6px;align-items:flex-start;"><h3 style="margin:0;">${e.name}</h3>${fitBadge(e.cat,'school')}</div>
+      <div style="margin:4px 0;"><span class="school-badge">Public school · no tuition</span></div>
+      <div class="listing-meta">${e.school}<br/>🗓️ <strong>${extraSeason(e)}</strong> · ${extraSignup(e)} <em>(typical)</em><br/>📅 ${e.days} · ${e.time}<br/>${distLabel(e)} · 📍 ${e.address.split(',')[0]}…</div>
       <div class="listing-footer">
         <span style="font-size:12px;color:var(--text-muted);">Grades ${e.grades}</span>
         <button class="btn btn-sm btn-primary" onclick="event.stopPropagation();requestExtraSpot('${e.id}')">Request spot</button>
@@ -4356,6 +4758,9 @@ function applyHash(){
   }
   if(hash==='home'||hash==='explore'||hash==='rides'||hash==='spaces'||hash==='setup'||hash==='onboarding'||hash==='profile'||hash==='investor'||hash==='progress'||hash==='extra'||hash==='vocab'||hash==='compass-section'||hash==='reach'||hash==='directory'||hash==='plus'||hash==='funding') go(hash);
   else if(hash==='splash') go('splash');
+  else if(hash==='school-policy'||hash==='resources'||hash==='journey'||hash==='orientation'){ go(hash); }
+  else if(hash==='explore-fit'){ seedDemoCompassReport(); state.role='learner'; go('explore'); }
+  else if(hash==='extra-fit'){ seedDemoCompassReport(); state.role='learner'; go('extra'); }
   else if(hash==='compass'){ go('compass'); }
   else if(hash==='compass-results'){ seedDemoCompassReport(); go('compass-results'); }
   else if(hash==='compass-intro') go('compass-intro');
@@ -4410,7 +4815,7 @@ applyHash();
   }
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=7-1').catch(()=>{});
+      navigator.serviceWorker.register('./sw.js?v=8-1').catch(()=>{});
     });
   }
   // Android beforeinstallprompt
