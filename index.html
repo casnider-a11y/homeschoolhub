@@ -2389,15 +2389,15 @@ function reportScores(){
     <div style="font-size:12px;color:var(--text-muted);">At a glance</div>
     <h2 style="font-family:'Fraunces',Georgia,serif;font-size:21px;margin:2px 0 10px;">${profileTitle()}</h2>
     <div class="sum-grid">
-      <div class="sum-row"><div class="sum-ic">🧠</div><div><div class="sum-k">Personality · how ${nm==='This learner'?'they work':nm+' works'}</div><div class="sum-v">${pers.style}</div><div class="sum-d">${persLine}</div></div></div>
-      <div class="sum-row"><div class="sum-ic">❤️</div><div><div class="sum-k">Interests · what energizes</div><div class="sum-v">${(ints.code||[]).join('')} · ${intNames.join(', ')}</div><div class="sum-d">${(ints.careers||[]).slice(0,4).join(' · ')}</div></div></div>
-      <div class="sum-row"><div class="sum-ic">⚡</div><div><div class="sum-k">Aptitudes · natural talents</div>
+      <div class="sum-row"><div class="sum-ic">🧠</div><div><div class="sum-k">Personality · ${nm==='This learner'?'their':nm+'’s'} natural style</div><div class="sum-v">${pers.style}</div><div class="sum-d">${persLine}</div></div></div>
+      <div class="sum-row"><div class="sum-ic">❤️</div><div><div class="sum-k">Interests · what energizes ${nm==='This learner'?'them':nm}</div><div class="sum-v">${(ints.code||[]).join('')} · ${intNames.join(', ')}</div><div class="sum-d">${(ints.careers||[]).slice(0,4).join(' · ')}</div></div></div>
+      <div class="sum-row"><div class="sum-ic">⚡</div><div><div class="sum-k">Aptitudes · ${nm==='This learner'?'their':nm+'’s'} natural talents</div>
         <div class="sum-d" style="margin-top:4px;"><strong style="color:#1B2A4A;">Strengths</strong><br>${strengths.map(([k,v])=>`<span class="apt-chip apt-hi">${APT_LABELS[k]} · ${v}</span>`).join('')||'—'}</div>
         <div class="sum-d" style="margin-top:6px;"><strong style="color:#A4452C;">Stretch areas</strong><br>${stretches.map(([k,v])=>`<span class="apt-chip apt-lo">${APT_LABELS[k]} · ${v}</span>`).join('')||'—'}</div></div></div>
       <div class="sum-row"><div class="sum-ic">🧭</div><div><div class="sum-k">Heading · where they meet</div><div class="sum-v">${state.compass.heading?.name||''}</div></div></div>
     </div>
   </div>
-  ${tipHTML('What this means','The Compass Profile is a navigation tool, not a grade. Personality shows <em>how</em> your learner likes to work, interests show <em>what</em> energizes them, and aptitudes show natural talents. Read all three together.')}
+  ${tipHTML('What this means','The Compass Profile is a navigation tool, not a grade. Personality shows your learner’s natural style, interests show <em>what</em> energizes them, and aptitudes show natural talents. Read all three together.')}
   ${tipHTML('Why weaknesses matter too','Direction comes from weaknesses as much as strengths. A very high score points to outlets worth seeking. A low score helps rule things out, or tells you where tools, teammates or a different approach will help. Both narrow the path.','why')}
   <div class="card report-sec" style="text-align:center;">
     <span class="demo-pill">Compass Profile™ · working name</span>
@@ -4034,15 +4034,15 @@ function renderOrientation(){
       </ol></div>
     <div class="card policy-sec"><h3>📊 What the research says</h3>
       <ul>
-        <li>Homeschooled students typically score <strong>15 to 25 percentile points above</strong> public-school students on standardized achievement tests, and above average on the SAT and ACT. Source: ${L('https://www.nheri.org/research-facts-on-homeschooling/','NHERI, Research Facts on Homeschooling (Ray)')}.</li>
-        <li>A peer-reviewed review found a positive effect on achievement in <strong>11 of 14</strong> studies, and positive adult or college outcomes in <strong>11 of 16</strong>. Source: ${L('https://doi.org/10.1080/15582159.2017.1395638','Ray (2017), Journal of School Choice 11(4)')}.</li>
-        <li>NHERI reports that home-educated students go to college at a similar rate to the general population and succeed there at an equal or higher rate. Source: ${L('https://www.nheri.org/research-facts-on-homeschooling/','NHERI')}.</li>
-        <li>A Harvard study of 12,288 young people (187 of them homeschooled) found homeschooled students later <strong>volunteered more</strong> and showed <strong>greater forgiveness</strong>, but were <strong>23% less likely to finish a college degree</strong>. <em>What it didn’t measure:</em> income, employment, occupation and entrepreneurship weren’t among its outcomes (income appears only as a family background control), so it says nothing about career success. Source: ${L('https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0258723','Pearson, Chen et al. (2021), PLOS ONE · Harvard Human Flourishing Program')}.</li>
-        <li><strong>Life and career, the Cardus Education Survey</strong> (a nationally representative sample of U.S. adults aged 24–39, 2023): long-term homeschoolers (8+ years) reported the <strong>highest optimism, gratitude and life satisfaction</strong> and the <strong>least depression and anxiety</strong> of any group. On the other side, all homeschooled groups were <strong>less likely to work full-time or have above-median household income</strong>. Long-term homeschoolers also more often ended their schooling with a high school diploma (41% vs 27% of those never homeschooled). Source: ${L('https://www.cardus.ca/research/diverse-outcomes-for-a-diverse-population/','Cardus (2025), Diverse Outcomes for a Diverse Population')}.</li>
-        <li><strong>Homeschooled adults</strong> (Ray 2004, HSLDA-commissioned, 5,000+ respondents homeschooled 7+ years, self-selected): 59% said they were “very happy” and 39% “pretty happy” with life; 71% took part in an ongoing community service activity. Jobs ranged widely, including small-business owners and contractors (2.5%) and tradespeople (1.5%), though 49% were still full-time students. Source: ${L('https://hslda.org/docs/librariesprovider2/public/homeschooling-grows-up.pdf','HSLDA, Homeschooling Grows Up (PDF)')}.</li>
-        <li><strong>College is one path among many.</strong> A degree is one route to a good life. Skilled trades, apprenticeships, entrepreneurship and service are others, and degree rates alone don’t measure success.</li>
+        <li><strong>Academics:</strong> homeschooled students typically score <strong>15 to 25 percentile points above</strong> public-school students on standardized achievement tests, and above average on the SAT and ACT, regardless of parents’ education or income. Source: ${L('https://www.nheri.org/research-facts-on-homeschooling/','NHERI, Research Facts on Homeschooling')}.</li>
+        <li><strong>Peer-reviewed evidence:</strong> a positive effect on achievement in <strong>11 of 14</strong> studies, and positive adult or college outcomes in <strong>11 of 16</strong>. Source: ${L('https://doi.org/10.1080/15582159.2017.1395638','Ray (2017), Journal of School Choice 11(4)')}.</li>
+        <li><strong>College:</strong> home-educated students go to college at a similar rate to the general population and succeed there at an equal or higher rate. Source: ${L('https://www.nheri.org/research-facts-on-homeschooling/','NHERI')}.</li>
+        <li><strong>Work and self-reliance:</strong> in a Canadian study of 226 home-educated adults, <strong>32% had self-employment income vs 4%</strong> of same-age Canadians, and <strong>96% were satisfied with their work</strong> (vs 88%). Source: ${L('https://www.naturalchild.org/articles/research/fifteen_years_later.pdf','Van Pelt, Allison & Allison (2009), Fifteen Years Later, Canadian Centre for Home Education')}.</li>
+        <li><strong>Well-being:</strong> in a nationally representative U.S. survey of adults aged 24–39, those homeschooled 8+ years reported the <strong>highest optimism, gratitude and life satisfaction</strong> and the <strong>least depression and anxiety</strong> of any group. Source: ${L('https://www.cardus.ca/research/diverse-outcomes-for-a-diverse-population/','Cardus Education Survey (2025)')}.</li>
+        <li><strong>Life satisfaction:</strong> among 5,000+ adults homeschooled 7+ years, 59% were “very happy” and 39% “pretty happy” with life, and 71% took part in ongoing community service. Source: ${L('https://hslda.org/docs/librariesprovider2/public/homeschooling-grows-up.pdf','HSLDA, Homeschooling Grows Up (Ray 2004)')}.</li>
+        <li><strong>College is one path among many.</strong> A degree is one route to a good life. Skilled trades, apprenticeships, entrepreneurship and service are others.</li>
       </ul>
-      <p style="font-size:12px;margin-top:6px;"><em>A fair caveat:</em> results vary across studies. Many use volunteer, self-selected samples, and none prove that homeschooling <em>causes</em> these outcomes. Family involvement matters a lot whatever the setting.</p></div>
+      <p style="font-size:12px;margin-top:6px;"><em>A fair caveat:</em> studies vary, many rely on volunteer or self-selected samples, and none prove that homeschooling <em>causes</em> these outcomes. Family involvement matters in any setting.</p></div>
     ${next?`<button class="btn btn-primary btn-block" onclick="state.orientNext=null;go('setup')">I’m ready · set up our profile</button>`
           :`<button class="btn btn-primary btn-block" onclick="go('explore')">Browse the marketplace</button>`}
     <button class="btn btn-secondary btn-block" style="margin-top:8px;" onclick="go('resources')">Resources &amp; local groups</button>
@@ -4849,7 +4849,7 @@ applyHash();
   }
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=8-2').catch(()=>{});
+      navigator.serviceWorker.register('./sw.js?v=8-4').catch(()=>{});
     });
   }
   // Android beforeinstallprompt
