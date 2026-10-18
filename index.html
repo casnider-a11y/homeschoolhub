@@ -2811,6 +2811,7 @@ function go(screen){
 }
 
 function tabGo(tab){
+  if(tab==='roles'){ state.obIndex=OB_INTRO.findIndex(x=>x.k==='role'); go('onboarding'); return; }
   if(tab==='compass') go('compass'); else go(tab);
 }
 
@@ -2922,7 +2923,7 @@ function renderOnboarding(){
     c.innerHTML=`<div class="ob-icon"><span style="font-size:40px">${o.icon}</span></div><h2>${o.title}</h2><p>${o.body}</p>`;
     act.innerHTML=`<button class="btn btn-primary btn-block" onclick="nextOnboarding()">Next</button>`;
   } else if(o.k==='role'){
-    c.innerHTML=`<h2>How will you use Course &amp; Calling?</h2><p>Most families start here as a parent. You can add learners and switch views any time.</p>`;
+    c.innerHTML=`<h2>Where do you want to go?</h2><p>Most families start here as a parent. You can add learners and switch views any time.</p>`;
     act.innerHTML=`<button class="btn btn-primary btn-block ob-parent-btn" onclick="obPickRole('parent')">👪 I’m a parent</button>
       <div class="ob-other-h">Other ways to join</div>
       <div class="ob-other">${[['learner','🎒 Learner'],['instructor','🧑‍🏫 Instructor'],['space','🏠 Space host'],['driver','🚗 Driver']].map(([r,l])=>`<button onclick="obPickRole('${r}')">${l}</button>`).join('')}</div>`;
@@ -4111,11 +4112,12 @@ const TAB_ICONS={
   dash:'<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/>',
 };
 const TAB_SETS={
-  learner:[['home','Home','home'],['explore','Explore','explore'],['compass','Compass','compass'],['rides','Rides','rides'],['resources','Resources','resources']],
-  parent:[['portal','Home','home'],['explore','Explore','explore'],['school-policy','School','school'],['resources','Resources','resources'],['orientation','Guide','guide']],
-  instructor:[['portal','Dashboard','dash'],['explore','Marketplace','explore'],['resources','Resources','resources'],['portal-form','Profile','profile']],
-  space:[['portal','Dashboard','dash'],['spaces','Spaces','spaces'],['resources','Resources','resources'],['portal-form','Profile','profile']],
-  driver:[['portal','Dashboard','dash'],['rides','Rides','rides'],['resources','Resources','resources'],['portal-form','Profile','profile']],
+  learner:[['roles','Home','home'],['home','My Day','dash'],['explore','Explore','explore'],['compass','Compass','compass'],['resources','Resources','resources']],
+  _old_learner:[['explore','Explore','explore'],['compass','Compass','compass'],['rides','Rides','rides'],['resources','Resources','resources']],
+  parent:[['roles','Home','home'],['portal','Dashboard','dash'],['explore','Explore','explore'],['school-policy','School','school'],['resources','Resources','resources']],
+  instructor:[['roles','Home','home'],['portal','Dashboard','dash'],['explore','Marketplace','explore'],['resources','Resources','resources'],['portal-form','Profile','profile']],
+  space:[['roles','Home','home'],['portal','Dashboard','dash'],['spaces','Spaces','spaces'],['resources','Resources','resources'],['portal-form','Profile','profile']],
+  driver:[['roles','Home','home'],['portal','Dashboard','dash'],['rides','Rides','rides'],['resources','Resources','resources'],['portal-form','Profile','profile']],
 };
 const TAB_HIDE=new Set(['splash','onboarding','setup','journey','investor','compass-analyze','compass-section','compass-sec-results','detail','extra-detail','plus','booking','confirm','space-book','ride-flow']);
 function tabKeyFor(screen, role){
