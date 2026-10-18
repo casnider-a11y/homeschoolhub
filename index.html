@@ -2389,7 +2389,7 @@ function reportScores(){
     <div style="font-size:12px;color:var(--text-muted);">At a glance</div>
     <h2 style="font-family:'Fraunces',Georgia,serif;font-size:21px;margin:2px 0 10px;">${profileTitle()}</h2>
     <div class="sum-grid">
-      <div class="sum-row"><div class="sum-ic">🧑‍🤝‍🧑</div><div><div class="sum-k">Personality · how ${nm==='This learner'?'they':nm} work</div><div class="sum-v">${pers.style}</div><div class="sum-d">${persLine}</div></div></div>
+      <div class="sum-row"><div class="sum-ic">🧠</div><div><div class="sum-k">Personality · how ${nm==='This learner'?'they work':nm+' works'}</div><div class="sum-v">${pers.style}</div><div class="sum-d">${persLine}</div></div></div>
       <div class="sum-row"><div class="sum-ic">❤️</div><div><div class="sum-k">Interests · what energizes</div><div class="sum-v">${(ints.code||[]).join('')} · ${intNames.join(', ')}</div><div class="sum-d">${(ints.careers||[]).slice(0,4).join(' · ')}</div></div></div>
       <div class="sum-row"><div class="sum-ic">⚡</div><div><div class="sum-k">Aptitudes · natural talents</div>
         <div class="sum-d" style="margin-top:4px;"><strong style="color:#1B2A4A;">Strengths</strong><br>${strengths.map(([k,v])=>`<span class="apt-chip apt-hi">${APT_LABELS[k]} · ${v}</span>`).join('')||'—'}</div>
