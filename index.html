@@ -102,7 +102,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 .upload-box{border:1.5px dashed var(--border);border-radius:12px;padding:18px;text-align:center;background:var(--cream-dark);cursor:pointer;font-size:13px;color:var(--text-muted)}
 .upload-box:active{background:var(--gold-light)}
 .toast{position:absolute;bottom:88px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:500;z-index:200;animation:toastIn .25s ease;max-width:90%;text-align:center;pointer-events:none}
-#screen-splash,#screen-onboarding,#screen-compass-intro{background:linear-gradient(180deg,var(--navy-deep),var(--navy) 55%,#243656);color:#fff}
+#screen-splash,#screen-onboarding,#screen-family,#screen-compass-intro{background:linear-gradient(180deg,var(--navy-deep),var(--navy) 55%,#243656);color:#fff}
 .ob-dots{display:flex;gap:8px;justify-content:center;margin:16px 0}
 .ob-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25)}
 .ob-dot.active{background:var(--coral);width:22px;border-radius:4px}
@@ -469,6 +469,17 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
     <div style="padding:8px 28px 32px;" id="obActions"></div>
   </div>
 </div>
+
+<div class="screen" id="screen-family">
+  <div class="ob-top"><button class="ob-back" id="fpBack" onclick="fpPrev()" aria-label="Back">‹ Back</button><div class="ob-step" id="fpStep"></div><button class="ob-skip" onclick="fpSave(true)">Skip</button></div>
+  <div class="ob-prog"><div class="ob-prog-fill" id="fpProg"></div></div>
+  <div class="scroll" style="display:flex;flex-direction:column;justify-content:center;">
+    <div id="fpContent" class="ob-card"></div>
+    <div class="ob-dots" id="fpDots"></div>
+    <div style="padding:8px 28px 32px;" id="fpActions"></div>
+  </div>
+</div>
+<style>.fp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.fp-grid .ob-opt{margin:0}.fp-lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.7);margin:12px 0 6px}</style>
 
 <!-- SETUP -->
 <div class="screen" id="screen-setup">
@@ -2777,6 +2788,7 @@ function go(screen){
 
   injectLogos();
   if(screen==='onboarding') renderOnboarding();
+  if(screen==='family') renderFamily();
   if(screen==='setup') renderSetup();
   if(screen==='home') renderHome();
   if(screen==='explore') renderExplore();
@@ -2932,12 +2944,12 @@ function renderOnboarding(){
     act.innerHTML=JOURNEY_OPTS.map(x=>`<button class="ob-opt ${state.journey===x.k?'sel':''}" onclick="pickJourney('${x.k}')"><strong>${x.t}</strong><span>${x.d}</span></button>`).join('')+
       `<button class="btn btn-primary btn-block" style="margin-top:10px;" ${state.journey?'':'disabled'} onclick="obAfterJourney()">Next</button>`;
   } else {
-    c.innerHTML=`<div class="ob-icon"><span style="font-size:40px">✨</span></div><h2>You’re ready to begin</h2><p>Next, tell us a little about your family and set up your learner’s profile. It takes about two minutes.</p>`;
-    act.innerHTML=`<button class="btn btn-primary btn-block" onclick="go('setup')">Set up my learner’s profile</button>
+    c.innerHTML=`<div class="ob-icon"><span style="font-size:40px">✨</span></div><h2>You’re ready to begin</h2><p>Next, a few quick taps about your family, so we can tailor the app to what you need. It takes about two minutes.</p>`;
+    act.innerHTML=`<button class="btn btn-primary btn-block" onclick="state.fpIndex=0;go('family')">Build my Family Profile</button>
       <button class="btn btn-ghost btn-block" style="color:rgba(255,255,255,.6);margin-top:4px;" onclick="obToDashboard()">Go to my dashboard</button>`;
   }
 }
-function nextOnboarding(){ const n=obSlides().length; if(state.obIndex<n-1){state.obIndex++;renderOnboarding();} else go('setup'); }
+function nextOnboarding(){ const n=obSlides().length; if(state.obIndex<n-1){state.obIndex++;renderOnboarding();} else {state.fpIndex=0;go('family');} }
 function prevOnboarding(){ if(state.obIndex>0){state.obIndex--;renderOnboarding();} }
 function skipOnboarding(){
   const roleIdx=OB_INTRO.findIndex(x=>x.k==='role');
@@ -2958,6 +2970,97 @@ function obToDashboard(){
   try{localStorage.setItem('cc_role','parent');}catch(e){}
   if(!state.compass.done) seedDemoCompassReport();
   state.role='parent'; setRole('parent');
+}
+/* ===== v9-7: Family Profile ===== */
+const FP_Q=[
+  {k:'kids',title:'Who are you learning with?',why:'<strong>You don’t have to teach.</strong> Course &amp; Calling connects you with instructors, classes, and co-ops. These answers help us show options that fit your children’s ages.'},
+  {k:'goals',title:'What matters most to your family?',why:'Pick as many as you like. We’ll put matching classes first.',multi:true,opts:[['academics','📘 Strong academics'],['trades','🔧 Trades & career readiness'],['social','🤝 Social connection'],['faith','🕊️ Faith & values'],['special','💙 Special-needs support'],['arts','🎨 Enrichment & arts']]},
+  {k:'pay',title:'How do you plan to pay?',why:'Arizona families can use ESA funds or a tax-credit scholarship. Not sure yet is fine.',opts:[['esa','💳 ESA (Empowerment Scholarship)'],['stc','🎓 Tax-credit scholarship'],['oop','💵 Out of pocket'],['unsure','🤔 Not sure yet']]},
+  {k:'rides',title:'Will you need help with rides?',why:'Vetted drivers can take learners to classes when you can’t.',opts:[['yes','Yes'],['sometimes','Sometimes'],['no','No']]},
+  {k:'prefs',title:'How do your kids learn best?',why:'We’ll use this to sort what you see. You can change it anytime.'},
+  {k:'help',title:'Would you like to share your own skills or help other families?',why:'Optional. Many parents teach what they know, drive carpools or host a class, and some earn from it.',multi:true,opts:[['teach','🧑‍🏫 Teach or tutor a subject I know'],['drive','🚗 Help with carpools / drive'],['host','🏠 Host a class in my space'],['none','Not right now']]}
+];
+const FP_AGES=[['3-5','3–5'],['6-10','6–10'],['11-13','11–13'],['14-18','14–18']];
+function fpLoad(){ try{return JSON.parse(localStorage.getItem('cc_family')||'null')}catch(e){return null} }
+function fpDraft(){ if(!state.fp) state.fp=fpLoad()||{kids:1,ages:[],goals:[],pay:null,rides:null,small:null,format:null,dist:null}; return state.fp; }
+function fpSet(k,v,multi){ const f=fpDraft(); if(k==='help'){ f.help=f.help||[]; if(v==='none') f.help=f.help.includes('none')?[]:['none']; else { f.help=f.help.filter(x=>x!=='none'); const i=f.help.indexOf(v); i>=0?f.help.splice(i,1):f.help.push(v);} renderFamily(); return; } if(multi){ const a=f[k]||(f[k]=[]); const i=a.indexOf(v); i>=0?a.splice(i,1):a.push(v);} else f[k]=v; renderFamily(); }
+function fpPrev(){ if(state.fpIndex>0){state.fpIndex--;renderFamily();} else go('onboarding'); }
+function fpNext(){ if(state.fpIndex<FP_Q.length-1){state.fpIndex++;renderFamily();} else fpSave(false); }
+function fpOpt(k,v,l,multi,small){ const f=fpDraft(); const on=multi?(f[k]||[]).includes(v):f[k]===v;
+  return `<button class="ob-opt ${on?'sel':''}" ${small?'style="padding:10px;text-align:center"':''} onclick="fpSet('${k}','${v}',${!!multi})"><strong>${l}</strong></button>`; }
+function renderFamily(){
+  const f=fpDraft(); state.fpIndex=Math.max(0,Math.min(state.fpIndex||0,FP_Q.length-1));
+  const i=state.fpIndex,q=FP_Q[i],n=FP_Q.length;
+  document.getElementById('fpStep').textContent=`Family Profile · ${i+1} of ${n}`;
+  document.getElementById('fpProg').style.width=Math.round((i+1)/n*100)+'%';
+  document.getElementById('fpDots').innerHTML=FP_Q.map((_,k)=>`<div class="ob-dot ${k===i?'active':''}"></div>`).join('');
+  document.getElementById('fpContent').innerHTML=`<h2>${q.title}</h2><p>${q.why}</p>`;
+  let h='';
+  if(q.k==='kids'){
+    h=`<div class="fp-lbl">How many learners?</div><div class="fp-grid" style="grid-template-columns:repeat(4,1fr)">${[1,2,3,4].map(x=>fpOpt('kids',x,x===4?'4+':x,false,true).replace(`'${x}',false`,`${x},false`)).join('')}</div>
+      <div class="fp-lbl">Ages (tap all that apply)</div><div class="fp-grid">${FP_AGES.map(([v,l])=>fpOpt('ages',v,'Ages '+l,true,true)).join('')}</div>`;
+  } else if(q.k==='prefs'){
+    h=`<div class="fp-lbl">Group size</div><div class="fp-grid">${fpOpt('small','yes','Small groups',0,1)}${fpOpt('small','no','Any size',0,1)}</div>
+      <div class="fp-lbl">Format</div><div class="fp-grid" style="grid-template-columns:repeat(3,1fr)">${fpOpt('format','inperson','In person',0,1)}${fpOpt('format','online','Online',0,1)}${fpOpt('format','mix','A mix',0,1)}</div>
+      <div class="fp-lbl">How far will you drive?</div><div class="fp-grid" style="grid-template-columns:repeat(4,1fr)">${[['5','5 mi'],['10','10 mi'],['20','20 mi'],['any','Any']].map(([v,l])=>fpOpt('dist',v,l,0,1)).join('')}</div>`;
+  } else if(q.k==='help'){
+    h=q.opts.map(([v,l])=>fpOpt(q.k,v,l,true)).join('')+`<div class="fp-lbl">Your expertise (optional)</div><input id="fpExpert" placeholder="e.g. nurse, welder, piano, accounting" value="${(f.expertise||'').replace(/"/g,'&quot;')}" oninput="fpDraft().expertise=this.value" style="width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:14px;"/>`;
+  } else h=q.opts.map(([v,l])=>fpOpt(q.k,v,l,q.multi)).join('');
+  const last=i===n-1;
+  h+=`<button class="btn btn-primary btn-block" style="margin-top:12px;" onclick="fpNext()">${last?'Save & see my dashboard':'Next'}</button>`;
+  document.getElementById('fpActions').innerHTML=h;
+  document.getElementById('fpBack').style.visibility='visible';
+}
+function fpSave(skipped){
+  const f=fpDraft(); f.done=true; f.savedAt=new Date().toISOString();
+  try{localStorage.setItem('cc_family',JSON.stringify(f));}catch(e){}
+  state.family=f; obToDashboard(); if(state.screen!=='portal') go('portal');
+  if(!skipped) toast('Family Profile saved');
+}
+function editFamilyProfile(){ state.fp=null; state.fpIndex=0; go('family'); }
+const FP_GOAL_MATCH={academics:l=>['STEM','Languages'].includes(l.subject)||l.type==='tutor',trades:l=>l.subject==='Trades',social:l=>['coop','micro'].includes(l.type)||l.subject==='PE / Sports',faith:l=>['coop','micro'].includes(l.type),special:l=>l.type==='tutor',arts:l=>['Arts','Music'].includes(l.subject)};
+const FP_GOAL_LBL={academics:'Academics',trades:'Trades',social:'Social',faith:'Values-based community',special:'1:1 support',arts:'Arts'};
+function familyRecs(f){
+  const goals=(f.goals||[]); const maxD=f.dist&&f.dist!=='any'?+f.dist:Infinity;
+  const ageOK=l=>{ if(!(f.ages||[]).length||!l.age) return true; const m=String(l.age).match(/(\d+)\D+(\d+)/); if(!m) return true;
+    return f.ages.some(a=>{const [lo,hi]=a.split('-').map(Number); return lo<=+m[2]&&hi>=+m[1];}); };
+  return LISTINGS.map(l=>{ const hits=goals.filter(g=>FP_GOAL_MATCH[g]&&FP_GOAL_MATCH[g](l));
+      let sc=hits.length*10+(l.rating||0); if(f.small==='yes'&&(l.type==='tutor'||l.type==='micro'||/small/i.test(l.bio||''))) sc+=3;
+      if(f.pay==='esa'&&l.esa) sc+=2; return {l,hits,sc}; })
+    .filter(x=>(goals.length?x.hits.length:true)&&(l=>(l.distance==null||l.distance<=maxD))(x.l)&&ageOK(x.l))
+    .sort((a,b)=>b.sc-a.sc);
+}
+function familyRecsMixed(f){ const all=familyRecs(f), out=[];
+  (f.goals||[]).forEach(g=>{ const x=all.find(y=>y.hits.includes(g)&&!out.includes(y)); if(x) out.push(x); });
+  all.forEach(y=>{ if(out.length<4&&!out.includes(y)) out.push(y); }); return out.slice(0,Math.max(4,Math.min(out.length,6))); }
+function familyDashHTML(){
+  const f=state.family||fpLoad();
+  if(!f||!f.done) return `<div class="card" style="margin-bottom:14px;border:2px solid var(--gold,#C9974A);cursor:pointer;" onclick="editFamilyProfile()">
+      <div style="font-weight:700;">👪 Build your Family Profile</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">A few quick taps so we can recommend classes, funding help and rides for your family ›</div></div>`;
+  const recs=familyRecsMixed(f); const kids=f.kids||1;
+  const gl=(f.goals||[]).map(g=>FP_GOAL_LBL[g]).join(' · ');
+  let h=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin:4px 0 8px;"><h3 style="margin:0;font-size:17px;">Recommended for your family</h3><button class="link-more" style="font-size:12px;" onclick="editFamilyProfile()">✎ Edit Family Profile</button></div>
+    <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">Based on ${gl?'your goals ('+gl+')':'your Family Profile'}${f.dist&&f.dist!=='any'?', within '+f.dist+' miles':''}${(f.ages||[]).length?', ages '+f.ages.join(', ').replace(/-/g,'–'):''}.</p>`;
+  h+= recs.length? recs.map(({l,hits})=>`<div class="card" style="margin-bottom:8px;display:flex;gap:10px;align-items:center;cursor:pointer;padding:12px;" onclick="openListing('${l.id}')">
+      <div style="font-size:26px;">${l.emoji}</div><div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:14px;">${l.title}</div>
+      <div style="font-size:12px;color:var(--text-muted);">${l.provider} · ${l.distance!=null?l.distance+' mi · ':''}$${l.price}/${l.unit}${l.esa?' · ESA ✓':''}</div>
+      ${hits.length?`<div style="font-size:11px;color:var(--coral);font-weight:600;margin-top:3px;">Matches: ${hits.map(g=>FP_GOAL_LBL[g]).join(', ')}</div>`:''}</div><div style="color:var(--text-muted)">›</div></div>`).join('')
+    : `<div class="card" style="margin-bottom:8px;font-size:13px;color:var(--text-muted);">No sample classes match every answer yet. Try a wider distance in your Family Profile, or <button class="link-more" onclick="go('explore')">browse everything</button>.</div>`;
+  h+=`<button class="btn btn-secondary btn-block btn-sm" style="margin:2px 0 14px;" onclick="go('explore')">See all classes</button>`;
+  if(f.pay==='esa') h+=`<div class="card" style="margin-bottom:12px;"><div style="font-weight:700;">💳 Using your ESA: how it works</div>
+      <ol style="font-size:13px;color:var(--text-muted);line-height:1.55;margin:6px 0 8px;padding-left:18px;"><li>Apply with the Arizona Department of Education (ESA program) and sign the contract.</li><li>Once funded, link your ESA here. Look for the <strong>ESA ✓</strong> tag on eligible classes.</li><li>You approve each booking; we keep receipts for your quarterly report.</li></ol>
+      <button class="btn btn-sm btn-primary" onclick="go('funding')">ESA details &amp; balance</button></div>`;
+  if(f.pay==='stc') h+=`<div class="card" style="margin-bottom:12px;font-size:13px;"><strong>🎓 Tax-credit scholarships</strong><div style="color:var(--text-muted);margin-top:4px;">Scholarships come through School Tuition Organizations and generally apply to private-school tuition. Ask your STO which costs are covered.</div></div>`;
+  if(f.rides==='yes'||f.rides==='sometimes') h+=`<div class="card" style="margin-bottom:12px;cursor:pointer;" onclick="go('rides')"><div style="font-weight:700;">🚗 Rides when you need them</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Vetted, background-checked drivers can take your learner${kids>1?'s':''} to class. Add a ride to any booking ›</div></div>`;
+  const hp=(f.help||[]).filter(x=>x!=='none');
+  if(hp.length){ const L={teach:['instructor','🧑‍🏫 Teach or tutor','Instructor portal'],drive:['driver','🚗 Drive carpools','Driver portal'],host:['space','🏠 Host classes in your space','Space host portal']};
+    h+=`<div class="card" style="margin-bottom:12px;"><div style="font-weight:700;">🤝 Ways you can help (and earn)</div><div style="font-size:12px;color:var(--text-muted);margin:2px 0 8px;">${f.expertise?'Your expertise: <strong>'+String(f.expertise).replace(/</g,'&lt;')+'</strong>. ':''}Set up a profile when you’re ready; it’s optional.</div>
+      ${hp.map(k=>`<button class="btn btn-sm btn-secondary" style="margin:0 6px 6px 0;" onclick="setRole('${L[k][0]}');go('portal')">${L[k][1]} › ${L[k][2]}</button>`).join('')}</div>`; }
+  h+=`<div class="card" style="margin-bottom:14px;background:#FBF7F2;border-left:4px solid var(--gold,#C9974A);"><div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;">Next step</div>
+      <div style="font-weight:700;margin:4px 0;">Start each learner’s Compass Profile™</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">About 30–40 minutes per child, done together. It adds a Fit % to every class.${kids>1?' You have '+(kids>=4?'4+':kids)+' learners; do one at a time.':''}</div>
+      <button class="btn btn-sm btn-primary" onclick="setRole('learner');go('compass')">Start a Compass Profile</button></div>`;
+  return h;
 }
 function replayOrientation(){ state.obIndex=0; go('onboarding'); }
 
@@ -3528,6 +3631,7 @@ function portalParent(){
       <div class="stat-card"><div class="label">ESA remaining</div><div class="value" style="font-size:18px;">${money(state.esaRemaining)}</div></div>
       <div class="stat-card"><div class="label">Pending approvals</div><div class="value">${pending.length}</div></div>
     </div>
+    ${familyDashHTML()}
     ${tipHTML('New to self-directed learning?','This is your home base. Approve what your learner books, track ESA funds, and find out what’s available locally, including free activities at your neighborhood public school.','tip')}
     <div class="card school-card" style="margin-bottom:14px;">
       <span class="school-badge">Arizona law · A.R.S. §15-802.01</span>
@@ -4119,7 +4223,7 @@ const TAB_SETS={
   space:[['roles','Home','home'],['portal','Dashboard','dash'],['spaces','Spaces','spaces'],['resources','Resources','resources'],['portal-form','Profile','profile']],
   driver:[['roles','Home','home'],['portal','Dashboard','dash'],['rides','Rides','rides'],['resources','Resources','resources'],['portal-form','Profile','profile']],
 };
-const TAB_HIDE=new Set(['splash','onboarding','setup','journey','investor','compass-analyze','compass-section','compass-sec-results','detail','extra-detail','plus','booking','confirm','space-book','ride-flow']);
+const TAB_HIDE=new Set(['splash','onboarding','family','setup','journey','investor','compass-analyze','compass-section','compass-sec-results','detail','extra-detail','plus','booking','confirm','space-book','ride-flow']);
 function tabKeyFor(screen, role){
   if(role==='learner'){
     if(screen.startsWith('compass')||screen==='vocab') return 'compass';
@@ -4890,7 +4994,7 @@ function applyHash(){
       state.compass.done=true; state.compass.headingKey='eng'; state.compass.heading=HEADINGS.eng;
     }
   }
-  if(hash==='home'||hash==='explore'||hash==='rides'||hash==='spaces'||hash==='setup'||hash==='onboarding'||hash==='profile'||hash==='investor'||hash==='progress'||hash==='extra'||hash==='vocab'||hash==='compass-section'||hash==='reach'||hash==='directory'||hash==='plus'||hash==='funding') go(hash);
+  if(hash==='home'||hash==='explore'||hash==='rides'||hash==='spaces'||hash==='setup'||hash==='onboarding'||hash==='family'||hash==='profile'||hash==='investor'||hash==='progress'||hash==='extra'||hash==='vocab'||hash==='compass-section'||hash==='reach'||hash==='directory'||hash==='plus'||hash==='funding') go(hash);
   else if(hash==='splash') go('splash');
   else if(hash==='school-policy'||hash==='resources'||hash==='journey'||hash==='orientation'){ go(hash); }
   else if(hash==='explore-fit'){ seedDemoCompassReport(); state.role='learner'; go('explore'); }
