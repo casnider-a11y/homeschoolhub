@@ -408,6 +408,22 @@ body.is-app .toast {
 .ob-opt{display:block;width:100%;text-align:left;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer;font-family:'DM Sans',sans-serif}
 .ob-opt strong{display:block;font-size:15px}.ob-opt span{font-size:12px;color:rgba(255,255,255,.65)}
 .ob-opt.sel{border-color:#C9974A;background:rgba(201,151,74,.18)}
+
+.sa-sec{margin-bottom:14px;position:relative;}
+.sa-num{position:absolute;top:14px;right:14px;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.sa-h{font-family:'Fraunces',Georgia,serif;font-size:18px;margin:0 30px 4px 0;}
+.sa-help{font-size:12px;color:var(--text-muted);line-height:1.4;margin-top:4px;}
+.sa-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-top:1px solid rgba(0,0,0,.06);}
+.sa-q{flex:1 1 55%;font-size:14px;font-weight:500;}
+.sa-tog{display:flex;border:1.5px solid rgba(0,0,0,.12);border-radius:10px;overflow:hidden;}
+.sa-tog button{border:none;background:#fff;padding:7px 11px;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;font-family:inherit;}
+.sa-tog button+button{border-left:1.5px solid rgba(0,0,0,.12);}
+.sa-tog button.on{background:var(--navy);color:#fff;}
+.sa-follow{width:100%;padding:9px 11px;border:1.5px solid rgba(0,0,0,.12);border-radius:10px;font-size:14px;font-family:inherit;}
+.sa-err .sa-tog,.sa-err input,.sa-err select,.sa-err textarea{border-color:#d9534f !important;}
+.sa-err>label,.sa-err .sa-q{color:#c0392b;}
+.sa-status{background:#fff1cc;color:#8a5a00;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap;}
+.sa-submit{font-size:16px;padding:15px;box-shadow:0 6px 18px rgba(0,0,0,.18);}
 </style>
 <style id="cc-gate-css">
 body:not(.cc-unlocked)>*:not(#cc-gate){display:none!important}
@@ -783,7 +799,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
     <span class="demo-pill">Demo</span>
   </div>
   <div class="scroll section-pad" id="portalFormContent"></div>
-  <div class="footer-bar"><button class="btn btn-primary btn-block" onclick="toast('Saved (demo)');go('portal')">Save (demo)</button></div>
+  <div class="footer-bar" id="portalFormFooter"></div>
 </div>
 
 
@@ -3815,7 +3831,8 @@ function portalSpace(){
       <div style="font-weight:600;">Forge Phoenix Makerspace</div>
       <div style="font-size:12px;color:var(--text-muted);">📍 1301 E Washington St · Cap. 16 · $75/hr</div>
     </div>
-    <button class="btn btn-navy btn-block" onclick="go('portal-form')">Space profile &amp; availability</button>
+    ${spaceStatusCard()}
+    <button class="btn btn-navy btn-block" onclick="go('portal-form')">Space Host Application</button>
     <div class="pay-note" style="margin-bottom:8px;">Bookings are paid by card (out-of-pocket). Arizona ESA has no space-rental category. Platform fee 15%.</div>
     <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:12px;">Airbnb-style listings for learning spaces · Demo</p>`;
 }
@@ -3841,7 +3858,7 @@ function portalDriver(){
 }
 
 function renderPortalForm(){
-  const titles={parent:'Parent / Guardian profile',learner:'Learner profile & portfolio',instructor:'Instructor credentials',space:'Space listing details',driver:'Driver documents'};
+  const titles={parent:'Parent / Guardian profile',learner:'Learner profile & portfolio',instructor:'Instructor credentials',space:'Space Host Application',driver:'Driver documents'};
   document.getElementById('portalFormTitle').textContent=titles[state.role]||'Upload';
   let fields='';
   if(state.role==='parent'){
@@ -3866,14 +3883,7 @@ function renderPortalForm(){
       <div class="field"><label>Course listings (CSV / form)</label><div class="upload-box" onclick="toast('Upload listings (demo)')">📎 Add course catalog</div></div>
       <div class="field"><label>Background check status</label><input value="Clear — verified (demo)" readonly/><div style="margin-top:6px;"><span class="verified-badge">✓ Verified</span></div></div>`;
   } else if(state.role==='space'){
-    fields=`
-      <div class="field"><label>Space name</label><input value="Forge Phoenix Makerspace"/></div>
-      <div class="field"><label>Full address</label><input value="1301 E Washington St, Phoenix, AZ 85034"/></div>
-      <div class="field"><label>Capacity</label><input type="number" value="16"/></div>
-      <div class="field"><label>Amenities</label><input value="3D printers, Tools, Wi-Fi, Parking"/></div>
-      <div class="field"><label>Hourly rate ($)</label><input type="number" value="75"/></div>
-      <div class="field"><label>Photos</label><div class="upload-box" onclick="toast('Upload photos (demo)')">📷 Upload space photos</div></div>
-      <div class="field"><label>Availability calendar</label><div class="upload-box" onclick="toast('Calendar sync (demo)')">📅 Connect calendar / set hours</div></div>`;
+    fields=spaceAppForm();
   } else {
     fields=`
       <div class="field"><label>Full name</label><input value="Marcus Washington"/></div>
@@ -3883,8 +3893,119 @@ function renderPortalForm(){
       <div class="field"><label>Background check</label><input value="Driving + criminal/legal — clear (demo)" readonly/>
         <div style="margin-top:6px;"><span class="verified-badge">✓ Verified clean record</span></div></div>`;
   }
-  document.getElementById('portalFormContent').innerHTML=`
+  const isSpace=state.role==='space';
+  document.getElementById('portalFormContent').innerHTML=isSpace?fields:`
     <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Demo form — uploads are placeholders only.</p>${fields}`;
+  document.getElementById('portalFormFooter').innerHTML=!isSpace?`<button class="btn btn-primary btn-block" onclick="toast('Saved (demo)');go('portal')">Save (demo)</button>`
+    :(SA.status==='review'?`<button class="btn btn-primary btn-block" onclick="go('portal')">Back to dashboard</button>`
+    :`<button class="btn btn-primary btn-block sa-submit" onclick="spaceAppSubmit()">Submit for Review and Approval</button>`);
+}
+
+// ===== Space Host Application =====
+const SA_KEY='cc_space_app';
+function saLoad(){try{return JSON.parse(localStorage.getItem(SA_KEY))||{};}catch(e){return {};}}
+let SA=saLoad();
+function saSave(){SA.savedAt=Date.now();try{localStorage.setItem(SA_KEY,JSON.stringify(SA));}catch(e){}}
+function saSet(k,v){SA[k]=v;saSave();}
+function saEsc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function saReq(r){return r?' <span style="color:#c0392b">*</span>':'';}
+function saText(k,label,o={}){const t=o.type||'text';const ph=o.ph?` placeholder="${saEsc(o.ph)}"`:'';
+  const input=t==='textarea'?`<textarea id="sa-${k}"${ph} oninput="saSet('${k}',this.value)">${saEsc(SA[k])}</textarea>`
+   :`<input id="sa-${k}" type="${t}"${ph} value="${saEsc(SA[k])}" oninput="saSet('${k}',this.value)"/>`;
+  return `<div class="field" data-sa="${k}"><label>${label}${saReq(o.req)}</label>${input}${o.help?`<div class="sa-help">${o.help}</div>`:''}</div>`;}
+function saSelect(k,label,opts,o={}){return `<div class="field" data-sa="${k}"><label>${label}${saReq(o.req)}</label><select id="sa-${k}" onchange="saSet('${k}',this.value)"><option value="">Choose…</option>${opts.map(x=>`<option${SA[k]===x?' selected':''}>${x}</option>`).join('')}</select></div>`;}
+function saYN(k,label,o={}){const ch=o.na?['Yes','No','N/A']:['Yes','No'];
+  return `<div class="sa-row" data-sa="${k}"><div class="sa-q">${label}${saReq(o.req)}${o.help?`<div class="sa-help">${o.help}</div>`:''}</div>
+  <div class="sa-tog">${ch.map(c=>`<button type="button" class="${SA[k]===c?'on':''}" onclick="saSet('${k}','${c}');saPaint('${k}')">${c}</button>`).join('')}</div>
+  ${o.follow?`<input class="sa-follow" style="${SA[k]==='Yes'?'':'display:none'}" placeholder="${saEsc(o.follow)}" value="${saEsc(SA[k+'_d'])}" oninput="saSet('${k}_d',this.value)"/>`:''}</div>`;}
+function saPaint(k){const row=document.querySelector(`[data-sa="${k}"]`);if(!row)return;row.classList.remove('sa-err');
+  row.querySelectorAll('.sa-tog button').forEach(b=>b.classList.toggle('on',b.textContent===SA[k]));
+  const f=row.querySelector('.sa-follow');if(f)f.style.display=SA[k]==='Yes'?'':'none';}
+function saSec(n,title,help,body){return `<div class="card sa-sec" id="sa-sec-${n}"><div class="sa-num">${n}</div><h3 class="sa-h">${title}</h3><p class="sa-help" style="margin:-2px 0 12px;">${help}</p>${body}</div>`;}
+const SA_REQ_TEXT=[['host','Host name'],['phone','Phone'],['email','Email'],['spaceName','Space name'],['address','Address'],['maxLearners','Max learners']];
+const SA_REQ_YN=[['curbside','Curbside drop-off lane'],['checkin','Driver check-in point'],['doorsLock','Doors lock during instruction'],['cameras','Security cameras'],['signLog','Sign-in/out log'],['firstAid','First aid kit'],['fireExits','Fire extinguisher & exits'],['bgCheck','Adults background-checked'],['separate','Separate from public areas'],['climate','Climate control']];
+function spaceAppForm(){
+  if(SA.status==='review') return spaceAppSubmitted();
+  const st=SA.savedAt?`Draft saved ${new Date(SA.savedAt).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}`:'Your answers save automatically as you go.';
+  return `
+  <div class="card" style="margin-bottom:14px;background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:#fff;border:none;">
+    <div style="font-size:12px;opacity:.7;">Space Host Application</div>
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:700;margin:2px 0 6px;">Clean, comfortable &amp; safe for kids</div>
+    <div style="font-size:13px;opacity:.85;line-height:1.45;">Tell us about your room so families can trust it, and drivers can make a clean, simple handoff. Fields marked <span style="color:#ffb4a8">*</span> are required.</div>
+    <div id="saSaved" style="font-size:11px;opacity:.65;margin-top:8px;">💾 ${st}</div>
+  </div>
+  ${saSec(1,'Contact info','Who we call about this space. We never share your phone number with families.',
+    saText('host','Host name',{req:1})+saText('org','Organization / church / business')+saText('phone','Phone',{req:1,type:'tel'})+saText('email','Email',{req:1,type:'email'})+
+    saSelect('bestTime','Best time to reach you',['Weekday mornings','Weekday afternoons','Evenings','Weekends','Any time']))}
+  ${saSec(2,'Space profile','What the room is like and when it’s open for classes.',
+    saText('spaceName','Space name',{req:1,ph:'e.g., Fellowship Hall, Room B'})+
+    saSelect('spaceType','Type of space',['Church','Community center','Office','Studio','Home','Library','Other'])+
+    saText('address','Full address',{req:1,ph:'Street, city, ZIP'})+
+    `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">${saText('sqft','Room size (sq ft)',{type:'number'})}${saText('maxLearners','Max learners',{req:1,type:'number'})}</div>`+
+    `<div class="field"><label>Photos</label><div class="upload-box" onclick="toast('Photo upload coming soon (demo)')">📷 Add photos of the room, entrance &amp; restrooms</div></div>`+
+    saText('desc','Description',{type:'textarea',ph:'Bright room with big tables, close to the front entrance…'})+
+    saText('hours','Available days & times',{ph:'Mon–Thu 9am–3pm'})+saText('rate','Hourly rate ($)',{type:'number'}))}
+  ${saSec(3,'Location & drop-off','Drivers need to hand children off safely and quickly. Help them find the door.',
+    saYN('curbside','Curbside drop-off / pickup lane',{req:1})+
+    saText('walkDist','Distance from parking/drop-off to room door',{ph:'e.g., 50 ft, same floor'})+
+    saYN('markedEntrance','Clearly marked entrance')+
+    saYN('ada','Accessible (ADA) entrance',{help:'Ramp or step-free entry.'})+
+    saText('parking','Parking spaces available',{type:'number'})+
+    saYN('checkin','Check-in point where drivers hand off children',{req:1,follow:'Where? e.g., front desk, lobby table'}))}
+  ${saSec(4,'Safety & security','The most important part. Answer honestly; “No” doesn’t disqualify you, it helps us plan.',
+    saYN('guard','On-site security staff',{na:1})+
+    saYN('doorsLock','Doors lock during instruction',{req:1})+
+    saYN('cameras','Security cameras',{req:1,follow:'Where? e.g., entrance, hallway'})+
+    saYN('signLog','Sign-in / sign-out log',{req:1})+
+    saYN('firstAid','First aid kit on site',{req:1})+
+    saYN('fireExits','Fire extinguisher & exits marked',{req:1})+
+    saYN('aed','AED (defibrillator)',{na:1})+
+    saYN('bgCheck','Adults on premises are background-checked',{req:1,na:1})+
+    saYN('restrooms','Restrooms near the room')+
+    saYN('separate','Room is separate from public areas',{req:1}))}
+  ${saSec(5,'Comfort & amenities','Kids learn best when they’re comfortable. Counts help instructors plan.',
+    saYN('climate','Climate control (heat & A/C)',{req:1})+
+    `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">${saText('tables','Tables',{type:'number'})}${saText('chairs','Chairs / folding chairs',{type:'number'})}</div>`+
+    saYN('wifi','Wi-Fi',{follow:'Speed, e.g., 100 Mbps'})+
+    saYN('whiteboard','Whiteboard')+saYN('projector','Projector / screen')+saYN('outlets','Enough power outlets')+
+    saYN('kitchen','Kitchenette / drinking water')+saYN('light','Natural light')+
+    saText('cleaning','Cleaning schedule',{ph:'e.g., cleaned nightly by staff'})+
+    saYN('insurance','Certificate of liability insurance',{help:'You’ll upload it during review.'}))}
+  <div id="saErrors"></div>
+  <p class="sa-help" style="text-align:center;margin:6px 0 4px;">By submitting, you agree our team may contact you and schedule a walkthrough.</p>`;
+}
+function spaceAppSubmitted(){
+  const when=SA.submittedAt?new Date(SA.submittedAt).toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}):'';
+  return `<div style="text-align:center;padding:24px 6px 10px;">
+    <div style="width:76px;height:76px;border-radius:50%;background:#e8f5ee;color:#1e8a4c;font-size:38px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">✓</div>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:24px;margin-bottom:8px;">Submitted for review</h2>
+    <p style="font-size:14px;line-height:1.55;color:var(--text-muted);">Our team checks each space for cleanliness, comfort, and child safety, and may schedule a walkthrough. Typical review: 3–5 business days.</p>
+    <div class="card" style="margin-top:18px;text-align:left;">
+      <div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-weight:600;">${saEsc(SA.spaceName)}</div><div style="font-size:12px;color:var(--text-muted);">${saEsc(SA.address)}</div></div><span class="sa-status">Under review</span></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Submitted ${when} · We’ll reach ${saEsc(SA.host)} at ${saEsc(SA.phone)}</div>
+    </div>
+    <button class="btn btn-secondary btn-block" style="margin-top:14px;" onclick="SA.status='draft';saSave();renderPortalForm()">Edit application</button>
+  </div>`;
+}
+function spaceAppSubmit(){
+  const miss=[];
+  SA_REQ_TEXT.forEach(([k,l])=>{if(!String(SA[k]||'').trim())miss.push([k,l]);});
+  if(SA.email&&!/^\S+@\S+\.\S+$/.test(SA.email))miss.push(['email','Valid email']);
+  SA_REQ_YN.forEach(([k,l])=>{if(!SA[k])miss.push([k,l]);});
+  document.querySelectorAll('.sa-err').forEach(e=>e.classList.remove('sa-err'));
+  const box=document.getElementById('saErrors');
+  if(miss.length){
+    miss.forEach(([k])=>{const el=document.querySelector(`[data-sa="${k}"]`);if(el)el.classList.add('sa-err');});
+    box.innerHTML=`<div class="card" style="border:1.5px solid #e2a59b;background:#fdf1ee;margin-bottom:10px;"><div style="font-weight:600;color:#a33;">Please answer ${miss.length} more item${miss.length>1?'s':''}:</div><div style="font-size:12px;color:#a33;margin-top:4px;">${miss.map(m=>m[1]).join(' · ')}</div></div>`;
+    const f=document.querySelector(`[data-sa="${miss[0][0]}"]`);if(f)f.scrollIntoView({behavior:'smooth',block:'center'});
+    toast('A few required items are missing');return;
+  }
+  SA.status='review';SA.submittedAt=Date.now();saSave();
+  renderPortalForm();document.getElementById('portalFormContent').scrollTop=0;
+}
+function spaceStatusCard(){
+  if(SA.status==='review') return `<div class="card" style="margin-bottom:14px;border:1.5px solid #f0c36d;background:#fff8e8;"><div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-weight:600;">Space Host Application</div><span class="sa-status">Under review</span></div><div style="font-size:12px;color:var(--text-muted);margin-top:6px;">${saEsc(SA.spaceName)} · Typical review 3–5 business days. We may schedule a walkthrough.</div></div>`;
+  return `<div class="card" style="margin-bottom:14px;border:1.5px dashed var(--border,#ccd);"><div style="font-weight:600;">Finish your Space Host Application</div><div style="font-size:12px;color:var(--text-muted);margin:4px 0 10px;">Contact, drop-off, safety and comfort details, then submit for review.</div><button class="btn btn-primary btn-sm" onclick="go('portal-form')">${SA.savedAt?'Continue application':'Start application'}</button></div>`;
 }
 
 function renderProgress(){
