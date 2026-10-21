@@ -402,6 +402,18 @@ body.is-app .toast {
 .ob-prog{height:4px;margin:0 20px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
 .ob-prog-fill{height:100%;background:var(--gold,#C9974A);transition:width .3s}
 .ob-parent-btn{font-size:18px;padding:18px}
+.rl-other-h{text-align:center;font-size:12px;color:var(--text-muted);margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em}
+.rl-other{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rl-other button{background:#fff;border:1px solid rgba(27,42,74,.15);color:#1B2A4A;border-radius:12px;padding:12px;font:600 14px 'DM Sans',sans-serif;cursor:pointer}
+.about-card{display:flex;gap:12px;align-items:center;padding:12px 14px;margin-bottom:10px;cursor:pointer}
+.about-card .ai{font-size:26px;width:36px;text-align:center;flex:none}
+.about-card .at{font-weight:700;font-size:15px;color:#1B2A4A}
+.about-card .ad{font-size:12px;color:var(--text-muted);margin-top:2px;line-height:1.35}
+.about-card .ach{margin-left:auto;color:var(--text-muted);font-size:18px}
+.about-page{text-align:center;padding:18px 6px}
+.about-page .ai{font-size:52px;margin-bottom:8px}
+.about-page h2{font-family:'Fraunces',Georgia,serif;font-size:24px;color:#1B2A4A;margin:0 0 12px}
+.about-page p{font-size:15px;line-height:1.55;color:#33415C;text-align:left}
 .ob-other-h{text-align:center;font-size:12px;color:rgba(255,255,255,.55);margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em}
 .ob-other{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ob-other button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:10px;font:600 13px 'DM Sans',sans-serif;cursor:pointer}
@@ -904,6 +916,19 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
     <h1 style="flex:1;">Resources</h1>
   </div>
   <div class="scroll section-pad" id="resourcesContent"></div>
+</div>
+<div class="screen" id="screen-roles">
+  <div class="top-header">
+    <h1 style="flex:1;">Where do you want to go?</h1>
+  </div>
+  <div class="scroll section-pad" id="rolesContent"></div>
+</div>
+<div class="screen" id="screen-about">
+  <div class="top-header">
+    <button class="back-btn" onclick="aboutBack()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1 style="flex:1;" id="aboutTitle">About Course &amp; Calling</h1>
+  </div>
+  <div class="scroll section-pad" id="aboutContent"></div>
 </div>
 <div class="screen" id="screen-journey">
   <div class="top-header">
@@ -2845,11 +2870,13 @@ function go(screen){
   if(screen==='resources') renderResources();
   if(screen==='journey') renderJourney();
   if(screen==='orientation') renderOrientation();
+  if(screen==='roles') renderRoles();
+  if(screen==='about') renderAbout();
   el.querySelectorAll('.scroll').forEach(s=>{s.scrollTop=0;});
 }
 
 function tabGo(tab){
-  if(tab==='roles'){ state.obIndex=OB_INTRO.findIndex(x=>x.k==='role'); go('onboarding'); return; }
+  if(tab==='roles'){ go('roles'); return; }
   if(tab==='compass') go('compass'); else go(tab);
 }
 
@@ -2923,7 +2950,7 @@ function renderRoleMenus(){
 }
 
 const OB_INTRO=[
-  {k:'info',icon:'🧭',title:'Welcome, parents',body:'Course &amp; Calling is a <strong>navigation tool</strong> and a <strong>marketplace</strong> in one. It helps you find a direction for your child, then find the classes and people to get there.'},
+  {k:'info',icon:'🧭',title:'Welcome, parents',about:'What is Course &amp; Calling?',body:'Course &amp; Calling is a <strong>navigation tool</strong> and a <strong>marketplace</strong> in one. It helps you find a direction for your child, then find the classes and people to get there.'},
   {k:'info',icon:'🧠',title:'The Compass Profile',body:'A short set of personality, interest and aptitude activities shows your child’s strengths and stretch areas, so every choice starts from who they are.'},
   {k:'info',icon:'📚',title:'Book what you need',body:'Classes, tutors, co-ops, microschools, learning spaces and even rides, all near home and all in one place.'},
   {k:'info',icon:'💳',title:'Pay with ESA funds',body:'Use your Arizona Empowerment Scholarship Account for eligible classes and tutoring. You approve every booking.'},
@@ -2932,7 +2959,7 @@ const OB_INTRO=[
 ];
 const OB_BEGIN=[
   {k:'info',icon:'🏟️',title:'Learning happens all around you',body:'Established classrooms, studios, stages and fields are open to your child. Your <strong>local public school</strong> lets homeschooled learners try out for teams, band, choir and theater (A.R.S. §15-802.01). Add city rec sports, arts and music programs, libraries, museums, community colleges and the trades.'},
-  {k:'info',icon:'🤝',title:'…and in classes you build together',body:'Parents and learners just like you assemble classes and pods through this marketplace: <strong>microschools, co-ops, independent instructors and space hosts</strong>. Join one, or start your own.'},
+  {k:'info',icon:'🤝',title:'…and in classes you build together',about:'Classes you build together',body:'Parents and learners just like you assemble classes and pods through this marketplace: <strong>microschools, co-ops, independent instructors and space hosts</strong>. Join one, or start your own.'},
   {k:'info',icon:'🧭',title:'The Compass points the way',body:'Your child’s Compass Profile gives every class a <strong>Fit %</strong> and suggests paths worth exploring, plus areas to support. It’s a guide, not a grade.'},
   {k:'info',icon:'🌱',title:'You can do this',body:'No teaching degree needed. Start small: <strong>1)</strong> choose ESA or a homeschool affidavit, <strong>2)</strong> take the Compass Profile together, <strong>3)</strong> book one class and join one local group. Adjust as you go.'},
   {k:'finish'},
@@ -3089,6 +3116,50 @@ function familyDashHTML(){
   return h;
 }
 function replayOrientation(){ state.obIndex=0; go('onboarding'); }
+/* ===== v9-10: standalone Home (roles) + About menu ===== */
+function renderRoles(){
+  const roles=[['learner','🎒 Learner'],['instructor','🧑‍🏫 Instructor'],['space','🏠 Space host'],['driver','🚗 Driver']];
+  document.getElementById('rolesContent').innerHTML=`
+    <p style="font-size:14px;color:var(--text-muted);line-height:1.45;margin:4px 0 14px;">Most families start here as a parent. You can add learners and switch views any time.</p>
+    <button class="btn btn-primary btn-block ob-parent-btn" onclick="rolesPick('parent')">👪 I’m a parent</button>
+    <div class="rl-other-h">Other ways to join</div>
+    <div class="rl-other">${roles.map(([r,l])=>`<button class="${state.role===r?'sel':''}" onclick="rolesPick('${r}')">${l}</button>`).join('')}</div>
+    <div class="card about-card" style="margin-top:22px;" onclick="state.aboutItem=null;go('about')">
+      <div class="ai">🧭</div><div><div class="at">About Course &amp; Calling</div><div class="ad">What the app does, the Compass Profile, ESA and more. Read any part, anytime.</div></div><div class="ach">›</div>
+    </div>
+    <div style="text-align:center;margin-top:6px;"><button class="link-more" style="font-size:12px;" onclick="replayOrientation()">↺ Replay full orientation</button></div>`;
+}
+function rolesPick(r){
+  if(r==='learner' && !state.compass.done){ seedDemoCompassReport(); state.municipality=state.municipality||'Phoenix'; state.extraMuni=state.extraMuni||state.municipality; }
+  setRole(r);
+}
+function aboutItems(){
+  const seen=new Set(), out=[];
+  OB_INTRO.concat(OB_BEGIN,OB_FIRST).forEach(o=>{ if(o.k==='info' && !seen.has(o.title)){ seen.add(o.title); out.push(o); } });
+  return out;
+}
+function aboutPlain(h){ const d=document.createElement('div'); d.innerHTML=h; const t=d.textContent; return t.length>90?t.slice(0,88).replace(/\s+\S*$/,'')+'…':t; }
+function renderAbout(){
+  const items=aboutItems(), i=state.aboutItem, c=document.getElementById('aboutContent'), t=document.getElementById('aboutTitle');
+  if(i!=null && items[i]){
+    const o=items[i];
+    t.innerHTML='About';
+    c.innerHTML=`<div class="about-page"><div class="ai">${o.icon}</div><h2>${o.about||o.title}</h2><p>${o.body}</p></div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="state.aboutItem=null;renderAbout()">‹ Back to About</button>
+        ${i<items.length-1?`<button class="btn btn-primary" style="flex:1;" onclick="state.aboutItem=${i+1};renderAbout();document.querySelector('#screen-about .scroll').scrollTop=0">Next topic ›</button>`:''}
+      </div>`;
+  } else {
+    t.innerHTML='About Course &amp; Calling';
+    c.innerHTML=`<p style="font-size:13px;color:var(--text-muted);line-height:1.45;margin:4px 0 12px;">The key ideas from the orientation, any time you want them. Tap a topic to read it.</p>`+
+      items.map((o,k)=>`<div class="card about-card" onclick="state.aboutItem=${k};renderAbout();document.querySelector('#screen-about .scroll').scrollTop=0"><div class="ai">${o.icon}</div><div><div class="at">${o.about||o.title}</div><div class="ad">${aboutPlain(o.body)}</div></div><div class="ach">›</div></div>`).join('')+
+      `<div style="text-align:center;margin-top:8px;"><button class="link-more" style="font-size:12px;" onclick="replayOrientation()">↺ Replay full orientation</button></div>`;
+  }
+}
+function aboutBack(){
+  if(state.aboutItem!=null){ state.aboutItem=null; renderAbout(); return; }
+  const p=state.prevScreen; go(p && p!=='about' && !TAB_HIDE.has(p) ? p : 'roles');
+}
 
 function updateEsaSetup(){
   document.getElementById('esaProgramName').textContent=esaName();
@@ -3669,7 +3740,7 @@ function portalParent(){
       </div>
       <p style="font-size:11px;color:var(--text-muted);margin:8px 0 0;">Other states vary. This applies to Arizona.</p>
     </div>
-    <div style="text-align:right;margin:-6px 0 12px;"><button class="link-more" style="font-size:12px;" onclick="replayOrientation()">↺ Replay orientation</button> · <button class="link-more" style="font-size:12px;" onclick="go('orientation')">Getting Started guide</button></div>
+    <div style="text-align:right;margin:-6px 0 12px;"><button class="link-more" style="font-size:12px;" onclick="state.aboutItem=null;go('about')">ℹ️ About Course &amp; Calling</button> · <button class="link-more" style="font-size:12px;" onclick="replayOrientation()">↺ Replay orientation</button> · <button class="link-more" style="font-size:12px;" onclick="go('orientation')">Getting Started guide</button></div>
     <div class="card" style="margin-bottom:14px;cursor:pointer;" onclick="go('resources')">
       <div style="font-weight:700;">📚 Resources</div>
       <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">City rec sports, youth arts, self-directed learning organizations, parent groups, libraries &amp; museums ›</div>
@@ -4388,6 +4459,7 @@ function renderResources(){
   const short={ 'City youth recreation & sports':'Rec sports','Youth arts, music & theater':'Arts & music','Trades & apprenticeships':'Trades','Self-directed & homeschool organizations':'Organizations','Parent groups, co-ops & pods':'Parent groups','Libraries & museums with learning programs':'Libraries & museums'};
   const groups=RESOURCES.filter(r=>cat==='All'||r.cat===cat);
   document.getElementById('resourcesContent').innerHTML=`
+    <div class="card about-card" onclick="state.aboutItem=null;go('about')"><div class="ai">🧭</div><div><div class="at">About Course &amp; Calling</div><div class="ad">The orientation messages, one tap each. Read any part, anytime.</div></div><div class="ach">›</div></div>
     ${tipHTML('Why this page exists','Self-directed learning works best when you draw on your whole community: city rec leagues, youth theaters, libraries, museums and other families. Here they are by category. Most are free or low-cost, and none require enrolling in a school.','why')}
     <div class="chip-row" style="margin-bottom:12px;">${cats.map(c=>`<button class="chip ${cat===c?'selected':''}" onclick="state.resCat='${c.replace(/'/g,"\\'")}';renderResources()">${c==='All'?'All':short[c]}</button>`).join('')}</div>
     <div class="card" style="margin-bottom:12px;padding:12px;cursor:pointer;" onclick="go('school-policy')">
@@ -4490,6 +4562,7 @@ const TAB_SETS={
 };
 const TAB_HIDE=new Set(['splash','onboarding','family','setup','journey','investor','compass-analyze','compass-section','compass-sec-results','detail','extra-detail','plus','booking','confirm','space-book','ride-flow']);
 function tabKeyFor(screen, role){
+  if(screen==='about') return (state.prevScreen==='resources')?'resources':'roles';
   if(role==='learner'){
     if(screen.startsWith('compass')||screen==='vocab') return 'compass';
     if(['extra','directory','spaces','reach'].includes(screen)) return 'explore';
