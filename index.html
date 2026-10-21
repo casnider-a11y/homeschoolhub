@@ -424,6 +424,16 @@ body.is-app .toast {
 .sa-err>label,.sa-err .sa-q{color:#c0392b;}
 .sa-status{background:#fff1cc;color:#8a5a00;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap;}
 .sa-submit{font-size:16px;padding:15px;box-shadow:0 6px 18px rgba(0,0,0,.18);}
+.ia-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;}
+.ia-chips .chip{font-size:12.5px;padding:6px 11px;}
+.sa-err .ia-chips .chip{border-color:#d9534f;}
+.ia-check{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(0,0,0,.06);font-size:13.5px;line-height:1.4;cursor:pointer;}
+.ia-check input{width:20px;height:20px;flex:0 0 20px;margin-top:1px;accent-color:var(--navy);}
+.sa-err.ia-check{color:#c0392b;}
+.sa-err.ia-check input{outline:2px solid #d9534f;outline-offset:1px;}
+.ia-fcra{font-size:11.5px;line-height:1.5;color:var(--text-muted);background:#f6f7fa;border-radius:10px;padding:10px 12px;margin:4px 0 6px;}
+.ia-sub{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted);margin:14px 0 6px;}
+.ia-lock{font-size:11.5px;color:#1e6b45;background:#e8f5ee;border-radius:10px;padding:8px 10px;margin-bottom:12px;line-height:1.45;}
 </style>
 <style id="cc-gate-css">
 body:not(.cc-unlocked)>*:not(#cc-gate){display:none!important}
@@ -3811,8 +3821,9 @@ function portalInstructor(){
       <div class="stat-card"><div class="label">Rating</div><div class="value">4.9</div></div>
     </div>
     <div class="card" style="margin-bottom:8px;"><div style="font-weight:600;">Robotics Lab — Ages 8–12</div><div style="font-size:12px;color:var(--sage);">● Active</div></div>
+    ${instrStatusCard()}
     ${instructorPlusCard()}
-    <button class="btn btn-navy btn-block" onclick="go('portal-form')">Credentials, bio &amp; listings</button>
+    <button class="btn btn-navy btn-block" onclick="go('portal-form')">Instructor Application</button>
     <button class="btn btn-secondary btn-block" style="margin-top:8px;" onclick="setRole('learner');go('spaces')">Book a space for a class</button>
     <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:12px;">Demo · illustrative figures</p>`;
 }
@@ -3858,7 +3869,7 @@ function portalDriver(){
 }
 
 function renderPortalForm(){
-  const titles={parent:'Parent / Guardian profile',learner:'Learner profile & portfolio',instructor:'Instructor credentials',space:'Space Host Application',driver:'Driver documents'};
+  const titles={parent:'Parent / Guardian profile',learner:'Learner profile & portfolio',instructor:'Instructor Application',space:'Space Host Application',driver:'Driver documents'};
   document.getElementById('portalFormTitle').textContent=titles[state.role]||'Upload';
   let fields='';
   if(state.role==='parent'){
@@ -3876,12 +3887,7 @@ function renderPortalForm(){
       <div class="field"><label>Portfolio photos / work samples</label><div class="upload-box" onclick="toast('File picker (demo)')">📎 Upload files · PDF, images</div></div>
       <div class="field"><label>Compass Profile™</label><input value="${state.compass.done?state.compass.heading.name:'Not completed'}" readonly/></div>`;
   } else if(state.role==='instructor'){
-    fields=`
-      <div class="field"><label>Legal / business name</label><input value="Desert Makers Studio"/></div>
-      <div class="field"><label>Bio</label><textarea>Hands-on STEM mentoring for self-directed learners in Phoenix.</textarea></div>
-      <div class="field"><label>Credentials / certifications</label><div class="upload-box" onclick="toast('Upload credentials (demo)')">📎 Upload certificates</div></div>
-      <div class="field"><label>Course listings (CSV / form)</label><div class="upload-box" onclick="toast('Upload listings (demo)')">📎 Add course catalog</div></div>
-      <div class="field"><label>Background check status</label><input value="Clear — verified (demo)" readonly/><div style="margin-top:6px;"><span class="verified-badge">✓ Verified</span></div></div>`;
+    fields=instrAppForm();
   } else if(state.role==='space'){
     fields=spaceAppForm();
   } else {
@@ -3893,10 +3899,12 @@ function renderPortalForm(){
       <div class="field"><label>Background check</label><input value="Driving + criminal/legal — clear (demo)" readonly/>
         <div style="margin-top:6px;"><span class="verified-badge">✓ Verified clean record</span></div></div>`;
   }
-  const isSpace=state.role==='space';
-  document.getElementById('portalFormContent').innerHTML=isSpace?fields:`
+  const isSpace=state.role==='space', isInstr=state.role==='instructor';
+  document.getElementById('portalFormContent').innerHTML=(isSpace||isInstr)?fields:`
     <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Demo form — uploads are placeholders only.</p>${fields}`;
-  document.getElementById('portalFormFooter').innerHTML=!isSpace?`<button class="btn btn-primary btn-block" onclick="toast('Saved (demo)');go('portal')">Save (demo)</button>`
+  document.getElementById('portalFormFooter').innerHTML=isInstr?(IA.status==='review'?`<button class="btn btn-primary btn-block" onclick="go('portal')">Back to dashboard</button>`
+    :`<button class="btn btn-primary btn-block sa-submit" onclick="instrAppSubmit()">Submit for Review and Approval</button>`)
+    :!isSpace?`<button class="btn btn-primary btn-block" onclick="toast('Saved (demo)');go('portal')">Save (demo)</button>`
     :(SA.status==='review'?`<button class="btn btn-primary btn-block" onclick="go('portal')">Back to dashboard</button>`
     :`<button class="btn btn-primary btn-block sa-submit" onclick="spaceAppSubmit()">Submit for Review and Approval</button>`);
 }
@@ -4006,6 +4014,142 @@ function spaceAppSubmit(){
 function spaceStatusCard(){
   if(SA.status==='review') return `<div class="card" style="margin-bottom:14px;border:1.5px solid #f0c36d;background:#fff8e8;"><div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-weight:600;">Space Host Application</div><span class="sa-status">Under review</span></div><div style="font-size:12px;color:var(--text-muted);margin-top:6px;">${saEsc(SA.spaceName)} · Typical review 3–5 business days. We may schedule a walkthrough.</div></div>`;
   return `<div class="card" style="margin-bottom:14px;border:1.5px dashed var(--border,#ccd);"><div style="font-weight:600;">Finish your Space Host Application</div><div style="font-size:12px;color:var(--text-muted);margin:4px 0 10px;">Contact, drop-off, safety and comfort details, then submit for review.</div><button class="btn btn-primary btn-sm" onclick="go('portal-form')">${SA.savedAt?'Continue application':'Start application'}</button></div>`;
+}
+
+// ===== Instructor Application =====
+const IA_KEY='cc_instr_app';
+const IA_NOPERSIST=['ssn4']; // never written to storage
+function iaLoad(){try{const o=JSON.parse(localStorage.getItem(IA_KEY))||{};IA_NOPERSIST.forEach(k=>delete o[k]);return o;}catch(e){return {};}}
+let IA=iaLoad();
+const IA_MEM={}; // in-memory only (SSN last 4)
+function iaSave(){IA.savedAt=Date.now();const o={};Object.keys(IA).forEach(k=>{if(!IA_NOPERSIST.includes(k))o[k]=IA[k];});try{localStorage.setItem(IA_KEY,JSON.stringify(o));}catch(e){}
+  const el=document.getElementById('iaSaved');if(el)el.textContent='💾 Draft saved '+new Date(IA.savedAt).toLocaleString([], {hour:'numeric',minute:'2-digit'});}
+function iaSet(k,v){if(IA_NOPERSIST.includes(k)){IA_MEM[k]=v;return;}IA[k]=v;iaSave();const row=document.querySelector(`[data-ia="${k}"]`);if(row&&String(v).trim())row.classList.remove('sa-err');iaRefreshErr();}
+function iaMissing(){const miss=[];
+  IA_REQ.forEach(([k,l,t])=>{const v=IA[k];if(t==='a'?!(v&&v.length):!String(v||'').trim())miss.push([k,l]);});
+  if(IA.email&&!/^\S+@\S+\.\S+$/.test(IA.email))miss.push(['email','Valid email']);
+  if(IA.ivp==='Yes'&&!String(IA.ivp_d||'').trim())miss.push(['ivp','IVP card number']);
+  return miss;}
+function iaErrBox(miss){return miss.length?`<div class="card" style="border:1.5px solid #e2a59b;background:#fdf1ee;margin-bottom:10px;"><div style="font-weight:600;color:#a33;">Please answer ${miss.length} more item${miss.length>1?'s':''}:</div><div style="font-size:12px;color:#a33;margin-top:4px;">${miss.map(m=>m[1]).join(' · ')}</div></div>`
+  :`<div class="card" style="border:1.5px solid #9fd3b4;background:#eef8f2;margin-bottom:10px;color:#1e6b45;font-weight:600;">✓ All required items answered. Ready to submit.</div>`;}
+function iaRefreshErr(){const box=document.getElementById('iaErrors');if(box&&box.innerHTML.trim())box.innerHTML=iaErrBox(iaMissing());}
+function iaText(k,label,o={}){const t=o.type||'text';const ph=o.ph?` placeholder="${saEsc(o.ph)}"`:'';
+  const val=IA_NOPERSIST.includes(k)?IA_MEM[k]:IA[k];const extra=o.attrs||'';
+  const input=t==='textarea'?`<textarea id="ia-${k}"${ph}${extra} oninput="iaSet('${k}',this.value)">${saEsc(val)}</textarea>`
+   :`<input id="ia-${k}" type="${t}"${ph}${extra} value="${saEsc(val)}" oninput="iaSet('${k}',this.value)"/>`;
+  return `<div class="field" data-ia="${k}"><label>${label}${saReq(o.req)}</label>${input}${o.help?`<div class="sa-help">${o.help}</div>`:''}</div>`;}
+function iaSelect(k,label,opts,o={}){return `<div class="field" data-ia="${k}"><label>${label}${saReq(o.req)}</label><select id="ia-${k}" onchange="iaSet('${k}',this.value)"><option value="">Choose…</option>${opts.map(x=>`<option${IA[k]===x?' selected':''}>${x}</option>`).join('')}</select>${o.help?`<div class="sa-help">${o.help}</div>`:''}</div>`;}
+function iaChips(k,label,opts,o={}){const cur=IA[k]||[];
+  return `<div class="field" data-ia="${k}"><label>${label}${saReq(o.req)}</label>${o.help?`<div class="sa-help" style="margin:0 0 6px;">${o.help}</div>`:''}<div class="ia-chips">${opts.map(x=>`<button type="button" class="chip${cur.includes(x)?' selected':''}" onclick="iaChip('${k}',this)">${x}</button>`).join('')}</div></div>`;}
+function iaChip(k,btn){const v=btn.textContent;const cur=(IA[k]||[]).slice();const i=cur.indexOf(v);if(i>=0)cur.splice(i,1);else cur.push(v);
+  IA[k]=cur;iaSave();btn.classList.toggle('selected',i<0);iaRefreshErr();
+  if(cur.length)document.querySelector(`[data-ia="${k}"]`).classList.remove('sa-err');
+  if(k==='subjects'){const f=document.getElementById('ia-subjOtherWrap');if(f)f.style.display=cur.includes('Other')?'':'none';}}
+function iaYN(k,label,o={}){const ch=o.choices||['Yes','No'];
+  return `<div class="sa-row" data-ia="${k}"><div class="sa-q">${label}${saReq(o.req)}${o.help?`<div class="sa-help">${o.help}</div>`:''}</div>
+  <div class="sa-tog">${ch.map(c=>`<button type="button" class="${IA[k]===c?'on':''}" onclick="iaSet('${k}','${c}');iaPaint('${k}')">${c}</button>`).join('')}</div>
+  ${o.follow?`<input class="sa-follow" id="ia-${k}_d" style="${IA[k]==='Yes'?'':'display:none'}" placeholder="${saEsc(o.follow)}" value="${saEsc(IA[k+'_d'])}" oninput="iaSet('${k}_d',this.value)"/>`:''}</div>`;}
+function iaPaint(k){const row=document.querySelector(`[data-ia="${k}"]`);if(!row)return;row.classList.remove('sa-err');
+  row.querySelectorAll('.sa-tog button').forEach(b=>b.classList.toggle('on',b.textContent===IA[k]));
+  const f=row.querySelector('.sa-follow');if(f)f.style.display=IA[k]==='Yes'?'':'none';}
+function iaCheck(k,html,o={}){return `<label class="ia-check" data-ia="${k}"><input type="checkbox" id="ia-${k}"${IA[k]?' checked':''} onchange="iaSet('${k}',this.checked?'1':'');if(!this.checked)IA['${k}']=false"/><span>${html}${saReq(o.req)}</span></label>`;}
+function iaSec(n,title,help,body){return `<div class="card sa-sec" id="ia-sec-${n}"><div class="sa-num">${n}</div><h3 class="sa-h">${title}</h3><p class="sa-help" style="margin:-2px 0 12px;">${help}</p>${body}</div>`;}
+const IA_SUBJECTS=['Math','Science','Reading / Writing','History','Languages','Art','Music','Coding / Tech','Trades / Shop','Life skills','Sports / PE','Test prep','Other'];
+const IA_AGES=['3–5','6–10','11–13','14–18','Adults'];
+const IA_FORMATS=['Group class','1:1 tutoring','Co-op','Online','In person'];
+const IA_SETTINGS=['Classroom teacher','Tutor','Coach','Industry professional','Tradesperson','Homeschool parent','Other'];
+const IA_REQ=[['fullName','Full name','t'],['phone','Phone','t'],['email','Email','t'],['cityZip','City / ZIP','t'],
+  ['subjects','At least one subject','a'],['ages','At least one age group','a'],['bio','Short bio','t'],['years','Years of experience','t'],
+  ['legalFirst','Legal first name','t'],['legalLast','Legal last name','t'],['dob','Date of birth','t'],
+  ['consentBg','Background check authorization','t'],['consentCode','Child safety code of conduct','t'],['noConvictions','Convictions confirmation','t'],
+  ['signature','Typed signature','t'],['sigDate','Signature date','t']];
+function iaToday(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function instrAppForm(){
+  if(IA.status==='review') return instrAppSubmitted();
+  if(!IA.sigDate) IA.sigDate=iaToday();
+  const st=IA.savedAt?`Draft saved ${new Date(IA.savedAt).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}`:'Your answers save automatically as you go.';
+  return `
+  <div class="card" style="margin-bottom:14px;background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:#fff;border:none;">
+    <div style="font-size:12px;opacity:.7;">Instructor Application</div>
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:700;margin:2px 0 6px;">Share what you know. Families are looking for people like you.</div>
+    <div style="font-size:13px;opacity:.85;line-height:1.45;">Teachers, tutors, coaches, tradespeople, and parents with a skill all qualify. It takes about 10 minutes. Fields marked <span style="color:#ffb4a8">*</span> are required.</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;font-size:11px;">${['1 Contact','2 Expertise','3 Experience','4 Background & safety'].map(x=>`<span style="background:rgba(255,255,255,.14);padding:3px 8px;border-radius:999px;">${x}</span>`).join('')}</div>
+    <div id="iaSaved" style="font-size:11px;opacity:.65;margin-top:8px;">💾 ${st}</div>
+  </div>
+  ${iaSec(1,'Contact info','How we reach you about your application. Families never see your phone or email until you accept a booking.',
+    iaText('fullName','Full name',{req:1,ph:'First and last name'})+iaText('phone','Phone',{req:1,type:'tel',ph:'(602) 555-0123'})+iaText('email','Email',{req:1,type:'email',ph:'you@example.com'})+
+    iaText('cityZip','City / ZIP',{req:1,ph:'e.g., Mesa 85203'})+
+    iaSelect('bestTime','Best time to reach you',['Weekday mornings','Weekday afternoons','Evenings','Weekends','Any time']))}
+  ${iaSec(2,'Your expertise','Just the basics. Pick everything you could teach; you’ll build full class listings after approval.',
+    iaChips('subjects','Subjects & skills',IA_SUBJECTS,{req:1,help:'Tap all that apply.'})+
+    `<div id="ia-subjOtherWrap" style="${(IA.subjects||[]).includes('Other')?'':'display:none'}">${iaText('subjOther','Other subject',{ph:'e.g., chess, sign language, beekeeping'})}</div>`+
+    iaText('skillsDetail','Specific skills or topics',{type:'textarea',ph:'e.g., Algebra I–II, welding basics, beginner piano, AP Biology',help:'Optional. Helps us match you with families searching for something specific.'})+
+    iaChips('ages','Age groups you’d like to teach',IA_AGES,{req:1})+
+    iaChips('formats','How you’d like to teach',IA_FORMATS,{help:'Optional. Pick any that fit.'})+
+    iaText('bio','Short bio',{req:1,type:'textarea',ph:'I’m a retired engineer who loves helping kids build things that work…',help:'2–3 sentences, in your own words. Families read this first.'})+
+    iaText('rate','Hourly rate ($)',{type:'number',ph:'e.g., 45',help:'Optional. Most Arizona instructors charge $30–$75/hr. You can change it anytime.'}))}
+  ${iaSec(3,'Experience','Formal teaching isn’t required. Real-world expertise counts.',
+    iaText('years','Years teaching, tutoring, or coaching',{req:1,type:'number',ph:'e.g., 5',attrs:' min="0" inputmode="numeric"',help:'Include informal experience like coaching a team or training apprentices.'})+
+    iaChips('settings','Where you’ve taught or worked',IA_SETTINGS,{help:'Optional. Tap all that apply.'})+
+    iaText('credentials','Credentials, licenses, or certifications',{type:'textarea',ph:'e.g., AZ teaching certificate, journeyman electrician, CompTIA A+',help:'Optional.'})+
+    iaSelect('education','Highest education',['High school / GED','Some college','Trade school / apprenticeship','Associate degree','Bachelor’s degree','Master’s degree','Doctorate','Prefer not to say'],{help:'Not required. Real-world expertise counts.'})+
+    `<div class="ia-sub">References (up to 2, optional)</div><p class="sa-help" style="margin:-2px 0 8px;">Someone who has seen you teach or work: a supervisor, client, or parent. We may call them during review.</p>`+
+    [1,2].map(n=>`<div style="border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:10px 12px 2px;margin-bottom:10px;"><div style="font-size:12px;font-weight:600;margin-bottom:6px;">Reference ${n}</div>${iaText('ref'+n+'Name','Name')}${iaText('ref'+n+'Rel','Relationship',{ph:'e.g., former principal'})}${iaText('ref'+n+'Contact','Phone or email')}</div>`).join('')+
+    iaText('link','LinkedIn or website',{type:'url',ph:'https://',help:'Optional.'})+
+    `<div class="field"><label>Resume</label><div class="upload-box" onclick="toast('Resume upload coming soon (demo)')">📎 Upload resume (PDF, optional)</div></div>`)}
+  ${iaSec(4,'Background check & safety','Every instructor is screened before working with children. This keeps families safe and builds trust in you.',
+    `<div class="ia-lock">🔒 Your full background check is handled securely by our screening partner. This demo stores nothing sensitive: your SSN digits are never saved.</div>`+
+    `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">${iaText('legalFirst','Legal first name',{req:1})}${iaText('legalMiddle','Middle name')}</div>`+
+    iaText('legalLast','Legal last name',{req:1})+
+    iaText('dob','Date of birth',{req:1,type:'date',help:'Used only to verify your identity.'})+
+    iaText('otherNames','Any other names used',{ph:'e.g., maiden name',help:'Optional. Helps the check find all your records.'})+
+    iaText('address','Current address',{ph:'Street, city, state, ZIP'})+
+    iaText('ssn4','SSN, last 4 digits only',{type:'password',ph:'••••',attrs:' maxlength="4" inputmode="numeric" autocomplete="off"',help:'Optional now. Not saved on this device. Our screening partner collects the full number securely.'})+
+    iaYN('ivp','Arizona IVP Fingerprint Clearance Card',{help:'Arizona’s Identity Verified Prints card, issued by DPS, is commonly required for working with children. Don’t have one? We’ll help you apply.',follow:'Card number'})+
+    iaYN('cpr','CPR / First Aid certified')+
+    `<div class="ia-sub">Consent & signature</div>`+
+    `<div class="ia-fcra"><strong>Background check disclosure (summary).</strong> Under the Fair Credit Reporting Act (FCRA), Course &amp; Calling may obtain a consumer report about you from a screening partner, including identity verification, criminal history, and sex offender registry searches, to decide whether you can work with minors. You may request a copy of the report, dispute anything inaccurate, and will receive notice before any decision based on it. You’ll receive the full standalone disclosure from our screening partner.</div>`+
+    iaCheck('consentBg','I have read the disclosure and <strong>authorize a background check</strong>.',{req:1})+
+    iaCheck('consentCode','I agree to the <strong>Child Safety Code of Conduct</strong>: never be alone and out of sight with a child, follow sign-in/out and handoff rules, and report concerns.',{req:1})+
+    iaYN('noConvictions','I have no convictions that would disqualify me from working with minors',{req:1,choices:['I confirm','Prefer to discuss'],help:'“Prefer to discuss” isn’t an automatic no. A reviewer will contact you privately.'})+
+    `<div style="margin-top:10px;">${iaText('signature','E-signature (type your full legal name)',{req:1,ph:'Your full legal name',help:'Typing your name counts as your signature.'})}${iaText('sigDate','Date',{req:1,type:'date'})}</div>`)}
+  <div id="iaErrors"></div>
+  <p class="sa-help" style="text-align:center;margin:6px 0 4px;">By submitting, you agree we may verify your identity, run a background check, and contact your references.</p>`;
+}
+function instrAppSubmitted(){
+  const when=IA.submittedAt?new Date(IA.submittedAt).toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}):'';
+  return `<div style="text-align:center;padding:24px 6px 10px;">
+    <div style="width:76px;height:76px;border-radius:50%;background:#e8f5ee;color:#1e8a4c;font-size:38px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">✓</div>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:24px;margin-bottom:8px;">Submitted for review</h2>
+    <p style="font-size:14px;line-height:1.55;color:var(--text-muted);">We verify identity, run a background check, and may contact your references. Typical review: 5–7 business days.</p>
+    <div class="card" style="margin-top:18px;text-align:left;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><div><div style="font-weight:600;">${saEsc(IA.fullName)}</div><div style="font-size:12px;color:var(--text-muted);">${saEsc((IA.subjects||[]).join(', '))}</div></div><span class="sa-status">Under review</span></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Submitted ${when} · We’ll reach you at ${saEsc(IA.phone)} or ${saEsc(IA.email)}</div>
+    </div>
+    <div class="card" style="margin-top:10px;text-align:left;font-size:13px;line-height:1.6;">
+      <div style="font-weight:600;margin-bottom:4px;">What happens next</div>
+      1. Identity check &amp; background screening<br>2. Reference calls (if provided)<br>3. Approval, then build your first class listing
+    </div>
+    <button class="btn btn-secondary btn-block" style="margin-top:14px;" onclick="IA.status='draft';iaSave();renderPortalForm()">Edit application</button>
+  </div>`;
+}
+function instrAppSubmit(){
+  const miss=iaMissing();
+  document.querySelectorAll('.sa-err').forEach(e=>e.classList.remove('sa-err'));
+  const box=document.getElementById('iaErrors');
+  if(miss.length){
+    miss.forEach(([k])=>{const el=document.querySelector(`[data-ia="${k}"]`);if(el)el.classList.add('sa-err');});
+    box.innerHTML=iaErrBox(miss);
+    const f=document.querySelector(`[data-ia="${miss[0][0]}"]`);if(f)f.scrollIntoView({behavior:'smooth',block:'center'});
+    toast('A few required items are missing');return;
+  }
+  IA.ssn4Provided=!!(IA_MEM.ssn4&&IA_MEM.ssn4.length===4); delete IA_MEM.ssn4;
+  IA.status='review';IA.submittedAt=Date.now();iaSave();
+  renderPortalForm();document.getElementById('portalFormContent').scrollTop=0;
+}
+function instrStatusCard(){
+  if(IA.status==='review') return `<div class="card" style="margin-bottom:14px;border:1.5px solid #f0c36d;background:#fff8e8;"><div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-weight:600;">Instructor Application</div><span class="sa-status">Under review</span></div><div style="font-size:12px;color:var(--text-muted);margin-top:6px;">${saEsc(IA.fullName)} · Identity, background check &amp; references. Typical review 5–7 business days.</div><button class="btn btn-secondary btn-sm" style="margin-top:10px;" onclick="go('portal-form')">View application</button></div>`;
+  return `<div class="card" style="margin-bottom:14px;border:1.5px dashed var(--border,#ccd);"><div style="font-weight:600;">${IA.savedAt?'Finish your Instructor Application':'Share what you know'}</div><div style="font-size:12px;color:var(--text-muted);margin:4px 0 10px;">Families are looking for people like you. Contact, expertise, experience, and a background check, then submit for review.</div><button class="btn btn-primary btn-sm" onclick="go('portal-form')">${IA.savedAt?'Continue application':'Start application'}</button></div>`;
 }
 
 function renderProgress(){
