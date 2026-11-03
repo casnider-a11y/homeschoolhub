@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="hsh-version" content="v10.6"/>
+<meta name="hsh-version" content="v10.7"/>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 
@@ -18,11 +18,11 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512.png" />
 
-<title>Course &amp; Calling (v10.6) | A Learning Compass Company</title>
+<title>Course &amp; Calling (v10.7) | A Learning Compass Company</title>
 <script>
 // APP_VERSION: single source of truth for the visible version (page title, gate label, #cc-ver, Profile footer).
 // On each release: bump this AND the CACHE name in sw.js. (Also update the static <title> fallback above.)
-const APP_VERSION='10.6';
+const APP_VERSION='10.7';
 document.title='Course & Calling (v'+APP_VERSION+') | A Learning Compass Company';
 // v10.5: hidden demo reset. courseandcalling.com/#reset wipes ALL saved app data for this origin
 // (localStorage + sessionStorage: gate unlock, role, journey, family, application drafts, investor gate, everything),
@@ -142,6 +142,24 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 .demo-sw.dark .ds-seg{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22)}
 .demo-sw.dark button{color:rgba(255,255,255,.85)}
 .demo-sw.dark button.on{background:var(--gold);color:var(--navy-deep)}
+/* v10.7: in-app Restart demo (keeps password unlock, clears everything else, back to first-time Welcome) */
+.demo-sw{flex-wrap:wrap;row-gap:6px}
+.demo-sw button.ds-rs{border:1px dashed rgba(27,42,74,.35);color:var(--navy-mid);padding:4px 9px;font-weight:600}
+.demo-sw.dark{right:84px}
+#screen-welcome > .scroll{padding-top:calc(env(safe-area-inset-top) + 84px)!important;padding-bottom:24px!important;justify-content:flex-start!important}
+#screen-welcome > .scroll > :first-child{margin-top:auto}
+#screen-welcome > .scroll > :last-child{margin-bottom:auto}
+.demo-sw.dark button.ds-rs{border-color:rgba(227,189,126,.55);color:var(--gold-light)}
+@media (max-width:400px){.demo-sw button{padding:5px 8px}.demo-sw button.ds-rs{padding:4px 8px}.demo-sw{gap:5px}}
+.rs-ov{position:fixed;inset:0;z-index:9500;background:rgba(18,32,56,.55);display:flex;align-items:center;justify-content:center;padding:24px}
+.rs-card{background:#fff;border-radius:18px;max-width:320px;width:100%;padding:22px 20px 16px;text-align:center;box-shadow:0 12px 40px rgba(18,32,56,.35);font-family:'DM Sans',system-ui,sans-serif}
+.rs-card .rs-i{font-size:30px;margin-bottom:6px}
+.rs-card h3{font-family:'Fraunces',Georgia,serif;font-size:20px;color:var(--navy);margin:0 0 8px}
+.rs-card p{font-size:14px;line-height:1.45;color:var(--text-muted);margin:0 0 16px}
+.rs-card .rs-b{display:flex;gap:8px}
+.rs-card .rs-b button{flex:1;border-radius:999px;padding:11px 10px;font:600 14px 'DM Sans',system-ui,sans-serif;cursor:pointer}
+.rs-card .rs-no{background:#fff;border:1px solid rgba(27,42,74,.25);color:var(--navy)}
+.rs-card .rs-yes{background:var(--navy);border:1px solid var(--navy);color:var(--gold-light)}
 .wl-hi{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:10px}
 #aboutViewer{position:absolute;inset:0;z-index:9500;background:linear-gradient(180deg,var(--navy-deep),var(--navy) 55%,#243656);color:#fff;display:flex;flex-direction:column;touch-action:pan-y}
 #aboutViewer.hidden{display:none!important}
@@ -507,7 +525,7 @@ body.cc-unlocked #cc-gate{display:none}
 <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="Course &amp; Calling"/></picture>
 <h1>Welcome</h1><p>Enter the access password to continue.</p>
 <input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
-<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.6</div>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.7</div>
 </form></div>
 <script>document.getElementById('cc-gate-ver').textContent='v'+APP_VERSION;</script>
 <script>
@@ -3065,7 +3083,7 @@ function renderOnboarding(){
     c.innerHTML=`<h2>Where do you want to go?</h2><p>Most families start here as a parent. You can add learners and switch views any time.</p>`;
     act.innerHTML=`<button class="btn btn-primary btn-block ob-parent-btn" onclick="obPickRole('parent')">👪 I’m a parent</button>
       <div class="ob-other-h">Other ways to join</div>
-      <div class="ob-other">${[['learner','🎒 Learner'],['instructor','🧑‍🏫 Instructor'],['space','🏠 Space host'],['driver','🚗 Driver']].map(([r,l])=>`<button onclick="obPickRole('${r}')">${l}</button>`).join('')}</div>`;
+      <div class="ob-other">${[['learner','🎒 Learner'],['instructor','🧑‍🏫 Instructor'],['space','🏠 Space provider'],['driver','🚗 Driver']].map(([r,l])=>`<button onclick="obPickRole('${r}')">${l}</button>`).join('')}</div>`;
   } else if(o.k==='journey'){
     c.innerHTML=`<h2>Where are you on your educational freedom journey?</h2><p>There’s no wrong answer. We’ll tailor what comes next.</p>`;
     act.innerHTML=JOURNEY_OPTS.map(x=>`<button class="ob-opt ${state.journey===x.k?'sel':''}" onclick="pickJourney('${x.k}')"><strong>${x.t}</strong><span>${x.d}</span></button>`).join('')+
@@ -3201,7 +3219,7 @@ function familyDashHTML(){
 function replayOrientation(){ state.obIndex=0; go('onboarding'); }
 /* ===== v9-10: standalone Home (roles) + About menu ===== */
 function renderRoles(){
-  const roles=[['learner','🎒 Learner'],['instructor','🧑‍🏫 Instructor'],['space','🏠 Space host'],['driver','🚗 Driver']];
+  const roles=[['learner','🎒 Learner'],['instructor','🧑‍🏫 Instructor'],['space','🏠 Space provider'],['driver','🚗 Driver']];
   document.getElementById('rolesContent').innerHTML=`
     <p style="font-size:14px;color:var(--text-muted);line-height:1.45;margin:4px 0 14px;">Most families start here as a parent. You can add learners and switch views any time.</p>
     <button class="btn btn-primary btn-block ob-parent-btn" onclick="rolesPick('parent')">👪 I’m a parent</button>
@@ -3249,7 +3267,7 @@ function aboutBack(){
    saves cc_role, and lands on that role's main page. Sample data only fills gaps: the Compass sample is seeded only if no
    Compass result exists (in-memory, as before), and a sample family is used in memory only when no real cc_family is saved.
    'cc_demo' marks that demo mode was used; #reset clears it with everything else. */
-const DEMO_ROLES=[['parent','Parent'],['learner','Learner'],['instructor','Instructor']];
+const DEMO_ROLES=[['parent','Parent'],['learner','Learner'],['instructor','Instructor'],['space','Space']];   // v10.7: + Space Provider
 const DEMO_FAMILY={demo:true,done:true,kids:2,ages:['6-10','11-13'],goals:['academics','trades','social'],pay:'esa',rides:'sometimes',small:null,format:null,dist:null,help:[]};
 function demoActive(){ try{return localStorage.getItem('cc_demo')==='1';}catch(e){return false;} }
 function demoApplySamples(){
@@ -3260,7 +3278,8 @@ function demoApplySamples(){
 function renderDemoSwitch(){
   const cur=(state.screen==='welcome'&&isFirstVisit())?null:state.role;   // brand-new visitor: nothing highlighted yet
   const html=`<span class="ds-l">Demo</span><div class="ds-seg" role="group" aria-label="Demo mode: switch role">${DEMO_ROLES.map(([r,l])=>
-    `<button type="button" class="${cur===r?'on':''}" aria-pressed="${cur===r}" onclick="demoSwitch('${r}')">${l}</button>`).join('')}</div>`;
+    `<button type="button" class="${cur===r?'on':''}" aria-pressed="${cur===r}" onclick="demoSwitch('${r}')">${l}</button>`).join('')}</div>`+
+    `<button type="button" class="ds-rs" onclick="demoRestartAsk()" aria-label="Restart demo">↺ Restart demo</button>`;
   document.querySelectorAll('[data-demo-sw]').forEach(el=>{ el.innerHTML=html; });
 }
 function demoSwitch(role){
@@ -3272,6 +3291,35 @@ function demoSwitch(role){
   const v=document.getElementById('aboutViewer'); if(v) v.classList.add('hidden');
   go(role==='learner'?'home':'portal');
 }
+/* ===== v10.7: in-app RESTART DEMO =====
+   Lets partners/investors return to the first-time state and try any role (learner, parent, instructor, space provider,
+   driver) as often as they like, including from the home-screen icon (which has its own storage; this clears that storage).
+   Clears EVERY localStorage key except the password unlock (cc_gate_ok): cc_role, cc_journey, cc_family, cc_demo,
+   cc_space_app (SA_KEY), cc_instr_app (IA_KEY) and anything else; clears all sessionStorage (hsh_inv_ok etc.).
+   Compass/assessment results, bookings and onboarding position live in memory, so a reload resets them.
+   Then reloads with no hash -> first-time 'Welcome' + Get Started, no password prompt. #reset (full wipe incl. gate) is unchanged. */
+function demoRestartAsk(){
+  if(document.getElementById('rsOv')) return;
+  const ov=document.createElement('div'); ov.className='rs-ov'; ov.id='rsOv';
+  ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-labelledby','rsT');
+  ov.innerHTML=`<div class="rs-card"><div class="rs-i">↺</div><h3 id="rsT">Start the demo over?</h3>
+    <p>This clears your answers so you can try a different role.</p>
+    <div class="rs-b"><button type="button" class="rs-no" onclick="demoRestartClose()">Cancel</button><button type="button" class="rs-yes" id="rsYes" onclick="demoRestart()">Start over</button></div></div>`;
+  ov.addEventListener('click',e=>{ if(e.target===ov) demoRestartClose(); });
+  document.body.appendChild(ov);
+  const y=document.getElementById('rsYes'); if(y) y.focus();
+}
+function demoRestartClose(){ const ov=document.getElementById('rsOv'); if(ov) ov.remove(); }
+function demoRestart(){
+  const K='cc_gate_ok'; let gate=null;
+  try{ gate=localStorage.getItem(K); }catch(e){}
+  try{ Object.keys(localStorage).forEach(k=>{ if(k!==K) localStorage.removeItem(k); }); }catch(e){ try{localStorage.clear();}catch(x){} }
+  try{ if(gate!=null) localStorage.setItem(K,gate); }catch(e){}
+  try{ sessionStorage.clear(); }catch(e){}
+  try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){}
+  location.reload();
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && document.getElementById('rsOv')) demoRestartClose(); });
 /* ===== v10.3: role-aware welcome (every launch, demo mode) + About slide viewer ===== */
 const LANDING_COPY={
   parent:"Course &amp; Calling is a navigational tool for educational freedom. Discover your child’s strengths, then find the classes, instructors, safe spaces and rides that fit. You don’t have to teach; we connect you with people who do.",
@@ -4969,6 +5017,10 @@ function renderProfile(){
       <button onclick="go('compass')" style="width:100%;text-align:left;padding:14px 16px;border:none;background:none;border-bottom:1px solid var(--border);font-family:inherit;font-size:14px;cursor:pointer;">Compass Profile™</button>
       <button onclick="go('investor')" style="width:100%;text-align:left;padding:14px 16px;border:none;background:none;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;color:var(--coral);">Investor view <span style="font-size:11px;opacity:.7;">(demo)</span></button>
     </div>
+    <div class="card" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+      <div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:14px;">Demo mode</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Start over as a learner, parent, instructor or space provider.</div></div>
+      <button class="btn btn-sm btn-secondary" style="white-space:nowrap;" onclick="demoRestartAsk()">↺ Restart demo</button>
+    </div>
     <p style="font-size:12px;color:var(--text-muted);text-align:center;line-height:1.5;">Course &amp; Calling v${APP_VERSION} · A Learning Compass Company<br/>Self-directed learning · Educational freedom<br/>All figures illustrative demo data.</p>`;
 }
 
@@ -5605,7 +5657,7 @@ window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); 
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.6</div>
+<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.7</div>
 <script>document.getElementById('cc-ver').textContent='v'+APP_VERSION;</script>
 </body>
 </html>
