@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="hsh-version" content="v10.7"/>
+<meta name="hsh-version" content="v10.8"/>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 
@@ -18,11 +18,11 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512.png" />
 
-<title>Course &amp; Calling (v10.7) | A Learning Compass Company</title>
+<title>Course &amp; Calling (v10.8) | A Learning Compass Company</title>
 <script>
 // APP_VERSION: single source of truth for the visible version (page title, gate label, #cc-ver, Profile footer).
 // On each release: bump this AND the CACHE name in sw.js. (Also update the static <title> fallback above.)
-const APP_VERSION='10.7';
+const APP_VERSION='10.8';
 document.title='Course & Calling (v'+APP_VERSION+') | A Learning Compass Company';
 // v10.5: hidden demo reset. courseandcalling.com/#reset wipes ALL saved app data for this origin
 // (localStorage + sessionStorage: gate unlock, role, journey, family, application drafts, investor gate, everything),
@@ -146,7 +146,8 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 .demo-sw{flex-wrap:wrap;row-gap:6px}
 .demo-sw button.ds-rs{border:1px dashed rgba(27,42,74,.35);color:var(--navy-mid);padding:4px 9px;font-weight:600}
 .demo-sw.dark{right:84px}
-#screen-welcome > .scroll{padding-top:calc(env(safe-area-inset-top) + 84px)!important;padding-bottom:24px!important;justify-content:flex-start!important}
+/* v10.8: welcome is clean again (no demo toggle); content stays centered but scrollable on short screens */
+#screen-welcome > .scroll{justify-content:flex-start!important}
 #screen-welcome > .scroll > :first-child{margin-top:auto}
 #screen-welcome > .scroll > :last-child{margin-bottom:auto}
 .demo-sw.dark button.ds-rs{border-color:rgba(227,189,126,.55);color:var(--gold-light)}
@@ -525,7 +526,7 @@ body.cc-unlocked #cc-gate{display:none}
 <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="Course &amp; Calling"/></picture>
 <h1>Welcome</h1><p>Enter the access password to continue.</p>
 <input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
-<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.7</div>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.8</div>
 </form></div>
 <script>document.getElementById('cc-gate-ver').textContent='v'+APP_VERSION;</script>
 <script>
@@ -568,7 +569,6 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
 <!-- WELCOME (v10.3 demo mode: returning users, every launch / reload / Home) -->
 <div class="screen active" id="screen-welcome">
   <button class="wl-about" onclick="openAboutViewer()" aria-label="About Course &amp; Calling">About</button>
-  <div class="demo-sw dark" data-demo-sw></div>
   <div class="scroll" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;text-align:center;">
     <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="" class="cc-logo-hero" style="width:210px;height:auto;margin-bottom:6px;"/></picture>
     <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Course &amp; Calling</h1>
@@ -743,6 +743,16 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
   </div>
   <div class="scroll section-pad" id="secResContent"></div>
   <div class="footer-bar"><button class="btn btn-primary btn-block" id="secResNext" onclick="continueAfterSection()">Continue</button></div>
+</div>
+
+<!-- v10.8: YOUR COURSE OPTIONS (after the learner's Compass Profile steps) -->
+<div class="screen" id="screen-courses">
+  <div class="top-header">
+    <h1 style="flex:1;">Your course options</h1>
+    <span class="demo-pill">Compass match</span>
+  </div>
+  <div class="scroll section-pad" id="coursesContent"></div>
+  <div class="footer-bar"><button class="btn btn-primary btn-block" id="coursesNext" onclick="coursesContinue()">Continue to My Day</button></div>
 </div>
 
 <!-- COMPASS FULL REPORT -->
@@ -1667,9 +1677,82 @@ function seedDemoCompassReport(){
   state.compass.vocabFrontier=['ambiguous','ephemeral','meticulous','obscure','pragmatic'];
   state.compass.sectionIndex=2; scoreCurrentSection();
   finalizeCompassReport();
+  state.compass.sample=true;   // v10.8: marks the sample profile so it never counts as the learner's own
 }
 
-function skipCompass(){ go('home'); toast('You can build Compass Profile™ anytime'); }
+function skipCompass(){
+  const f=state.learnerFlow; state.learnerFlow=null;
+  if(f==='onboarding'){ obFinish('learner'); return; }   // v10.8: onboarding still ends on the welcome page
+  go('home'); toast('You can build Compass Profile™ anytime');
+}
+/* ===== v10.8: learner's own Compass Profile is saved (cc_compass) so the first-run steps happen once.
+   Restart demo and #reset clear it. The sample profile (state.compass.sample) never counts as real. ===== */
+function hasRealCompass(){ return !!(state.compass && state.compass.done && !state.compass.sample); }
+function compassSave(){
+  const c=state.compass, keep={};
+  ['done','headingKey','heading','scores','report','answers','vocabFrontier'].forEach(k=>{ keep[k]=c[k]; });
+  try{ localStorage.setItem('cc_compass',JSON.stringify(keep)); }catch(e){}
+}
+function compassLoad(){
+  let o=null; try{ o=JSON.parse(localStorage.getItem('cc_compass')||'null'); }catch(e){}
+  if(!o || !o.done) return false;
+  resetCompassState(); Object.assign(state.compass,o); state.compass.sample=false;
+  try{ state.compass.aptBattery=aptBattery(); }catch(e){}
+  if(!state.vocab) state.vocab={streak:0, mastered:[], queue:[], frontier:[]};
+  state.vocab.frontier=[...new Set([...(state.compass.vocabFrontier||[]), ...VOCAB_STARTER.slice(0,3).map(v=>v.w)])];
+  return true;
+}
+// Learner first run: Compass Profile steps -> Your course options -> (My Day | welcome page). flow = 'demo' | 'onboarding'
+function startLearnerFirstRun(flow){
+  state.municipality=state.municipality||'Phoenix'; state.extraMuni=state.extraMuni||state.municipality;
+  go('compass-intro');
+  state.learnerFlow=flow;
+}
+function courseMatches(){
+  const hd=state.compass.heading?state.compass.heading.name:null;
+  const seen=new Set();
+  return LISTINGS.filter(l=>l.type==='class'||l.type==='tutor'||l.type==='coop'||l.type==='micro')
+    .map(l=>({l,fit:fitOf(l.subject,l.type),on:!!(hd&&l.heading===hd)}))
+    .sort((a,b)=>(b.on-a.on)||(b.fit-a.fit))
+    .filter(x=>{ if(seen.has(x.l.title)) return false; seen.add(x.l.title); return true; })
+    .slice(0,6);
+}
+function courseReason(l,on){
+  const sc=state.compass.scores||{}, code=(sc.interests&&sc.interests.code)||[];
+  const tags=FIT_TAGS[l.subject]||{ints:[],apts:[]};
+  const bits=[];
+  if(on) bits.push('on your heading: <strong>'+state.compass.heading.name+'</strong>');
+  const ic=tags.ints.find(c=>code.slice(0,3).includes(c)); if(ic) bits.push('fits your <strong>'+INTEREST_LABELS[ic]+'</strong> interests');
+  const pct=(sc.aptitude&&sc.aptitude.pct)||{};
+  const ta=tags.apts.filter(a=>pct[a]!=null).sort((a,b)=>pct[b]-pct[a])[0];
+  if(ta && pct[ta]>=50) bits.push('uses your <strong>'+APT_LABELS[ta]+'</strong> strength ('+pct[ta]+'th %ile)');
+  if(!bits.length) bits.push('a stretch pick to build a newer area');
+  const t=bits.join(' · '); return t.charAt(0).toUpperCase()+t.slice(1);
+}
+function renderCourses(){
+  const hd=state.compass.heading, items=courseMatches(), nm=learnerName();
+  const TYPE={class:'Small-group class',tutor:'1:1 tutoring',coop:'Co-op',micro:'Microschool'};
+  document.getElementById('coursesContent').innerHTML=`
+    <p style="font-size:14px;color:var(--text-muted);line-height:1.45;margin:2px 0 10px;">Matched to ${nm==='Your'?'your':nm+'’s'} Compass Profile™${hd?`. Heading: <strong style="color:var(--navy)">${hd.name}</strong>`:''}.</p>`+
+    items.map(({l,on})=>{
+      const ss=(l.sessions||[]).slice(0,2).map(x=>x.day+' '+x.time).join(' · ');
+      const bio=l.bio.length>110?l.bio.slice(0,108).replace(/\s+\S*$/,'')+'…':l.bio;
+      return `<div class="card course-opt" style="margin-bottom:10px;cursor:pointer;" onclick="state.learnerFlow=null;openListing('${l.id}')">
+        <div style="display:flex;gap:10px;align-items:flex-start;"><div style="font-size:26px;line-height:1;">${l.emoji}</div>
+        <div style="flex:1;min-width:0;"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;"><div style="font-weight:700;font-size:15px;">${l.title}</div>${fitBadge(l.subject,l.type)}</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.4;margin:3px 0 5px;">${bio}</div>
+        <div style="font-size:12px;color:var(--navy-mid);font-weight:600;">${l.provider}</div>
+        <div style="font-size:12px;color:var(--text-muted);">${TYPE[l.type]||'Class'}${ss?' · '+ss:''} · $${l.price}/${l.unit}${l.esa?' · ESA ✓':''}</div>
+        <div class="course-why" style="font-size:12px;color:var(--coral);margin-top:6px;line-height:1.35;">✦ ${courseReason(l,on)}</div></div></div></div>`;
+    }).join('')+
+    `<div style="text-align:center;margin:4px 0 8px;"><button class="link-more" style="font-size:12px;" onclick="state.learnerFlow=null;go('compass-results')">See the full Compass Profile™ report</button></div>`;
+  document.getElementById('coursesNext').textContent= state.learnerFlow==='onboarding' ? 'Continue' : 'Continue to My Day';
+}
+function coursesContinue(){
+  const f=state.learnerFlow; state.learnerFlow=null;
+  if(f==='onboarding'){ obFinish('learner'); return; }   // onboarding ends on the 'Welcome back' page (v10.5 rule)
+  go('home');
+}
 
 function showSectionIntro(idx){
   state.compass.sectionIndex=idx;
@@ -1938,6 +2021,8 @@ function continueAfterSection(){
     showSectionIntro(state.compass.sectionIndex+1);
   } else {
     finalizeCompassReport();
+    state.compass.sample=false; compassSave();
+    if(state.learnerFlow){ go('courses'); return; }   // v10.8: learner first run -> Your course options
     go('compass-results');
   }
 }
@@ -2912,6 +2997,7 @@ function go(screen){
     else screen='compass-intro';
   }
   if(screen==='journey'){ state.obIndex=OB_INTRO.findIndex(x=>x.k==='journey'); screen='onboarding'; }
+  if(state.learnerFlow && !/^compass-/.test(screen) && screen!=='courses') state.learnerFlow=null;   // v10.8
   const el=document.getElementById('screen-'+screen);
   if(!el){console.warn('missing',screen);return;}
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -2938,6 +3024,7 @@ function go(screen){
   if(screen==='compass-analyze') renderCompassAnalyze();
   if(screen==='compass-sec-results') renderCompassSecResults();
   if(screen==='compass-results') renderCompassResults();
+  if(screen==='courses') renderCourses();
   if(screen==='vocab') renderVocab();
   if(screen==='spaces') renderSpaces();
   if(screen==='space-book') renderSpaceBook();
@@ -3002,7 +3089,7 @@ function finishSetup(){
 }
 
 
-function skipCompass(){ go('home'); toast('You can build Compass Profile™ anytime'); }
+// (v10.8: duplicate skipCompass removed; see the Compass section)
 
 function setRole(role){
   state.role=role;
@@ -3104,6 +3191,7 @@ function skipOnboarding(){
 function obPickRole(r){
   try{localStorage.setItem('cc_role',r);}catch(e){}
   if(r==='parent'){ state.role='parent'; state.obIndex=OB_INTRO.findIndex(x=>x.k==='journey'); renderOnboarding(); }
+  else if(r==='learner' && !hasRealCompass()){ setRoleQuiet('learner'); startLearnerFirstRun('onboarding'); }   // v10.8
   else { obFinish(r); }
 }
 // v10.5: every onboarding exit saves the role and ends on the blue logo welcome ("Welcome back", role-aware);
@@ -3289,6 +3377,8 @@ function demoSwitch(role){
   demoApplySamples();
   hideRoleMenus();
   const v=document.getElementById('aboutViewer'); if(v) v.classList.add('hidden');
+  // v10.8: first time as Learner (no saved Compass Profile of their own) runs the Compass steps, then course options, then My Day.
+  if(role==='learner' && !hasRealCompass()){ startLearnerFirstRun('demo'); return; }
   go(role==='learner'?'home':'portal');
 }
 /* ===== v10.7: in-app RESTART DEMO =====
@@ -4805,7 +4895,7 @@ const TAB_SETS={
   space:[['roles','Home','home'],['portal','Dashboard','dash'],['spaces','Spaces','spaces'],['resources','Resources','resources'],['portal-form','Profile','profile']],
   driver:[['roles','Home','home'],['portal','Dashboard','dash'],['rides','Rides','rides'],['resources','Resources','resources'],['portal-form','Profile','profile']],
 };
-const TAB_HIDE=new Set(['splash','welcome','onboarding','family','setup','journey','investor','compass-analyze','compass-section','compass-sec-results','detail','extra-detail','plus','booking','confirm','space-book','ride-flow']);
+const TAB_HIDE=new Set(['courses','splash','welcome','onboarding','family','setup','journey','investor','compass-analyze','compass-section','compass-sec-results','detail','extra-detail','plus','booking','confirm','space-book','ride-flow']);
 function tabKeyFor(screen, role){
   if(screen==='about') return (state.prevScreen==='resources')?'resources':'roles';
   if(role==='learner'){
@@ -5627,6 +5717,7 @@ document.addEventListener('click', (e)=>{
   if(!e.target.closest('.role-menu') && !e.target.closest('#roleBtn') && !e.target.closest('[onclick*="toggleRoleMenu"]')) hideRoleMenus();
 });
 injectLogos();
+compassLoad();   // v10.8
 applyHash();
 demoApplySamples();
 showReturningWelcome();
@@ -5657,7 +5748,7 @@ window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); 
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 2px);right:10px;z-index:9000;font:600 9px/10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.7</div>
+<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 2px);right:10px;z-index:9000;font:600 9px/10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.8</div>
 <script>document.getElementById('cc-ver').textContent='v'+APP_VERSION;</script>
 </body>
 </html>
