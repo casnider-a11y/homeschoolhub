@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512.png" />
 
-<title>Course &amp; Calling (v10) | A Learning Compass Company</title>
+<title>Course &amp; Calling (v10.1) | A Learning Compass Company</title>
 <meta name="description" content="Course &amp; Calling: self-directed learning and career discovery. Set your course. Find your calling."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -280,15 +280,8 @@ html.standalone .toast,
 body.is-app .toast {
   bottom: calc(88px + env(safe-area-inset-bottom, 0px));
 }
-.a2hs-banner {
-  position: absolute; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom, 0px));
-  z-index: 250; background: var(--navy); color: #fff; border-radius: 14px; padding: 12px 14px;
-  font-size: 13px; line-height: 1.4; box-shadow: 0 8px 24px rgba(0,0,0,.25);
-  display: flex; gap: 10px; align-items: flex-start;
-}
-.a2hs-banner button { border: none; background: var(--coral); color: #fff; font-weight: 600; font-family: inherit;
-  padding: 8px 12px; border-radius: 10px; cursor: pointer; flex-shrink: 0; }
-.a2hs-banner .a2hs-x { background: transparent; color: rgba(255,255,255,.7); padding: 4px 8px; }
+.a2hs-tip { margin-top:18px; font-size:11px; line-height:1.4; color:rgba(255,255,255,.5); max-width:260px; }
+html.installed .a2hs-tip { display:none; }
 @media (max-width: 480px) {
   body { background: var(--cream) !important; }
   .phone-shell { width:100%; height:100%; border-radius:0; padding:0; box-shadow:none; max-height:none; }
@@ -372,7 +365,7 @@ body.is-app .toast {
   body *{visibility:hidden!important;}
   #screen-investor, #screen-investor *{visibility:visible!important;}
   #screen-investor{position:absolute;left:0;top:0;width:100%;}
-  .phone-shell,.desk-hint,.tab-bar,.top-header .back-btn,.a2hs-banner{display:none!important;}
+  .phone-shell,.desk-hint,.tab-bar,.top-header .back-btn{display:none!important;}
   .inv-no-print{display:none!important;}
 }
 
@@ -476,7 +469,7 @@ body.cc-unlocked #cc-gate{display:none}
 <img src="brand/primary-dark-bg.svg" alt="Course &amp; Calling"/>
 <h1>Welcome</h1><p>Enter the access password to continue.</p>
 <input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
-<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em">v10</div>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em">v10.1</div>
 </form></div>
 <script>
 (function(){var H='5197ebd5d2c687a104c17e435283b3f04b73ffa3f3986c7dfeea7b8e6a641c9f',K='cc_gate_ok';
@@ -510,6 +503,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
     <p style="font-size:15px;line-height:1.5;color:rgba(255,255,255,0.7);max-width:290px;margin-bottom:28px;">For parents guiding self-directed learning: find your child’s direction, then the classes, tutors, spaces and rides to get there.</p>
     <button class="btn btn-primary btn-block" style="max-width:280px;" onclick="state.obIndex=0;go('onboarding')">Get Started</button>
     <button class="btn btn-ghost" style="margin-top:8px;color:rgba(255,255,255,0.55);" onclick="obToDashboard()">Skip to the parent dashboard</button>
+    <div class="a2hs-tip">Tip: add this to your home screen for quick access.</div>
   </div>
 </div>
 
@@ -526,6 +520,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
     <button class="btn btn-primary btn-block" id="wlContinue" style="max-width:280px;" onclick="welcomeContinue()">Continue to my Dashboard</button>
     <button class="btn btn-ghost btn-block" style="max-width:280px;margin-top:10px;color:#fff;border:1px solid rgba(255,255,255,.3);" onclick="go('roles')">Where do you want to go?</button>
     <button class="link-more" style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.6);" onclick="openAboutViewer()">About Course &amp; Calling</button>
+    <div class="a2hs-tip">Tip: add this to your home screen for quick access.</div>
   </div>
 </div>
 
@@ -1007,7 +1002,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
 </nav>
 </div>
 </div>
-<div class="desk-hint">Course &amp; Calling · a Learning Compass company · Add to Home Screen on your phone</div>
+<div class="desk-hint">Course &amp; Calling · a Learning Compass company · Tip: add this to your home screen for quick access.</div>
 
 <script>
 
@@ -5481,49 +5476,14 @@ applyHash();
       navigator.serviceWorker.register('./sw.js?v=9-2').catch(()=>{});
     });
   }
-  // Android beforeinstallprompt
-  let deferredPrompt = null;
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    showA2HS(true);
-  });
-  function showA2HS(android) {
-    if (sessionStorage.getItem('a2hsDismissed')) return;
-    if (mq) return; // already installed
-    if (document.getElementById('a2hs')) return;
-    const b = document.createElement('div');
-    b.id = 'a2hs';
-    b.className = 'a2hs-banner';
-    b.innerHTML = android
-      ? `<div style="flex:1"><strong>Install Course &amp; Calling</strong><br/>Add this app to your home screen for the full experience.</div>
-         <button id="a2hsInstall">Install</button><button class="a2hs-x" id="a2hsX">✕</button>`
-      : `<div style="flex:1"><strong>Add to Home Screen</strong><br/>On iPhone: tap Share → Add to Home Screen for fullscreen app mode.</div>
-         <button class="a2hs-x" id="a2hsX">Got it</button>`;
-    const host = document.getElementById('phone') || document.body;
-    host.appendChild(b);
-    document.getElementById('a2hsX')?.addEventListener('click', () => {
-      sessionStorage.setItem('a2hsDismissed','1'); b.remove();
-    });
-    document.getElementById('a2hsInstall')?.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      sessionStorage.setItem('a2hsDismissed','1');
-      b.remove();
-    });
-  }
-  // iOS Safari hint (not standalone, iOS UA)
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  if (isIOS && !mq) setTimeout(() => showA2HS(false), 1200);
+  // v10.1: no install banner or popup; a quiet tip line on the opening screens, hidden once installed.
+  if (mq) document.documentElement.classList.add('installed');
 })();
 
 </script>
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10</div>
+<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.1</div>
 </body>
 </html>
