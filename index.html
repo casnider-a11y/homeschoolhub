@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="hsh-version" content="v7-1"/>
+<meta name="hsh-version" content="v10.5"/>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 
@@ -18,12 +18,27 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512.png" />
 
-<title>Course &amp; Calling (v10.4) | A Learning Compass Company</title>
+<title>Course &amp; Calling (v10.5) | A Learning Compass Company</title>
 <script>
 // APP_VERSION: single source of truth for the visible version (page title, gate label, #cc-ver, Profile footer).
 // On each release: bump this AND the CACHE name in sw.js. (Also update the static <title> fallback above.)
-const APP_VERSION='10.4';
+const APP_VERSION='10.5';
 document.title='Course & Calling (v'+APP_VERSION+') | A Learning Compass Company';
+// v10.5: hidden demo reset. courseandcalling.com/#reset wipes ALL saved app data for this origin
+// (localStorage + sessionStorage: gate unlock, role, journey, family, application drafts, investor gate, everything),
+// drops the #reset hash and reloads to the true first-run state (password gate, then first-visit welcome).
+// Runs in <head>, before the password gate check and before the app boots.
+window.ccReset=function(){
+  if(window.__ccResetting) return; window.__ccResetting=true;
+  try{localStorage.clear();}catch(e){}
+  try{sessionStorage.clear();}catch(e){}
+  try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+  var done=false, go=function(){ if(done) return; done=true; location.reload(); };
+  try{ if(window.caches&&caches.keys){ caches.keys().then(function(k){return Promise.all(k.map(function(x){return caches.delete(x);}));}).then(go,go); } }catch(e){}
+  setTimeout(go,400);
+};
+if(location.hash==='#reset') window.ccReset();
+window.addEventListener('hashchange',function(){ if(location.hash==='#reset') window.ccReset(); });
 </script>
 <meta name="description" content="Course &amp; Calling: self-directed learning and career discovery. Set your course. Find your calling."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -482,7 +497,7 @@ body.cc-unlocked #cc-gate{display:none}
 <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="Course &amp; Calling"/></picture>
 <h1>Welcome</h1><p>Enter the access password to continue.</p>
 <input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
-<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.4</div>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.5</div>
 </form></div>
 <script>document.getElementById('cc-gate-ver').textContent='v'+APP_VERSION;</script>
 <script>
@@ -509,7 +524,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
 <div class="app" id="app">
 
 <!-- SPLASH -->
-<div class="screen active" id="screen-splash">
+<div class="screen" id="screen-splash">
   <div class="scroll" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;text-align:center;">
     <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="" class="cc-logo-hero" style="width:210px;height:auto;margin-bottom:6px;"/></picture>
     <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Course &amp; Calling</h1>
@@ -523,7 +538,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
 </div>
 
 <!-- WELCOME (v10.3 demo mode: returning users, every launch / reload / Home) -->
-<div class="screen" id="screen-welcome">
+<div class="screen active" id="screen-welcome">
   <button class="wl-about" onclick="openAboutViewer()" aria-label="About Course &amp; Calling">About</button>
   <div class="scroll" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;text-align:center;">
     <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="" class="cc-logo-hero" style="width:210px;height:auto;margin-bottom:6px;"/></picture>
@@ -533,7 +548,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
     <div class="wl-hi" id="wlHi">Welcome back</div>
     <p id="wlCopy" style="font-size:15px;line-height:1.5;color:rgba(255,255,255,0.7);max-width:290px;margin-bottom:28px;"></p>
     <button class="btn btn-primary btn-block" id="wlContinue" style="max-width:280px;" onclick="welcomeContinue()">Continue to my Dashboard</button>
-    <button class="btn btn-ghost btn-block" style="max-width:280px;margin-top:10px;color:#fff;border:1px solid rgba(255,255,255,.3);" onclick="go('roles')">Where do you want to go?</button>
+    <button class="btn btn-ghost btn-block" style="max-width:280px;margin-top:10px;color:#fff;border:1px solid rgba(255,255,255,.3);" id="wlRoles" onclick="go('roles')">Where do you want to go?</button>
     <button class="link-more" style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.6);" onclick="openAboutViewer()">About Course &amp; Calling</button>
     <div class="a2hs-tip">Tip: add this to your home screen for quick access.</div>
   </div>
@@ -2760,7 +2775,7 @@ function vocabSaveSentence(){
 
 const state={
   journey:(function(){try{return localStorage.getItem('cc_journey')}catch(e){return null}})(),
-  screen:'splash', obIndex:0, city:'Phoenix', municipality:'Phoenix', role:'parent',
+  screen:'welcome', obIndex:0, city:'Phoenix', municipality:'Phoenix', role:'parent',
   parent:{name:'Alex Parent',email:'alex.parent@email.demo',phone:'(602) 555-0142',
     address:'4821 E Exeter Blvd, Phoenix, AZ 85018', lat:33.5115, lng:-111.9780},
   reach:{mode:'miles', miles:15, minutes:20, showOutside:false},
@@ -3044,7 +3059,7 @@ function renderOnboarding(){
   } else {
     c.innerHTML=`<div class="ob-icon"><span style="font-size:40px">✨</span></div><h2>You’re ready to begin</h2><p>Next, a few quick taps about your family, so we can tailor the app to what you need. It takes about two minutes.</p>`;
     act.innerHTML=`<button class="btn btn-primary btn-block" onclick="state.fpIndex=0;go('family')">Build my Family Profile</button>
-      <button class="btn btn-ghost btn-block" style="color:rgba(255,255,255,.6);margin-top:4px;" onclick="obToDashboard()">Go to my dashboard</button>`;
+      <button class="btn btn-ghost btn-block" style="color:rgba(255,255,255,.6);margin-top:4px;" onclick="obToDashboard()">Skip for now</button>`;
   }
 }
 function nextOnboarding(){ const n=obSlides().length; if(state.obIndex<n-1){state.obIndex++;renderOnboarding();} else {state.fpIndex=0;go('family');} }
@@ -3052,13 +3067,20 @@ function prevOnboarding(){ if(state.obIndex>0){state.obIndex--;renderOnboarding(
 function skipOnboarding(){
   const roleIdx=OB_INTRO.findIndex(x=>x.k==='role');
   if(state.obIndex<roleIdx){ state.obIndex=roleIdx; renderOnboarding(); }
-  else go('setup');
+  else obToDashboard();
 }
 function obPickRole(r){
   try{localStorage.setItem('cc_role',r);}catch(e){}
   if(r==='parent'){ state.role='parent'; state.obIndex=OB_INTRO.findIndex(x=>x.k==='journey'); renderOnboarding(); }
-  else if(r==='learner'){ skipToApp(); }
-  else { setRole(r); }
+  else { obFinish(r); }
+}
+// v10.5: every onboarding exit saves the role and ends on the blue logo welcome ("Welcome back", role-aware);
+// its Continue button opens the portal / My Day.
+function obFinish(role){
+  setRoleQuiet(role);
+  state.welcomeFallback=false;
+  hideRoleMenus();
+  go('welcome');
 }
 function obAfterJourney(){
   if(state.journey==='experienced'){ obToDashboard(); return; }
@@ -3067,7 +3089,7 @@ function obAfterJourney(){
 function obToDashboard(){
   try{localStorage.setItem('cc_role','parent');}catch(e){}
   if(!state.compass.done) seedDemoCompassReport();
-  state.role='parent'; setRole('parent');
+  obFinish('parent');
 }
 /* ===== v9-7: Family Profile ===== */
 const FP_Q=[
@@ -3105,17 +3127,19 @@ function renderFamily(){
     h=q.opts.map(([v,l])=>fpOpt(q.k,v,l,true)).join('')+`<div class="fp-lbl">Your expertise (optional)</div><input id="fpExpert" placeholder="e.g. nurse, welder, piano, accounting" value="${(f.expertise||'').replace(/"/g,'&quot;')}" oninput="fpDraft().expertise=this.value" style="width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-family:inherit;font-size:14px;"/>`;
   } else h=q.opts.map(([v,l])=>fpOpt(q.k,v,l,q.multi)).join('');
   const last=i===n-1;
-  h+=`<button class="btn btn-primary btn-block" style="margin-top:12px;" onclick="fpNext()">${last?'Save & see my dashboard':'Next'}</button>`;
+  h+=`<button class="btn btn-primary btn-block" style="margin-top:12px;" onclick="fpNext()">${last?(state.fpEdit?'Save & see my dashboard':'Save & finish'):'Next'}</button>`;
   document.getElementById('fpActions').innerHTML=h;
   document.getElementById('fpBack').style.visibility='visible';
 }
 function fpSave(skipped){
   const f=fpDraft(); f.done=true; f.savedAt=new Date().toISOString();
   try{localStorage.setItem('cc_family',JSON.stringify(f));}catch(e){}
-  state.family=f; obToDashboard(); if(state.screen!=='portal') go('portal');
+  state.family=f;
+  if(state.fpEdit){ state.fpEdit=false; try{localStorage.setItem('cc_role','parent');}catch(e){} setRole('parent'); }
+  else obToDashboard();
   if(!skipped) toast('Family Profile saved');
 }
-function editFamilyProfile(){ state.fp=null; state.fpIndex=0; go('family'); }
+function editFamilyProfile(){ state.fp=null; state.fpIndex=0; state.fpEdit=true; go('family'); }
 const FP_GOAL_MATCH={academics:l=>['STEM','Languages'].includes(l.subject)||l.type==='tutor',trades:l=>l.subject==='Trades',social:l=>['coop','micro'].includes(l.type)||l.subject==='PE / Sports',faith:l=>['coop','micro'].includes(l.type),special:l=>l.type==='tutor',arts:l=>['Arts','Music'].includes(l.subject)};
 const FP_GOAL_LBL={academics:'Academics',trades:'Trades',social:'Social',faith:'Values-based community',special:'1:1 support',arts:'Arts'};
 function familyRecs(f){
@@ -3213,6 +3237,7 @@ const LANDING_COPY={
   instructor:"Course &amp; Calling is a navigational tool that connects your expertise with families who’ve chosen educational freedom. Share what you know, fill your classes, and get paid through ESA-eligible bookings.",
   space:"Course &amp; Calling is a navigational tool that helps families find clean, comfortable, safe places to learn. Open your space to vetted classes and earn from hours that would otherwise sit empty.",
   driver:"Course &amp; Calling is a navigational tool that gets learners where their learning happens. Offer background-checked rides with a clean, safe handoff at every drop-off.",
+  _first:"Course &amp; Calling is a navigational tool for educational freedom and self-directed learning. Discover your child’s strengths, then find the classes, instructors, safe spaces and rides that fit. You don’t have to teach; we connect you with people who do.",
   _fallback:"Course &amp; Calling is a navigational tool for educational freedom. Parents and learners find the classes, instructors, safe spaces and rides that fit; instructors, space providers and drivers connect with the families who need them.",
 };
 // v10.3: map role values that older builds or hand-edited storage might hold onto current role ids.
@@ -3231,26 +3256,40 @@ function setRoleQuiet(role){
   if(role==='learner'){ if(!state.compass.done) seedDemoCompassReport(); state.municipality=state.municipality||'Phoenix'; state.extraMuni=state.extraMuni||state.municipality; }
   else if(role==='parent' && !state.compass.done) seedDemoCompassReport();
 }
+// v10.5: first visit = no saved cc_role. Same blue logo welcome, with "Welcome" + Get Started (runs onboarding).
+function isFirstVisit(){ let raw=null; try{raw=localStorage.getItem('cc_role');}catch(e){} return !raw; }
 function renderWelcome(){
-  const known=ROLES.find(x=>x.id===state.role), fb=!!state.welcomeFallback || !known;
+  const first=isFirstVisit();
+  const known=ROLES.find(x=>x.id===state.role), fb=!first && (!!state.welcomeFallback || !known);
   const role=known?state.role:'parent', r=known||ROLES[0];
-  document.getElementById('wlCopy').innerHTML= fb ? LANDING_COPY._fallback : (LANDING_COPY[role]||LANDING_COPY._fallback);
-  document.getElementById('wlHi').textContent= fb ? 'Welcome back' : 'Welcome back · '+r.label;
-  document.getElementById('wlContinue').textContent= fb ? 'Continue to the parent Dashboard' : (role==='learner' ? 'Continue to My Day' : 'Continue to my Dashboard');
+  const rb=document.getElementById('wlRoles'); if(rb) rb.style.display=first?'none':'';
+  if(first){
+    document.getElementById('wlCopy').innerHTML=LANDING_COPY._first;
+    document.getElementById('wlHi').textContent='Welcome';
+    document.getElementById('wlContinue').textContent='Get Started';
+  } else {
+    document.getElementById('wlCopy').innerHTML= fb ? LANDING_COPY._fallback : (LANDING_COPY[role]||LANDING_COPY._fallback);
+    document.getElementById('wlHi').textContent= fb ? 'Welcome back' : 'Welcome back · '+r.label;
+    document.getElementById('wlContinue').textContent= fb ? 'Continue to the parent Dashboard' : (role==='learner' ? 'Continue to My Day' : 'Continue to my Dashboard');
+  }
   const sc=document.querySelector('#screen-welcome .scroll'); if(sc) sc.scrollTop=0;
 }
 function welcomeContinue(){
+  if(isFirstVisit()){ state.obIndex=0; go('onboarding'); return; }
   if(state.welcomeFallback || !ROLES.find(x=>x.id===state.role)){ state.welcomeFallback=false; setRole('parent'); return; }
   if(state.role==='learner') go('home'); else go('portal');
 }
 // v10.3 demo mode: returning users (cc_role saved) see the full welcome on every launch and reload. Deep links bypass it.
+// v10.5: brand-new visitors (no cc_role) get the same welcome in first-visit mode (replaces the old splash as first screen).
 function showReturningWelcome(){
+  if(window.__ccResetting) return false;
   if(location.hash) return false;
   let raw=null; try{raw=localStorage.getItem('cc_role');}catch(e){}
-  if(!raw) return false;
-  const r=normRole(raw);
-  if(r){ state.welcomeFallback=false; setRoleQuiet(r); }
-  else { state.welcomeFallback=true; state.role='parent'; if(!state.compass.done) seedDemoCompassReport(); }
+  if(raw){
+    const r=normRole(raw);
+    if(r){ state.welcomeFallback=false; setRoleQuiet(r); }
+    else { state.welcomeFallback=true; state.role='parent'; if(!state.compass.done) seedDemoCompassReport(); }
+  } else { state.welcomeFallback=false; }
   hideRoleMenus();
   const v=document.getElementById('aboutViewer'); if(v) v.classList.add('hidden');
   go('welcome');
@@ -5441,6 +5480,7 @@ updateClock(); setInterval(updateClock,30000);
 function applyHash(){
   const hash=(location.hash||'').replace('#','');
   if(!hash) return;
+  if(hash==='reset' || window.__ccResetting){ if(window.ccReset) window.ccReset(); return; }
   // seed compass for demo hashes that need it
   const needCompass=['home','explore','compass-results','investor','rides','spaces','detail-l1','confirm','space-book','ride','portals','portal-instructor','portal-space','portal-driver','portal-learner','portal-parent','reach','directory','plus','funding'];
   if(needCompass.some(h=>hash===h||hash.startsWith(h))){
@@ -5521,7 +5561,7 @@ window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); 
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.4</div>
+<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.5</div>
 <script>document.getElementById('cc-ver').textContent='v'+APP_VERSION;</script>
 </body>
 </html>
