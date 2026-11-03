@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512.png" />
 
-<title>Course &amp; Calling (v10.1) | A Learning Compass Company</title>
+<title>Course &amp; Calling (v10.2) | A Learning Compass Company</title>
 <meta name="description" content="Course &amp; Calling: self-directed learning and career discovery. Set your course. Find your calling."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -104,6 +104,8 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 .toast{position:absolute;bottom:88px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:500;z-index:200;animation:toastIn .25s ease;max-width:90%;text-align:center;pointer-events:none}
 #screen-splash,#screen-welcome,#screen-onboarding,#screen-family,#screen-compass-intro{background:linear-gradient(180deg,var(--navy-deep),var(--navy) 55%,#243656);color:#fff}
 .wl-about{position:absolute;top:calc(env(safe-area-inset-top) + 24px);right:14px;z-index:5;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.9);font:600 12px 'DM Sans',system-ui,sans-serif;letter-spacing:.03em;padding:6px 12px;border-radius:999px;cursor:pointer}
+.res-flag{margin-top:5px;display:inline-block;font-size:11.5px;line-height:1.35;font-weight:600;color:#8a4b0f;background:#FDF0DC;border:1px solid #F0C98A;border-radius:8px;padding:4px 8px}
+.av-all{display:block;margin:0 auto calc(env(safe-area-inset-bottom) + 18px);background:none;border:none;color:rgba(255,255,255,.6);font:500 12px 'DM Sans',system-ui,sans-serif;text-decoration:underline;cursor:pointer}
 .wl-hi{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:10px}
 #aboutViewer{position:absolute;inset:0;z-index:9500;background:linear-gradient(180deg,var(--navy-deep),var(--navy) 55%,#243656);color:#fff;display:flex;flex-direction:column;touch-action:pan-y}
 #aboutViewer.hidden{display:none!important}
@@ -469,7 +471,7 @@ body.cc-unlocked #cc-gate{display:none}
 <img src="brand/primary-dark-bg.svg" alt="Course &amp; Calling"/>
 <h1>Welcome</h1><p>Enter the access password to continue.</p>
 <input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
-<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em">v10.1</div>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em">v10.2</div>
 </form></div>
 <script>
 (function(){var H='5197ebd5d2c687a104c17e435283b3f04b73ffa3f3986c7dfeea7b8e6a641c9f',K='cc_gate_ok';
@@ -485,6 +487,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
   <div class="av-top"><div class="av-count" id="avCount"></div><button class="av-x" onclick="closeAboutViewer()" aria-label="Close">✕</button></div>
   <div class="av-body"><div id="avContent" class="ob-card"></div><div class="ob-dots" id="avDots"></div></div>
   <div class="av-nav"><button class="btn btn-ghost" id="avPrev" onclick="avStep(-1)">‹ Back</button><button class="btn btn-primary" id="avNext" onclick="avStep(1)">Next ›</button></div>
+  <button class="av-all" onclick="closeAboutViewer();state.aboutItem=null;go('about')">See all topics</button>
 </div>
 <div class="status-bar" id="statusBar">
   <span class="time" id="clock">9:41</span>
@@ -516,7 +519,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
     <div style="font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:14px;color:var(--gold-light);margin-bottom:10px;">a Learning Compass company</div>
     <div style="font-size:13px;font-weight:600;letter-spacing:0.04em;color:rgba(255,255,255,0.85);margin-bottom:14px;">Set your course. Find your calling.</div>
     <div class="wl-hi" id="wlHi">Welcome back</div>
-    <p id="wlCopy" style="font-size:15px;line-height:1.5;color:rgba(255,255,255,0.75);max-width:300px;margin-bottom:26px;"></p>
+    <p id="wlCopy" style="font-size:15px;line-height:1.5;color:rgba(255,255,255,0.7);max-width:290px;margin-bottom:28px;"></p>
     <button class="btn btn-primary btn-block" id="wlContinue" style="max-width:280px;" onclick="welcomeContinue()">Continue to my Dashboard</button>
     <button class="btn btn-ghost btn-block" style="max-width:280px;margin-top:10px;color:#fff;border:1px solid rgba(255,255,255,.3);" onclick="go('roles')">Where do you want to go?</button>
     <button class="link-more" style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.6);" onclick="openAboutViewer()">About Course &amp; Calling</button>
@@ -2904,7 +2907,8 @@ function go(screen){
 }
 
 function tabGo(tab){
-  if(tab==='roles'){ go('roles'); return; }
+  // v10.2: Home opens the role-aware logo welcome (the signature splash look) every time.
+  if(tab==='roles'){ go('welcome'); return; }
   if(tab==='compass') go('compass'); else go(tab);
 }
 
@@ -3152,7 +3156,7 @@ function renderRoles(){
     <button class="btn btn-primary btn-block ob-parent-btn" onclick="rolesPick('parent')">👪 I’m a parent</button>
     <div class="rl-other-h">Other ways to join</div>
     <div class="rl-other">${roles.map(([r,l])=>`<button class="${state.role===r?'sel':''}" onclick="rolesPick('${r}')">${l}</button>`).join('')}</div>
-    <div class="card about-card" style="margin-top:22px;" onclick="state.aboutItem=null;go('about')">
+    <div class="card about-card" style="margin-top:22px;" onclick="openAboutViewer()">
       <div class="ai">🧭</div><div><div class="at">About Course &amp; Calling</div><div class="ad">What the app does, the Compass Profile, ESA and more. Read any part, anytime.</div></div><div class="ach">›</div>
     </div>
     <div style="text-align:center;margin-top:6px;"><button class="link-more" style="font-size:12px;" onclick="replayOrientation()">↺ Replay full orientation</button></div>`;
@@ -3817,7 +3821,7 @@ function portalParent(){
       </div>
       <p style="font-size:11px;color:var(--text-muted);margin:8px 0 0;">Other states vary. This applies to Arizona.</p>
     </div>
-    <div style="text-align:right;margin:-6px 0 12px;"><button class="link-more" style="font-size:12px;" onclick="state.aboutItem=null;go('about')">ℹ️ About Course &amp; Calling</button> · <button class="link-more" style="font-size:12px;" onclick="replayOrientation()">↺ Replay orientation</button> · <button class="link-more" style="font-size:12px;" onclick="go('orientation')">Getting Started guide</button></div>
+    <div style="text-align:right;margin:-6px 0 12px;"><button class="link-more" style="font-size:12px;" onclick="openAboutViewer()">ℹ️ About Course &amp; Calling</button> · <button class="link-more" style="font-size:12px;" onclick="replayOrientation()">↺ Replay orientation</button> · <button class="link-more" style="font-size:12px;" onclick="go('orientation')">Getting Started guide</button></div>
     <div class="card" style="margin-bottom:14px;cursor:pointer;" onclick="go('resources')">
       <div style="font-weight:700;">📚 Resources</div>
       <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">City rec sports, youth arts, self-directed learning organizations, parent groups, libraries &amp; museums ›</div>
@@ -4471,18 +4475,18 @@ const RESOURCES=[
     {n:'Scottsdale Parks & Recreation',u:'https://www.scottsdaleaz.gov/parks',d:'Youth leagues, aquatics and community centers.'},
     {n:'Tempe Youth Sports',u:'https://www.tempe.gov/government/community-services/classes-leagues/sports-youth',d:'Ages 5–18: flag football, basketball, softball, golf, camps.'},
     {n:'Glendale Youth Sports',u:'https://www.glendaleaz.gov/Explore/Parks-and-Recreation/Youth-Adult-Sports/Youth-Sports',d:'Volunteer-coached youth leagues; @Play recreation magazine.'},
-    {n:'Peoria Youth Sports',u:'https://www.peoriaaz.gov/government/departments/parks-recreation-and-community-facilities/recreation-programs/sports/youth-sports',d:'Basketball, flag football, soccer, t-ball, volleyball. Fall sign-ups open late July.'},
-    {n:'Surprise (city site)',u:'https://surpriseaz.gov/',d:'Recreation programs listed under Parks & Recreation.'},
-    {n:'Little League',u:'https://www.littleleague.org/',d:'Find your local Little League boundary and spring sign-ups.'},
+    {n:'Peoria Youth Sports',u:'https://www.peoriaaz.gov/government/departments/parks-recreation-and-community-facilities/recreation-programs/sports/youth-sports',d:'Fall: flag football, soccer, t-ball, machine-pitch baseball and volleyball (sign-ups open late July). Winter: basketball.'},
+    {n:'Surprise Parks & Recreation',u:'https://surpriseaz.gov/parks-recreation',d:'City of Surprise youth sports leagues, swim lessons, camps, classes and recreation centers.'},
+    {n:'Little League · League Finder',u:'https://www.littleleague.org/play-little-league/league-finder/',d:'Enter your address to find your local Arizona Little League and its spring sign-ups.'},
     {n:'Valley of the Sun YMCA',u:'https://valleyymca.org/',d:'Youth sports, swim lessons and camps across the Valley.'},
-    {n:'Boys & Girls Clubs of Arizona',u:'https://www.bgcaz.org/',d:'After-school programs, sports and arts.'},
+    {n:'Boys & Girls Clubs of the Valley',u:'https://www.bgcaz.org/',d:'After-school programs, sports and arts at clubs across the Phoenix metro area.'},
   ]},
   {cat:'Youth arts, music & theater',icon:'🎭',why:'Community ensembles and youth theaters welcome self-directed learners. Many rehearse in the afternoon, which suits flexible schedules.',items:[
     {n:'Childsplay',u:'https://childsplayaz.org/',d:'Professional theater for young audiences plus a theater academy (Tempe).'},
     {n:'Valley Youth Theatre',u:'https://vyt.com/',d:'Youth productions, auditions and classes in downtown Phoenix.'},
     {n:'Phoenix Children’s Chorus',u:'https://www.phoenixchildrenschorus.org/',d:'Auditioned choirs for young singers.'},
     {n:'Phoenix Youth Symphony Orchestras',u:'https://pysorchestras.org/',d:'Auditioned youth orchestras and ensembles.'},
-    {n:'Phoenix Symphony',u:'https://www.phoenixsymphony.org/',d:'Youth concerts and education programs.'},
+    {n:'Phoenix Symphony',u:'https://www.phoenixsymphony.org/',d:'Youth concerts and education programs.',flag:'Note: programs suspended after Nov 1, 2026 (per the Symphony’s Oct 20 announcement); check for updates.'},
     {n:'Mesa Arts Center',u:'https://www.mesaartscenter.com/',d:'Studio art, music and performing arts classes for youth.'},
     {n:'Scottsdale Arts',u:'https://scottsdalearts.org/',d:'Arts education, museum and performance programs.'},
   ]},
@@ -4491,13 +4495,13 @@ const RESOURCES=[
     {n:'IBEW Local 640',u:'https://www.ibew640.com/',d:'Electrical workers union for Maricopa County and most of Arizona.'},
     {n:'Arizona Pipe Trades Apprenticeship',u:'https://pipetrades.org/',d:'Plumbers, pipefitters/steamfitters and HVAC techs; 5-year paid program. Check for open application windows.'},
     {n:'UA Local 469 · Apprenticeship',u:'https://ualocal469.org/apprenticeship-training/',d:'Plumbers and pipefitters union, Phoenix. Requirements: ID, diploma or GED, entrance exam.'},
-    {n:'Western States Carpenters',u:'https://wscarpenters.org/',d:'Union carpenter training and apprenticeship in the western states.'},
+    {n:'Carpenters Training Center · Phoenix',u:'https://www.wsctf.org/centers/phoenix/',d:'Western States Carpenters’ Phoenix Training Center (4547 W. McDowell Rd, Phoenix): union carpenter apprenticeship and craft training.'},
     {n:'GateWay Community College · Welding',u:'https://www.gatewaycc.edu/degrees-certificates/welding',d:'Maricopa Community Colleges welding certificates; GateWay also sponsors electrician and HVAC apprenticeships.'},
     {n:'EVIT · Apprenticeships',u:'https://www.evit.edu/programs/apprenticeships',d:'East Valley CTE district (Mesa): electrical, HVAC-R, plumbing and welding pre-apprenticeships for high schoolers and adults.'},
     {n:'EVIT · Welding Technologies (high school)',u:'https://www.evit.edu/programs/welding-technologies-high-school',d:'AWS certifications and OSHA 10 for high-school students.'},
     {n:'West-MEC',u:'https://www.west-mec.edu/',d:'West Valley CTE district: trades and technical programs for high schoolers and adults.'},
     {n:'Arizona Apprenticeship Program (DES)',u:'https://des.az.gov/services/employment/apprenticeship-program',d:'The state registration agency for apprenticeships. Find registered programs across Arizona.'},
-    {n:'ABC Central Arizona',u:'https://abcaz.org/',d:'Associated Builders and Contractors: merit-shop craft training and apprenticeships.'},
+    {n:'Arizona Builders Alliance',u:'https://azbuilders.org/',d:'Arizona’s joint ABC and AGC chapter: earn-while-you-learn apprenticeships in electrical, plumbing, pipefitting, carpentry, sheet metal and low voltage.'},
     {n:'IEC Arizona',u:'https://iecaz.org/',d:'Independent Electrical Contractors: merit-shop electrical apprenticeship.'},
     {n:'Apprenticeship.gov · Job Finder',u:'https://www.apprenticeship.gov/apprenticeship-job-finder',d:'U.S. Department of Labor search for registered apprenticeships near you.'},
     {n:'NCCER',u:'https://www.nccer.org/',d:'National craft curriculum and credentials used by many training programs.'},
@@ -4536,7 +4540,7 @@ function renderResources(){
   const short={ 'City youth recreation & sports':'Rec sports','Youth arts, music & theater':'Arts & music','Trades & apprenticeships':'Trades','Self-directed & homeschool organizations':'Organizations','Parent groups, co-ops & pods':'Parent groups','Libraries & museums with learning programs':'Libraries & museums'};
   const groups=RESOURCES.filter(r=>cat==='All'||r.cat===cat);
   document.getElementById('resourcesContent').innerHTML=`
-    <div class="card about-card" onclick="state.aboutItem=null;go('about')"><div class="ai">🧭</div><div><div class="at">About Course &amp; Calling</div><div class="ad">The orientation messages, one tap each. Read any part, anytime.</div></div><div class="ach">›</div></div>
+    <div class="card about-card" onclick="openAboutViewer()"><div class="ai">🧭</div><div><div class="at">About Course &amp; Calling</div><div class="ad">What the app does, the Compass Profile, ESA and more. Swipe through anytime.</div></div><div class="ach">›</div></div>
     ${tipHTML('Why this page exists','Self-directed learning works best when you draw on your whole community: city rec leagues, youth theaters, libraries, museums and other families. Here they are by category. Most are free or low-cost, and none require enrolling in a school.','why')}
     <div class="chip-row" style="margin-bottom:12px;">${cats.map(c=>`<button class="chip ${cat===c?'selected':''}" onclick="state.resCat='${c.replace(/'/g,"\\'")}';renderResources()">${c==='All'?'All':short[c]}</button>`).join('')}</div>
     <div class="card" style="margin-bottom:12px;padding:12px;cursor:pointer;" onclick="go('school-policy')">
@@ -4549,10 +4553,10 @@ function renderResources(){
         : g.items;
       return `<div class="res-group"><h3>${g.icon} ${g.cat}</h3>
         <p class="res-why">${g.why}</p>
-        ${items.map(i=>`<a class="res-item" href="${i.u}" target="_blank" rel="noopener noreferrer"><div><div class="res-n">${i.n} ↗</div><div class="res-d">${i.d}</div></div></a>`).join('')}
+        ${items.map(i=>`<a class="res-item" href="${i.u}" target="_blank" rel="noopener noreferrer"><div><div class="res-n">${i.n} ↗</div><div class="res-d">${i.d}</div>${i.flag?`<div class="res-flag">⚠️ ${i.flag}</div>`:''}</div></a>`).join('')}
         ${g.items==='DIRECTORY'?`<button class="btn btn-sm btn-secondary" style="margin-top:6px;" onclick="go('directory')">Open full co-op &amp; pod directory</button>`:''}
       </div>`;}).join('')}
-    <p style="font-size:11px;color:var(--text-muted);line-height:1.45;margin-top:10px;">Listed for information only. No partnership or endorsement is implied. Links checked Oct 2026.</p>`;
+    <p style="font-size:11px;color:var(--text-muted);line-height:1.45;margin-top:10px;">Listed for information only. No partnership or endorsement is implied. Links checked Nov 2026.</p>`;
 }
 
 /* ===== v8: parent journey + Getting Started orientation ===== */
@@ -5484,6 +5488,6 @@ applyHash();
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.1</div>
+<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.2</div>
 </body>
 </html>
