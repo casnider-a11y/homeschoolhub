@@ -18,7 +18,13 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512.png" />
 
-<title>Course &amp; Calling (v10.3) | A Learning Compass Company</title>
+<title>Course &amp; Calling (v10.4) | A Learning Compass Company</title>
+<script>
+// APP_VERSION: single source of truth for the visible version (page title, gate label, #cc-ver, Profile footer).
+// On each release: bump this AND the CACHE name in sw.js. (Also update the static <title> fallback above.)
+const APP_VERSION='10.4';
+document.title='Course & Calling (v'+APP_VERSION+') | A Learning Compass Company';
+</script>
 <meta name="description" content="Course &amp; Calling: self-directed learning and career discovery. Set your course. Find your calling."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -476,8 +482,9 @@ body.cc-unlocked #cc-gate{display:none}
 <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="Course &amp; Calling"/></picture>
 <h1>Welcome</h1><p>Enter the access password to continue.</p>
 <input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
-<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em">v10.3</div>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.4</div>
 </form></div>
+<script>document.getElementById('cc-gate-ver').textContent='v'+APP_VERSION;</script>
 <script>
 (function(){var H='5197ebd5d2c687a104c17e435283b3f04b73ffa3f3986c7dfeea7b8e6a641c9f',K='cc_gate_ok';
 try{if(localStorage.getItem(K)===H){document.body.classList.add('cc-unlocked');}}catch(e){}
@@ -4881,7 +4888,7 @@ function renderProfile(){
       <button onclick="go('compass')" style="width:100%;text-align:left;padding:14px 16px;border:none;background:none;border-bottom:1px solid var(--border);font-family:inherit;font-size:14px;cursor:pointer;">Compass Profile™</button>
       <button onclick="go('investor')" style="width:100%;text-align:left;padding:14px 16px;border:none;background:none;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;color:var(--coral);">Investor view <span style="font-size:11px;opacity:.7;">(demo)</span></button>
     </div>
-    <p style="font-size:12px;color:var(--text-muted);text-align:center;line-height:1.5;">Course &amp; Calling v7 · A Learning Compass Company<br/>Self-directed learning · Educational freedom<br/>All figures illustrative demo data.</p>`;
+    <p style="font-size:12px;color:var(--text-muted);text-align:center;line-height:1.5;">Course &amp; Calling v${APP_VERSION} · A Learning Compass Company<br/>Self-directed learning · Educational freedom<br/>All figures illustrative demo data.</p>`;
 }
 
 function invUnlocked(){
@@ -5514,6 +5521,7 @@ window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); 
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.3</div>
+<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.4</div>
+<script>document.getElementById('cc-ver').textContent='v'+APP_VERSION;</script>
 </body>
 </html>
