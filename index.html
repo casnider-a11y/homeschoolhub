@@ -89,7 +89,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 .btn-ghost{background:transparent;color:var(--navy-mid);padding:8px 12px}
 .btn-block{width:100%}
 .btn-sm{padding:8px 14px;font-size:13px;border-radius:10px}
-.top-header{display:flex;align-items:center;gap:10px;padding:4px 16px 12px;flex-shrink:0}
+.top-header{display:flex;align-items:center;gap:10px;padding:14px 16px 12px;flex-shrink:0}  /* v10.7: +10px top so the version label never covers header buttons */
 .top-header h1{font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:700;flex:1}
 .back-btn,.icon-btn{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--navy);flex-shrink:0;border:none}
 .back-btn{border:1.5px solid var(--border);background:var(--white)}
@@ -456,7 +456,7 @@ html.installed .a2hs-tip { display:none; }
 .journey-opt{display:block;width:100%;text-align:left;margin-bottom:8px}.journey-opt.sel{border-color:#C9974A!important;background:#FBF4E8!important;box-shadow:0 0 0 2px #C9974A inset}
 .checklist li{margin-bottom:6px}
 
-.ob-top{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 4px;color:#fff}
+.ob-top{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 4px;color:#fff}
 .ob-back,.ob-skip{background:none;border:none;color:rgba(255,255,255,.7);font:600 14px 'DM Sans',sans-serif;cursor:pointer;padding:8px}
 .ob-step{font-size:12px;color:rgba(255,255,255,.6);font-weight:600}
 .ob-prog{height:4px;margin:0 20px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
@@ -3083,7 +3083,7 @@ function renderOnboarding(){
     c.innerHTML=`<h2>Where do you want to go?</h2><p>Most families start here as a parent. You can add learners and switch views any time.</p>`;
     act.innerHTML=`<button class="btn btn-primary btn-block ob-parent-btn" onclick="obPickRole('parent')">👪 I’m a parent</button>
       <div class="ob-other-h">Other ways to join</div>
-      <div class="ob-other">${[['learner','🎒 Learner'],['instructor','🧑‍🏫 Instructor'],['space','🏠 Space provider'],['driver','🚗 Driver']].map(([r,l])=>`<button onclick="obPickRole('${r}')">${l}</button>`).join('')}</div>`;
+      <div class="ob-other">${[['learner','🎒 Learner'],['instructor','🧑‍🏫 Instructor'],['space','🏠 Space host'],['driver','🚗 Driver']].map(([r,l])=>`<button onclick="obPickRole('${r}')">${l}</button>`).join('')}</div>`;
   } else if(o.k==='journey'){
     c.innerHTML=`<h2>Where are you on your educational freedom journey?</h2><p>There’s no wrong answer. We’ll tailor what comes next.</p>`;
     act.innerHTML=JOURNEY_OPTS.map(x=>`<button class="ob-opt ${state.journey===x.k?'sel':''}" onclick="pickJourney('${x.k}')"><strong>${x.t}</strong><span>${x.d}</span></button>`).join('')+
@@ -3219,7 +3219,7 @@ function familyDashHTML(){
 function replayOrientation(){ state.obIndex=0; go('onboarding'); }
 /* ===== v9-10: standalone Home (roles) + About menu ===== */
 function renderRoles(){
-  const roles=[['learner','🎒 Learner'],['instructor','🧑‍🏫 Instructor'],['space','🏠 Space provider'],['driver','🚗 Driver']];
+  const roles=[['learner','🎒 Learner'],['instructor','🧑‍🏫 Instructor'],['space','🏠 Space host'],['driver','🚗 Driver']];
   document.getElementById('rolesContent').innerHTML=`
     <p style="font-size:14px;color:var(--text-muted);line-height:1.45;margin:4px 0 14px;">Most families start here as a parent. You can add learners and switch views any time.</p>
     <button class="btn btn-primary btn-block ob-parent-btn" onclick="rolesPick('parent')">👪 I’m a parent</button>
@@ -3267,7 +3267,7 @@ function aboutBack(){
    saves cc_role, and lands on that role's main page. Sample data only fills gaps: the Compass sample is seeded only if no
    Compass result exists (in-memory, as before), and a sample family is used in memory only when no real cc_family is saved.
    'cc_demo' marks that demo mode was used; #reset clears it with everything else. */
-const DEMO_ROLES=[['parent','Parent'],['learner','Learner'],['instructor','Instructor'],['space','Space']];   // v10.7: + Space Provider
+const DEMO_ROLES=[['parent','Parent'],['learner','Learner'],['instructor','Instructor'],['space','Host']];   // v10.7: + Space host
 const DEMO_FAMILY={demo:true,done:true,kids:2,ages:['6-10','11-13'],goals:['academics','trades','social'],pay:'esa',rides:'sometimes',small:null,format:null,dist:null,help:[]};
 function demoActive(){ try{return localStorage.getItem('cc_demo')==='1';}catch(e){return false;} }
 function demoApplySamples(){
@@ -3292,7 +3292,7 @@ function demoSwitch(role){
   go(role==='learner'?'home':'portal');
 }
 /* ===== v10.7: in-app RESTART DEMO =====
-   Lets partners/investors return to the first-time state and try any role (learner, parent, instructor, space provider,
+   Lets partners/investors return to the first-time state and try any role (learner, parent, instructor, space host,
    driver) as often as they like, including from the home-screen icon (which has its own storage; this clears that storage).
    Clears EVERY localStorage key except the password unlock (cc_gate_ok): cc_role, cc_journey, cc_family, cc_demo,
    cc_space_app (SA_KEY), cc_instr_app (IA_KEY) and anything else; clears all sessionStorage (hsh_inv_ok etc.).
@@ -5018,7 +5018,7 @@ function renderProfile(){
       <button onclick="go('investor')" style="width:100%;text-align:left;padding:14px 16px;border:none;background:none;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;color:var(--coral);">Investor view <span style="font-size:11px;opacity:.7;">(demo)</span></button>
     </div>
     <div class="card" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;">
-      <div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:14px;">Demo mode</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Start over as a learner, parent, instructor or space provider.</div></div>
+      <div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:14px;">Demo mode</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Start over as a learner, parent, instructor or space host.</div></div>
       <button class="btn btn-sm btn-secondary" style="white-space:nowrap;" onclick="demoRestartAsk()">↺ Restart demo</button>
     </div>
     <p style="font-size:12px;color:var(--text-muted);text-align:center;line-height:1.5;">Course &amp; Calling v${APP_VERSION} · A Learning Compass Company<br/>Self-directed learning · Educational freedom<br/>All figures illustrative demo data.</p>`;
@@ -5657,7 +5657,7 @@ window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); 
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.7</div>
+<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 2px);right:10px;z-index:9000;font:600 9px/10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.7</div>
 <script>document.getElementById('cc-ver').textContent='v'+APP_VERSION;</script>
 </body>
 </html>
