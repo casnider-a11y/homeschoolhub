@@ -1,4 +1,4 @@
-const CACHE = 'hsh-v10-3';
+const CACHE = 'hsh-v10-4';
 const CORE = [
   './',
   './index.html',
@@ -19,7 +19,10 @@ const CORE = [
   './brand/mark-dark-bg.svg',
   './brand/primary-dark-bg.svg',
   './brand/primary-light-bg.svg',
-  './brand/horizontal-light-bg.svg'
+  './brand/horizontal-light-bg.svg',
+  './brand/primary-dark-bg-static.svg',
+  './brand/mark-dark-bg-static.svg',
+  './brand/mark-light-bg-static.svg'
 ];
 
 self.addEventListener('install', (e) => {

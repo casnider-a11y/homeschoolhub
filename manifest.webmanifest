@@ -1,7 +1,7 @@
 {
   "name": "Course & Calling",
   "short_name": "C&C",
-  "description": "Course & Calling — self-directed learning and career discovery, with the Compass Profile. A Learning Compass company.",
+  "description": "Course & Calling — self-directed learning and career discovery, with the Compass Profile. A Learning Compass Company.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

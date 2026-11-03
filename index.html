@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512.png" />
 
-<title>Course &amp; Calling (v10.2) | A Learning Compass Company</title>
+<title>Course &amp; Calling (v10.3) | A Learning Compass Company</title>
 <meta name="description" content="Course &amp; Calling: self-directed learning and career discovery. Set your course. Find your calling."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -106,6 +106,11 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 .wl-about{position:absolute;top:calc(env(safe-area-inset-top) + 24px);right:14px;z-index:5;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.9);font:600 12px 'DM Sans',system-ui,sans-serif;letter-spacing:.03em;padding:6px 12px;border-radius:999px;cursor:pointer}
 .res-flag{margin-top:5px;display:inline-block;font-size:11.5px;line-height:1.35;font-weight:600;color:#8a4b0f;background:#FDF0DC;border:1px solid #F0C98A;border-radius:8px;padding:4px 8px}
 .av-all{display:block;margin:0 auto calc(env(safe-area-inset-bottom) + 18px);background:none;border:none;color:rgba(255,255,255,.6);font:500 12px 'DM Sans',system-ui,sans-serif;text-decoration:underline;cursor:pointer}
+/* v10.3: safe vertical centering; content never clips above the top on short phones */
+#screen-splash .scroll,#screen-welcome .scroll{justify-content:flex-start!important}
+#screen-splash .scroll::before,#screen-splash .scroll::after,#screen-welcome .scroll::before,#screen-welcome .scroll::after{content:'';flex:1 1 0;min-height:0}
+#screen-welcome .scroll{padding-top:calc(env(safe-area-inset-top) + 60px)!important}
+@media (max-height:720px){#screen-splash .scroll img,#screen-welcome .scroll img{width:160px!important}#screen-welcome .scroll{padding-top:calc(env(safe-area-inset-top) + 56px)!important;padding-bottom:20px!important}#wlCopy{margin-bottom:20px!important}}
 .wl-hi{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:10px}
 #aboutViewer{position:absolute;inset:0;z-index:9500;background:linear-gradient(180deg,var(--navy-deep),var(--navy) 55%,#243656);color:#fff;display:flex;flex-direction:column;touch-action:pan-y}
 #aboutViewer.hidden{display:none!important}
@@ -468,10 +473,10 @@ body.cc-unlocked #cc-gate{display:none}
 </head>
 <body>
 <div id="cc-gate"><form class="box" id="cc-gate-form" autocomplete="off">
-<img src="brand/primary-dark-bg.svg" alt="Course &amp; Calling"/>
+<picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="Course &amp; Calling"/></picture>
 <h1>Welcome</h1><p>Enter the access password to continue.</p>
 <input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
-<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em">v10.2</div>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em">v10.3</div>
 </form></div>
 <script>
 (function(){var H='5197ebd5d2c687a104c17e435283b3f04b73ffa3f3986c7dfeea7b8e6a641c9f',K='cc_gate_ok';
@@ -499,9 +504,9 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
 <!-- SPLASH -->
 <div class="screen active" id="screen-splash">
   <div class="scroll" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;text-align:center;">
-    <img src="brand/primary-dark-bg.svg" alt="" style="width:210px;height:auto;margin-bottom:6px;animation:pulse 2s ease infinite;"/>
+    <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="" class="cc-logo-hero" style="width:210px;height:auto;margin-bottom:6px;"/></picture>
     <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Course &amp; Calling</h1>
-    <div style="font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:14px;color:var(--gold-light);margin-bottom:10px;">a Learning Compass company</div>
+    <div style="font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:14px;color:var(--gold-light);margin-bottom:10px;">A Learning Compass Company</div>
     <div style="font-size:13px;font-weight:600;letter-spacing:0.04em;color:rgba(255,255,255,0.85);margin-bottom:8px;">Set your course. Find your calling.</div>
     <p style="font-size:15px;line-height:1.5;color:rgba(255,255,255,0.7);max-width:290px;margin-bottom:28px;">For parents guiding self-directed learning: find your child’s direction, then the classes, tutors, spaces and rides to get there.</p>
     <button class="btn btn-primary btn-block" style="max-width:280px;" onclick="state.obIndex=0;go('onboarding')">Get Started</button>
@@ -510,13 +515,13 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
   </div>
 </div>
 
-<!-- WELCOME (v10: returning users, once per visit) -->
+<!-- WELCOME (v10.3 demo mode: returning users, every launch / reload / Home) -->
 <div class="screen" id="screen-welcome">
   <button class="wl-about" onclick="openAboutViewer()" aria-label="About Course &amp; Calling">About</button>
   <div class="scroll" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;text-align:center;">
-    <img src="brand/primary-dark-bg.svg" alt="" style="width:210px;height:auto;margin-bottom:6px;animation:pulse 2s ease infinite;"/>
+    <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="" class="cc-logo-hero" style="width:210px;height:auto;margin-bottom:6px;"/></picture>
     <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Course &amp; Calling</h1>
-    <div style="font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:14px;color:var(--gold-light);margin-bottom:10px;">a Learning Compass company</div>
+    <div style="font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:14px;color:var(--gold-light);margin-bottom:10px;">A Learning Compass Company</div>
     <div style="font-size:13px;font-weight:600;letter-spacing:0.04em;color:rgba(255,255,255,0.85);margin-bottom:14px;">Set your course. Find your calling.</div>
     <div class="wl-hi" id="wlHi">Welcome back</div>
     <p id="wlCopy" style="font-size:15px;line-height:1.5;color:rgba(255,255,255,0.7);max-width:290px;margin-bottom:28px;"></p>
@@ -1005,13 +1010,13 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
 </nav>
 </div>
 </div>
-<div class="desk-hint">Course &amp; Calling · a Learning Compass company · Tip: add this to your home screen for quick access.</div>
+<div class="desk-hint">Course &amp; Calling · A Learning Compass Company · Tip: add this to your home screen for quick access.</div>
 
 <script>
 
-const LOGO_SVG_LIGHT = `<img class="logo-svg" src="brand/mark-dark-bg.svg" alt="Course &amp; Calling"/>`;
+const LOGO_SVG_LIGHT = `<picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/mark-dark-bg-static.svg"/><img class="logo-svg" src="brand/mark-dark-bg.svg?v=10-3" alt="Course &amp; Calling"/></picture>`;
 
-const LOGO_SVG = `<img class="logo-svg" src="brand/mark-light-bg.svg" alt="Course &amp; Calling"/>`;
+const LOGO_SVG = `<picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/mark-light-bg-static.svg"/><img class="logo-svg" src="brand/mark-light-bg.svg?v=10-3" alt="Course &amp; Calling"/></picture>`;
 
 function injectLogos(){
   const lightEls=['splashLogo','compassIntroLogo'];
@@ -2947,7 +2952,8 @@ function skipCompass(){ go('home'); toast('You can build Compass Profile™ anyt
 
 function setRole(role){
   state.role=role;
-  try{localStorage.setItem('cc_role',role);sessionStorage.setItem('cc_welcomed','1');}catch(e){}
+  try{localStorage.setItem('cc_role',role);}catch(e){}
+  state.welcomeFallback=false;
   hideRoleMenus();
   const r=ROLES.find(x=>x.id===role);
   document.getElementById('roleLabel').textContent=r.short;
@@ -3193,14 +3199,21 @@ function aboutBack(){
   const p=state.prevScreen; go(p && p!=='about' && !TAB_HIDE.has(p) ? p : 'roles');
 }
 
-/* ===== v10: role-aware welcome (once per visit) + About slide viewer ===== */
+/* ===== v10.3: role-aware welcome (every launch, demo mode) + About slide viewer ===== */
 const LANDING_COPY={
   parent:"Course &amp; Calling is a navigational tool for educational freedom. Discover your child’s strengths, then find the classes, instructors, safe spaces and rides that fit. You don’t have to teach; we connect you with people who do.",
   learner:"Course &amp; Calling is a navigational tool for your self-directed learning. Find what you’re great at, explore what excites you, and chart your own course.",
   instructor:"Course &amp; Calling is a navigational tool that connects your expertise with families who’ve chosen educational freedom. Share what you know, fill your classes, and get paid through ESA-eligible bookings.",
   space:"Course &amp; Calling is a navigational tool that helps families find clean, comfortable, safe places to learn. Open your space to vetted classes and earn from hours that would otherwise sit empty.",
   driver:"Course &amp; Calling is a navigational tool that gets learners where their learning happens. Offer background-checked rides with a clean, safe handoff at every drop-off.",
+  _fallback:"Course &amp; Calling is a navigational tool for educational freedom. Parents and learners find the classes, instructors, safe spaces and rides that fit; instructors, space providers and drivers connect with the families who need them.",
 };
+// v10.3: map role values that older builds or hand-edited storage might hold onto current role ids.
+const ROLE_ALIASES={parents:'parent',family:'parent',learners:'learner',student:'learner',kid:'learner',kids:'learner',child:'learner',
+  instructors:'instructor',teacher:'instructor',tutor:'instructor',educator:'instructor',
+  spaces:'space',host:'space','space-host':'space',space_host:'space',provider:'space','space-provider':'space',space_provider:'space',location:'space',
+  drivers:'driver',ride:'driver',rides:'driver'};
+function normRole(r){ if(!r) return null; r=String(r).trim().toLowerCase(); if(ROLES.find(x=>x.id===r)) return r; return ROLE_ALIASES[r]||null; }
 function setRoleQuiet(role){
   if(!ROLES.find(x=>x.id===role)) role='parent';
   state.role=role;
@@ -3212,14 +3225,29 @@ function setRoleQuiet(role){
   else if(role==='parent' && !state.compass.done) seedDemoCompassReport();
 }
 function renderWelcome(){
-  const role=state.role||'parent', r=ROLES.find(x=>x.id===role)||ROLES[0];
-  document.getElementById('wlCopy').innerHTML=LANDING_COPY[role]||LANDING_COPY.parent;
-  document.getElementById('wlHi').textContent='Welcome back · '+r.label;
-  document.getElementById('wlContinue').textContent= role==='learner' ? 'Continue to My Day' : 'Continue to my Dashboard';
+  const known=ROLES.find(x=>x.id===state.role), fb=!!state.welcomeFallback || !known;
+  const role=known?state.role:'parent', r=known||ROLES[0];
+  document.getElementById('wlCopy').innerHTML= fb ? LANDING_COPY._fallback : (LANDING_COPY[role]||LANDING_COPY._fallback);
+  document.getElementById('wlHi').textContent= fb ? 'Welcome back' : 'Welcome back · '+r.label;
+  document.getElementById('wlContinue').textContent= fb ? 'Continue to the parent Dashboard' : (role==='learner' ? 'Continue to My Day' : 'Continue to my Dashboard');
+  const sc=document.querySelector('#screen-welcome .scroll'); if(sc) sc.scrollTop=0;
 }
 function welcomeContinue(){
-  try{sessionStorage.setItem('cc_welcomed','1');}catch(e){}
+  if(state.welcomeFallback || !ROLES.find(x=>x.id===state.role)){ state.welcomeFallback=false; setRole('parent'); return; }
   if(state.role==='learner') go('home'); else go('portal');
+}
+// v10.3 demo mode: returning users (cc_role saved) see the full welcome on every launch and reload. Deep links bypass it.
+function showReturningWelcome(){
+  if(location.hash) return false;
+  let raw=null; try{raw=localStorage.getItem('cc_role');}catch(e){}
+  if(!raw) return false;
+  const r=normRole(raw);
+  if(r){ state.welcomeFallback=false; setRoleQuiet(r); }
+  else { state.welcomeFallback=true; state.role='parent'; if(!state.compass.done) seedDemoCompassReport(); }
+  hideRoleMenus();
+  const v=document.getElementById('aboutViewer'); if(v) v.classList.add('hidden');
+  go('welcome');
+  return true;
 }
 let avIdx=0, avX=null, avY=null;
 function openAboutViewer(){ avIdx=0; renderAboutViewer(); document.getElementById('aboutViewer').classList.remove('hidden'); }
@@ -4853,7 +4881,7 @@ function renderProfile(){
       <button onclick="go('compass')" style="width:100%;text-align:left;padding:14px 16px;border:none;background:none;border-bottom:1px solid var(--border);font-family:inherit;font-size:14px;cursor:pointer;">Compass Profile™</button>
       <button onclick="go('investor')" style="width:100%;text-align:left;padding:14px 16px;border:none;background:none;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;color:var(--coral);">Investor view <span style="font-size:11px;opacity:.7;">(demo)</span></button>
     </div>
-    <p style="font-size:12px;color:var(--text-muted);text-align:center;line-height:1.5;">Course &amp; Calling v7 · a Learning Compass company<br/>Self-directed learning · Educational freedom<br/>All figures illustrative demo data.</p>`;
+    <p style="font-size:12px;color:var(--text-muted);text-align:center;line-height:1.5;">Course &amp; Calling v7 · A Learning Compass Company<br/>Self-directed learning · Educational freedom<br/>All figures illustrative demo data.</p>`;
 }
 
 function invUnlocked(){
@@ -4920,7 +4948,7 @@ function renderInvestor(){
         <div class="logo-md" style="margin:0 auto 12px;" id="invLogoLock">${LOGO_SVG}</div>
         <div style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">Course &amp; Calling</div>
         <h2 style="font-family:'Fraunces',Georgia,serif;font-size:22px;margin:8px 0 2px;">Investor Dashboard</h2>
-        <div style="font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:12px;color:var(--text-muted);margin-bottom:8px;">a Learning Compass company</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:12px;color:var(--text-muted);margin-bottom:8px;">A Learning Compass Company</div>
         <p style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:16px;">Phoenix lean + Compass Plus view of the Oct 2026 pro forma (Base) — password-gated for demo sharing.</p>
         <div class="field" style="text-align:left;">
           <label>Password</label>
@@ -5258,7 +5286,7 @@ function invSet(key, val){
 }
 function invCopySummary(){
   const v=state.invView, m=state.invModel;
-  const lines=['Course & Calling (a Learning Compass company) — Investor snapshot (Base, Oct 2026 pro forma)',''];
+  const lines=['Course & Calling (A Learning Compass Company) — Investor snapshot (Base, Oct 2026 pro forma)',''];
   WB_FP.forEach(f=>{const x=wbRow(f.id,v); lines.push(`${f.label}: with Compass Plus ${wbBE(x.bp)} · peak ${invFmt(x.pp)} · raise ${invFmt(wbRaise(x.pp))} | marketplace only ${wbBE(x.bm)} · peak ${invFmt(x.pm)}`);});
   lines.push('', `Federal credit setting: ${v.credit}${v.azOptIn?' (AZ opts in — what-if)':''}. Arizona has not opted in for 2027.`);
   lines.push('Take rates: courses 15% · rides 20% (own TNC, AZ) · spaces 15%.');
@@ -5459,11 +5487,9 @@ document.addEventListener('click', (e)=>{
 });
 injectLogos();
 applyHash();
-(function(){ if(location.hash) return; let r=null; try{r=localStorage.getItem('cc_role');}catch(e){}
-  if(!r) return;
-  let welcomed=false; try{welcomed=sessionStorage.getItem('cc_welcomed')==='1';}catch(e){}
-  if(!welcomed && ROLES.find(x=>x.id===r)){ setRoleQuiet(r); go('welcome'); try{sessionStorage.setItem('cc_welcomed','1');}catch(e){} return; }
-  if(r==='learner'){ skipToApp(); } else { if(r==='parent'&&!state.compass.done) seedDemoCompassReport(); setRole(r); } })();
+showReturningWelcome();
+// iOS can restore the page from the back/forward cache instead of reloading; treat that as a launch too.
+window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); });
 
 /* PWA boot */
 (function(){
@@ -5488,6 +5514,6 @@ applyHash();
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.2</div>
+<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.3</div>
 </body>
 </html>
