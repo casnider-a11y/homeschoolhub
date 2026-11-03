@@ -1,4 +1,4 @@
-const CACHE = 'hsh-v10-6';
+const CACHE = 'hsh-v10-7';
 const CORE = [
   './',
   './index.html',

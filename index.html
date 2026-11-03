@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="hsh-version" content="v10.5"/>
+<meta name="hsh-version" content="v10.6"/>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 
@@ -18,11 +18,11 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512.png" />
 
-<title>Course &amp; Calling (v10.5) | A Learning Compass Company</title>
+<title>Course &amp; Calling (v10.6) | A Learning Compass Company</title>
 <script>
 // APP_VERSION: single source of truth for the visible version (page title, gate label, #cc-ver, Profile footer).
 // On each release: bump this AND the CACHE name in sw.js. (Also update the static <title> fallback above.)
-const APP_VERSION='10.5';
+const APP_VERSION='10.6';
 document.title='Course & Calling (v'+APP_VERSION+') | A Learning Compass Company';
 // v10.5: hidden demo reset. courseandcalling.com/#reset wipes ALL saved app data for this origin
 // (localStorage + sessionStorage: gate unlock, role, journey, family, application drafts, investor gate, everything),
@@ -132,6 +132,16 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 #screen-splash .scroll::before,#screen-splash .scroll::after,#screen-welcome .scroll::before,#screen-welcome .scroll::after{content:'';flex:1 1 0;min-height:0}
 #screen-welcome .scroll{padding-top:calc(env(safe-area-inset-top) + 60px)!important}
 @media (max-height:720px){#screen-splash .scroll img,#screen-welcome .scroll img{width:160px!important}#screen-welcome .scroll{padding-top:calc(env(safe-area-inset-top) + 56px)!important;padding-bottom:20px!important}#wlCopy{margin-bottom:20px!important}}
+/* v10.6: Demo-mode role switcher (welcome + every portal) */
+.demo-sw{display:flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;padding:0 16px 8px;position:relative;z-index:6}
+.demo-sw .ds-l{font:700 9px 'DM Sans',system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.demo-sw .ds-seg{display:inline-flex;background:var(--cream-dark);border:1px solid rgba(27,42,74,.14);border-radius:999px;padding:2px}
+.demo-sw button{border:0;background:transparent;font:600 11px 'DM Sans',system-ui,sans-serif;color:var(--navy);padding:5px 10px;border-radius:999px;cursor:pointer;line-height:1.1;white-space:nowrap}
+.demo-sw button.on{background:var(--navy);color:var(--gold-light);box-shadow:0 1px 3px rgba(18,32,56,.25)}
+.demo-sw.dark{position:absolute;top:calc(env(safe-area-inset-top) + 24px);left:14px;padding:0;justify-content:flex-start}
+.demo-sw.dark .ds-seg{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22)}
+.demo-sw.dark button{color:rgba(255,255,255,.85)}
+.demo-sw.dark button.on{background:var(--gold);color:var(--navy-deep)}
 .wl-hi{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:10px}
 #aboutViewer{position:absolute;inset:0;z-index:9500;background:linear-gradient(180deg,var(--navy-deep),var(--navy) 55%,#243656);color:#fff;display:flex;flex-direction:column;touch-action:pan-y}
 #aboutViewer.hidden{display:none!important}
@@ -497,7 +507,7 @@ body.cc-unlocked #cc-gate{display:none}
 <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="Course &amp; Calling"/></picture>
 <h1>Welcome</h1><p>Enter the access password to continue.</p>
 <input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
-<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.5</div>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.6</div>
 </form></div>
 <script>document.getElementById('cc-gate-ver').textContent='v'+APP_VERSION;</script>
 <script>
@@ -540,6 +550,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
 <!-- WELCOME (v10.3 demo mode: returning users, every launch / reload / Home) -->
 <div class="screen active" id="screen-welcome">
   <button class="wl-about" onclick="openAboutViewer()" aria-label="About Course &amp; Calling">About</button>
+  <div class="demo-sw dark" data-demo-sw></div>
   <div class="scroll" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;text-align:center;">
     <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="" class="cc-logo-hero" style="width:210px;height:auto;margin-bottom:6px;"/></picture>
     <h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">Course &amp; Calling</h1>
@@ -753,6 +764,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
     </button>
   </div>
+  <div class="demo-sw" data-demo-sw></div>
   <div id="roleMenu" class="role-menu hidden"></div>
   <div class="scroll" id="homeScroll"></div>
 </div>
@@ -867,6 +879,7 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
     <button class="icon-btn" onclick="toggleRoleMenu()" style="width:auto;padding:0 10px;font-size:11px;font-weight:600;"><span id="portalRoleLabel">Learner</span> ▾</button>
   </div>
   <div id="roleMenu2" class="role-menu hidden"></div>
+  <div class="demo-sw" data-demo-sw></div>
   <div class="scroll section-pad" id="portalContent"></div>
 </div>
 
@@ -2930,6 +2943,7 @@ function go(screen){
   if(screen==='roles') renderRoles();
   if(screen==='about') renderAbout();
   if(screen==='welcome') renderWelcome();
+  if(screen==='welcome'||screen==='home'||screen==='portal') renderDemoSwitch();
   el.querySelectorAll('.scroll').forEach(s=>{s.scrollTop=0;});
 }
 
@@ -3162,7 +3176,7 @@ function familyDashHTML(){
   const recs=familyRecsMixed(f); const kids=f.kids||1;
   const gl=(f.goals||[]).map(g=>FP_GOAL_LBL[g]).join(' · ');
   let h=`<div style="display:flex;justify-content:space-between;align-items:baseline;margin:4px 0 8px;"><h3 style="margin:0;font-size:17px;">Recommended for your family</h3><button class="link-more" style="font-size:12px;" onclick="editFamilyProfile()">✎ Edit Family Profile</button></div>
-    <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">Based on ${gl?'your goals ('+gl+')':'your Family Profile'}${f.dist&&f.dist!=='any'?', within '+f.dist+' miles':''}${(f.ages||[]).length?', ages '+f.ages.join(', ').replace(/-/g,'–'):''}.</p>`;
+    <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px;">${f.demo?'<strong>Sample family (demo).</strong> ':''}Based on ${gl?'your goals ('+gl+')':'your Family Profile'}${f.dist&&f.dist!=='any'?', within '+f.dist+' miles':''}${(f.ages||[]).length?', ages '+f.ages.join(', ').replace(/-/g,'–'):''}.</p>`;
   h+= recs.length? recs.map(({l,hits})=>`<div class="card" style="margin-bottom:8px;display:flex;gap:10px;align-items:center;cursor:pointer;padding:12px;" onclick="openListing('${l.id}')">
       <div style="font-size:26px;">${l.emoji}</div><div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:14px;">${l.title}</div>
       <div style="font-size:12px;color:var(--text-muted);">${l.provider} · ${l.distance!=null?l.distance+' mi · ':''}$${l.price}/${l.unit}${l.esa?' · ESA ✓':''}</div>
@@ -3230,6 +3244,34 @@ function aboutBack(){
   const p=state.prevScreen; go(p && p!=='about' && !TAB_HIDE.has(p) ? p : 'roles');
 }
 
+/* ===== v10.6: DEMO MODE role switcher =====
+   Parent | Learner | Instructor. Switches instantly (no onboarding, journey, Compass assessment or Family Profile prompts),
+   saves cc_role, and lands on that role's main page. Sample data only fills gaps: the Compass sample is seeded only if no
+   Compass result exists (in-memory, as before), and a sample family is used in memory only when no real cc_family is saved.
+   'cc_demo' marks that demo mode was used; #reset clears it with everything else. */
+const DEMO_ROLES=[['parent','Parent'],['learner','Learner'],['instructor','Instructor']];
+const DEMO_FAMILY={demo:true,done:true,kids:2,ages:['6-10','11-13'],goals:['academics','trades','social'],pay:'esa',rides:'sometimes',small:null,format:null,dist:null,help:[]};
+function demoActive(){ try{return localStorage.getItem('cc_demo')==='1';}catch(e){return false;} }
+function demoApplySamples(){
+  if(!demoActive()) return;
+  if(!fpLoad() && (!state.family || state.family.demo)) state.family=Object.assign({},DEMO_FAMILY);
+  if((state.role==='learner'||state.role==='parent') && !state.compass.done) seedDemoCompassReport();
+}
+function renderDemoSwitch(){
+  const cur=(state.screen==='welcome'&&isFirstVisit())?null:state.role;   // brand-new visitor: nothing highlighted yet
+  const html=`<span class="ds-l">Demo</span><div class="ds-seg" role="group" aria-label="Demo mode: switch role">${DEMO_ROLES.map(([r,l])=>
+    `<button type="button" class="${cur===r?'on':''}" aria-pressed="${cur===r}" onclick="demoSwitch('${r}')">${l}</button>`).join('')}</div>`;
+  document.querySelectorAll('[data-demo-sw]').forEach(el=>{ el.innerHTML=html; });
+}
+function demoSwitch(role){
+  try{localStorage.setItem('cc_demo','1');}catch(e){}
+  setRoleQuiet(role);            // saves cc_role, updates role labels, seeds sample Compass only if none
+  state.welcomeFallback=false;
+  demoApplySamples();
+  hideRoleMenus();
+  const v=document.getElementById('aboutViewer'); if(v) v.classList.add('hidden');
+  go(role==='learner'?'home':'portal');
+}
 /* ===== v10.3: role-aware welcome (every launch, demo mode) + About slide viewer ===== */
 const LANDING_COPY={
   parent:"Course &amp; Calling is a navigational tool for educational freedom. Discover your child’s strengths, then find the classes, instructors, safe spaces and rides that fit. You don’t have to teach; we connect you with people who do.",
@@ -5534,7 +5576,9 @@ document.addEventListener('click', (e)=>{
 });
 injectLogos();
 applyHash();
+demoApplySamples();
 showReturningWelcome();
+renderDemoSwitch();
 // iOS can restore the page from the back/forward cache instead of reloading; treat that as a launch too.
 window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); });
 
@@ -5561,7 +5605,7 @@ window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); 
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.5</div>
+<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 4px);right:8px;z-index:9000;font:600 10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.6</div>
 <script>document.getElementById('cc-ver').textContent='v'+APP_VERSION;</script>
 </body>
 </html>
