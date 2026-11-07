@@ -1034,6 +1034,17 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
   </div>
   <div class="scroll section-pad" id="rolesContent"></div>
 </div>
+<!-- Founder orientation: informational only, separate from parent onboarding/About. -->
+<div class="screen" id="screen-founder-orientation">
+  <div class="top-header"><h1>For founders</h1></div>
+  <div class="scroll section-pad">
+    <div class="card"><h2 style="font-size:22px;margin-bottom:12px;">Satellite classrooms</h2>
+      <p style="font-size:15px;line-height:1.6;">Schools face limits on space availability, cost, and student capacity. Course &amp; Calling could help them reach more learners through short-term satellite classrooms within their region, still under the school's management. In-person, off-campus learning — not online. A future direction, not a working demo feature.</p>
+    </div>
+    <button type="button" class="btn btn-secondary btn-block" onclick="closeFounderOrientation()">Back to dashboard</button>
+  </div>
+</div>
+
 <div class="screen" id="screen-about">
   <div class="top-header">
     <button class="back-btn" onclick="aboutBack()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg></button>
@@ -3148,7 +3159,6 @@ const OB_INTRO=[
   {k:'info',icon:'🧭',title:'Welcome to Course &amp; Calling.',about:'What is Course &amp; Calling?',body:"A place for parents, learners, and founders of indie schools and microschools to connect, discover opportunities, and build learning around each learner's interests and strengths.</p><p>Whether you're a parent, a learner, or building a school, start here."},
   {k:'info',icon:'🧠',title:'The Compass Profile',body:'A short set of personality, interest and aptitude activities shows your child’s strengths and stretch areas, so every choice starts from who they are.'},
   {k:'info',icon:'📚',title:'Book what you need',body:'Classes, tutors, co-ops, microschools, learning spaces and even rides, all near home and all in one place.'},
-  {k:'info',icon:'🏫',title:'Satellite classrooms',body:"Schools face limits on space availability, cost, and student capacity. Course &amp; Calling could help them reach more learners through short-term satellite classrooms within their region, still under the school's management. In-person, off-campus learning — not online. A future direction, not a working demo feature."},
   {k:'info',icon:'💳',title:'Pay with ESA funds',body:'Use your Arizona Empowerment Scholarship Account for eligible classes and tutoring. You approve every booking.'},
   {k:'role'},
   {k:'journey'},
@@ -3555,6 +3565,17 @@ function addChild(){
 
 /* ===== COMPASS PROFILE ===== */
 /* ===== HOME ===== */
+// Founder information preserves the dashboard and role from which it was opened.
+let founderReturnScreen='portal';
+function openFounderOrientation(){
+  founderReturnScreen=state.screen;
+  go('founder-orientation');
+}
+function closeFounderOrientation(){ go(founderReturnScreen); }
+function founderEntryHTML(){
+  return `<button type="button" class="btn btn-secondary btn-block" style="margin-bottom:14px;min-height:44px;" onclick="openFounderOrientation()">For founders</button>`;
+}
+
 function renderHome(){
   renderRoleMenus();
   const h=new Date().getHours();
@@ -3584,6 +3605,7 @@ function renderHome(){
         <div style="font-size:13px;color:var(--text-muted);">Personality · Interests · Aptitude → your heading</div>
         <button class="btn btn-primary btn-sm" style="margin-top:10px;">Start</button>
       </div>`}
+      ${founderEntryHTML()}
       <div class="wallet-card" onclick="go('progress')" style="cursor:pointer;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
           <div style="font-size:11px;font-weight:600;opacity:0.75;letter-spacing:0.04em;text-transform:uppercase;">ESA Wallet · AZ Empowerment</div>
@@ -4093,6 +4115,7 @@ function portalParent(){
       <p style="font-size:11px;color:var(--text-muted);margin:8px 0 0;">Other states vary. This applies to Arizona.</p>
     </div>
     <div style="text-align:right;margin:-6px 0 12px;"><button class="link-more" style="font-size:12px;" onclick="openAboutViewer()">ℹ️ About Course &amp; Calling</button> · <button class="link-more" style="font-size:12px;" onclick="replayOrientation()">↺ Replay orientation</button> · <button class="link-more" style="font-size:12px;" onclick="go('orientation')">Getting Started guide</button></div>
+    ${founderEntryHTML()}
     <div class="card" style="margin-bottom:14px;cursor:pointer;" onclick="go('resources')">
       <div style="font-weight:700;">📚 Resources</div>
       <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">City rec sports, youth arts, self-directed learning organizations, parent groups, libraries &amp; museums ›</div>
@@ -4912,7 +4935,7 @@ const TAB_SETS={
   space:[['roles','Home','home'],['portal','Dashboard','dash'],['spaces','Spaces','spaces'],['resources','Resources','resources'],['portal-form','Profile','profile']],
   driver:[['roles','Home','home'],['portal','Dashboard','dash'],['rides','Rides','rides'],['resources','Resources','resources'],['portal-form','Profile','profile']],
 };
-const TAB_HIDE=new Set(['courses','splash','welcome','onboarding','family','setup','journey','investor','compass-analyze','compass-section','compass-sec-results','detail','extra-detail','plus','booking','confirm','space-book','ride-flow']);
+const TAB_HIDE=new Set(['founder-orientation','courses','splash','welcome','onboarding','family','setup','journey','investor','compass-analyze','compass-section','compass-sec-results','detail','extra-detail','plus','booking','confirm','space-book','ride-flow']);
 function tabKeyFor(screen, role){
   if(screen==='about') return (state.prevScreen==='resources')?'resources':'roles';
   if(role==='learner'){
