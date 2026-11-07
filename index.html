@@ -142,6 +142,15 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 .demo-sw.dark .ds-seg{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22)}
 .demo-sw.dark button{color:rgba(255,255,255,.85)}
 .demo-sw.dark button.on{background:var(--gold);color:var(--navy-deep)}
+/* Local review draft: restart stays in flow, never covering phone content. */
+.demo-tools{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:6px 16px;background:var(--cream);border-bottom:1px solid rgba(27,42,74,.18);color:var(--navy)}
+.demo-tools[hidden]{display:none}
+.demo-tools-label{font-size:12px;font-weight:700}
+.demo-restart{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border:1px solid var(--navy);border-radius:10px;background:#fff;color:var(--navy);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.demo-restart:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+.demo-restart-note{margin-top:20px;padding:14px;border:1px solid rgba(255,255,255,.4);border-radius:12px;font-size:14px;line-height:1.5;color:#fff}
+.demo-restart-sample{display:inline-block;padding:3px 8px;border:1px solid currentColor;border-radius:8px;font-weight:700}
+
 /* v10.7: in-app Restart demo (keeps password unlock, clears everything else, back to first-time Welcome) */
 .demo-sw{flex-wrap:wrap;row-gap:6px}
 .demo-sw button.ds-rs{border:1px dashed rgba(27,42,74,.35);color:var(--navy-mid);padding:4px 9px;font-weight:600}
@@ -551,6 +560,10 @@ if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body
   <span class="status-icons" style="opacity:.7;font-size:11px">●●● ▮</span>
 </div>
 <div class="app" id="app">
+  <div class="demo-tools" id="demoTools" role="group" aria-label="Demo controls" hidden>
+    <span class="demo-tools-label">Demo</span>
+    <button type="button" class="demo-restart" onclick="demoRestartAsk()">↺ Restart demo</button>
+  </div>
 
 <!-- SPLASH -->
 <div class="screen" id="screen-splash">
@@ -3004,6 +3017,9 @@ function go(screen){
   el.classList.add('active');
   if(state.screen!==screen) state.prevScreen=state.screen;
   state.screen=screen;
+  // Keep welcome uncluttered; restart sits above all other demo screens,
+  // including orientation and assessments, outside their scrolling content.
+  document.getElementById('demoTools').hidden=['splash','welcome'].includes(screen);
 
   updateTabBar(screen);
 
@@ -3176,7 +3192,8 @@ function renderOnboarding(){
     act.innerHTML=JOURNEY_OPTS.map(x=>`<button class="ob-opt ${state.journey===x.k?'sel':''}" onclick="pickJourney('${x.k}')"><strong>${x.t}</strong><span>${x.d}</span></button>`).join('')+
       `<button class="btn btn-primary btn-block" style="margin-top:10px;" ${state.journey?'':'disabled'} onclick="obAfterJourney()">Next</button>`;
   } else {
-    c.innerHTML=`<div class="ob-icon"><span style="font-size:40px">✨</span></div><h2>You’re ready to begin</h2><p>Next, a few quick taps about your family, so we can tailor the app to what you need. It takes about two minutes.</p>`;
+    c.innerHTML=`<div class="ob-icon"><span style="font-size:40px">✨</span></div><h2>You’re ready to begin</h2><p>Next, a few quick taps about your family, so we can tailor the app to what you need. It takes about two minutes.</p>
+      <div class="demo-restart-note">Want to try another role or start over? Look for <span class="demo-restart-sample">↺ Restart demo</span>.</div>`;
     act.innerHTML=`<button class="btn btn-primary btn-block" onclick="state.fpIndex=0;go('family')">Build my Family Profile</button>
       <button class="btn btn-ghost btn-block" style="color:rgba(255,255,255,.6);margin-top:4px;" onclick="obToDashboard()">Skip for now</button>`;
   }
@@ -3366,8 +3383,7 @@ function demoApplySamples(){
 function renderDemoSwitch(){
   const cur=(state.screen==='welcome'&&isFirstVisit())?null:state.role;   // brand-new visitor: nothing highlighted yet
   const html=`<span class="ds-l">Demo</span><div class="ds-seg" role="group" aria-label="Demo mode: switch role">${DEMO_ROLES.map(([r,l])=>
-    `<button type="button" class="${cur===r?'on':''}" aria-pressed="${cur===r}" onclick="demoSwitch('${r}')">${l}</button>`).join('')}</div>`+
-    `<button type="button" class="ds-rs" onclick="demoRestartAsk()" aria-label="Restart demo">↺ Restart demo</button>`;
+    `<button type="button" class="${cur===r?'on':''}" aria-pressed="${cur===r}" onclick="demoSwitch('${r}')">${l}</button>`).join('')}</div>`;
   document.querySelectorAll('[data-demo-sw]').forEach(el=>{ el.innerHTML=html; });
 }
 function demoSwitch(role){
@@ -3393,7 +3409,7 @@ function demoRestartAsk(){
   const ov=document.createElement('div'); ov.className='rs-ov'; ov.id='rsOv';
   ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-labelledby','rsT');
   ov.innerHTML=`<div class="rs-card"><div class="rs-i">↺</div><h3 id="rsT">Start the demo over?</h3>
-    <p>This clears your answers so you can try a different role.</p>
+    <p>This clears your saved answers and setup, including your Compass Profile and demo bookings, so you can try a different role. This cannot be undone.</p>
     <div class="rs-b"><button type="button" class="rs-no" onclick="demoRestartClose()">Cancel</button><button type="button" class="rs-yes" id="rsYes" onclick="demoRestart()">Start over</button></div></div>`;
   ov.addEventListener('click',e=>{ if(e.target===ov) demoRestartClose(); });
   document.body.appendChild(ov);
