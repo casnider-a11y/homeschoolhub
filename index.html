@@ -547,11 +547,13 @@ body.cc-unlocked #cc-gate{display:none}
 </form></div>
 <script>document.getElementById('cc-gate-ver').textContent='v'+APP_VERSION;</script>
 <script>
-(function(){var H='5197ebd5d2c687a104c17e435283b3f04b73ffa3f3986c7dfeea7b8e6a641c9f',K='cc_gate_ok';
+(function(){var H='5197ebd5d2c687a104c17e435283b3f04b73ffa3f3986c7dfeea7b8e6a641c9f',L='3d957c58cf3965895342b4a9fdf801f0e7f55ab74ff5f1cb15329d090b161220',K='cc_gate_ok';
 try{if(localStorage.getItem(K)===H){document.body.classList.add('cc-unlocked');}}catch(e){}
 async function sha(t){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')}
+function logUnlock(label){try{fetch('https://cc-usage-log.courseandcalling.workers.dev/log',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({label:label}),keepalive:true,mode:'cors',credentials:'omit'}).catch(function(){})}catch(e){}}
 document.getElementById('cc-gate-form').addEventListener('submit',async function(e){e.preventDefault();var i=document.getElementById('cc-gate-pw'),er=document.getElementById('cc-gate-err');
-if(await sha(i.value)===H){try{localStorage.setItem(K,H)}catch(x){}document.body.classList.add('cc-unlocked');er.textContent=''}else{er.textContent='Incorrect password. Please try again.';i.value='';i.focus()}});})();
+var h=await sha(i.value),label=h===H?'shared':h===L?'Lisa Nelson':null;
+if(label){try{localStorage.setItem(K,H)}catch(x){}document.body.classList.add('cc-unlocked');er.textContent='';logUnlock(label)}else{er.textContent='Incorrect password. Please try again.';i.value='';i.focus()}});})();
 </script>
 
 <div class="phone-shell">
