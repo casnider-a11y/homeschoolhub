@@ -516,7 +516,7 @@ html.installed .a2hs-tip { display:none; }
 .ia-fcra{font-size:11.5px;line-height:1.5;color:var(--text-muted);background:#f6f7fa;border-radius:10px;padding:10px 12px;margin:4px 0 6px;}
 .ia-sub{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted);margin:14px 0 6px;}
 .ia-lock{font-size:11.5px;color:#1e6b45;background:#e8f5ee;border-radius:10px;padding:8px 10px;margin-bottom:12px;line-height:1.45;}
-/* Founder feedback demo: no collection or persistence. */
+/* Founder feedback: collected on Share feedback via the usage-log Worker. */
 .founder-card{display:block;width:100%;text-align:left;background:linear-gradient(135deg,#fff8ed,#eef4f1);border:2px solid var(--gold);border-radius:16px;padding:16px;margin:0 0 14px;color:var(--navy);font:inherit;cursor:pointer}
 .founder-card strong{display:block;font-size:18px;margin:5px 0}.founder-card span{display:block;font-size:13px;line-height:1.5}.founder-card:focus-visible{outline:3px solid var(--navy);outline-offset:3px}
 .fq-form fieldset{border:0;min-width:0;padding:0;margin:0}.fq-form [hidden]{display:none!important}.fq-form legend{font-weight:700;font-size:17px;line-height:1.4;margin-bottom:12px;width:100%}
@@ -1052,7 +1052,7 @@ if(label){try{localStorage.setItem(K,H)}catch(x){}document.body.classList.add('c
       <p style="font-size:15px;line-height:1.6;">Schools face limits on space availability, cost, and student capacity. Course &amp; Calling could help them reach more learners through short-term satellite classrooms within their region, still under the school's management. In-person, off-campus learning — not online. A future direction, not a working demo feature.</p>
     </div>
     <button type="button" class="btn btn-primary btn-block" style="margin-bottom:12px;" onclick="openFounderFeedback()">Share your perspective</button>
-    <p class="fq-note">Demo only. Responses are not collected yet.</p>
+    <p class="fq-note">Responses are collected to help shape Course &amp; Calling. We contact you only if you opt in.</p>
     <button type="button" class="btn btn-secondary btn-block" onclick="closeFounderOrientation()">Back to dashboard</button>
   </div>
 </div>
@@ -1063,8 +1063,8 @@ if(label){try{localStorage.setItem(K,H)}catch(x){}document.body.classList.add('c
   <div class="scroll section-pad" id="founderFeedbackScroll">
     <h2 class="fq-heading" id="fqTitle" tabindex="-1">Help shape tools for school founders</h2>
     <p style="font-size:14px;line-height:1.5;margin-bottom:12px;">Tell us a little about your plans and whether this idea could help. About one minute.</p>
-    <p class="fq-note">Demo only. Responses are not collected yet. Your entries stay only in this open demo and are cleared when you leave this founder view or finish. A future version would use feedback to shape the idea and contact only people who explicitly opt in about their selected feedback or pilot interest. No responses or contact details are collected here.</p>
-    <div id="fqDone" class="card" role="status" hidden><strong>Demo complete. Responses are not collected yet.</strong></div>
+    <p class="fq-note">Your responses are collected to help shape this idea. We will contact you only if you explicitly opt in about your selected feedback or pilot interest.</p>
+    <div id="fqDone" class="card" role="status" hidden><strong>Thank you — your response was received.</strong></div>
     <form id="founderFeedbackForm" class="fq-form" onsubmit="submitFounderFeedback(event)" autocomplete="off" novalidate>
       <p class="fq-note" id="fqStepLabel">Step 1 of 3</p>
       <fieldset data-fq-step="0"><legend>1 · Your school</legend>
@@ -1089,10 +1089,11 @@ if(label){try{localStorage.setItem(K,H)}catch(x){}document.body.classList.add('c
           <label>Name (optional)<input type="text" name="contactName" maxlength="120" disabled></label>
           <label>Email (optional)<input type="email" name="contactEmail" maxlength="254" disabled></label>
           <label class="fq-label"><input type="checkbox" name="permission" disabled>I give permission to contact me about my selected feedback and/or future pilot interest.</label>
-          <p class="fq-note">Contact details and permission are optional. You can complete the demo without either. Nothing is sent or saved even if you give permission.</p>
+          <p class="fq-note">Contact details are used only for Course &amp; Calling follow-up if you check the box.</p>
         </div>
       </fieldset>
       <div class="fq-nav"><button type="button" id="fqPrev" class="btn btn-secondary" onclick="founderFeedbackStep(-1)">Back to introduction</button><button type="button" id="fqNext" class="btn btn-primary" onclick="founderFeedbackStep(1)">Next</button><button type="submit" id="fqSubmit" class="btn btn-primary" hidden>Share feedback</button></div>
+      <p id="fqSubmitErr" class="fq-status" role="status" aria-live="polite"></p>
     </form>
     <button type="button" class="btn btn-secondary btn-block" onclick="closeFounderOrientation()">Back to dashboard</button>
   </div>
@@ -3637,6 +3638,7 @@ function clearFounderFeedback(){
   f.reset(); fqStep=0;
   document.getElementById('fqDone').hidden=true; f.hidden=false;
   document.getElementById('fqLimit').textContent='';
+  const se=document.getElementById('fqSubmitErr'); if(se) se.textContent='';
   updateFounderConditions(); renderFounderStep();
 }
 function openFounderFeedback(){ clearFounderFeedback(); go('founder-feedback'); document.getElementById('fqTitle').focus(); }
@@ -3665,13 +3667,29 @@ function founderFeedbackStep(delta){
   fqStep=Math.max(0,Math.min(2,fqStep+delta));renderFounderStep();
   document.getElementById('founderFeedbackScroll').scrollTop=0;document.getElementById('fqTitle').focus();
 }
-function submitFounderFeedback(event){
+function founderFeedbackPayload(f){
+  const fd=new FormData(f);
+  const challenges=[...f.querySelectorAll('input[name="challenges"]:checked')].map(i=>i.value);
+  const consent=!!f.querySelector('input[name="permission"]:checked');
+  const payload={stage:fd.get('stage')||'',city:fd.get('city')||'',region:fd.get('region')||'',school:fd.get('school')||'',challenges,other:fd.get('other')||'',satellite:fd.get('satellite')||'',useful:fd.get('useful')||'',interest:fd.get('interest')||'',consent};
+  if(consent){payload.contactName=fd.get('contactName')||'';payload.contactEmail=fd.get('contactEmail')||'';}
+  return payload;
+}
+async function submitFounderFeedback(event){
   event.preventDefault();
   if(fqStep!==2){ founderFeedbackStep(1); return; }
   if(!validateFounderStep()) return;
-  // Deliberately no serialization, transport, storage, or response collection.
-  clearFounderFeedback();document.getElementById('founderFeedbackForm').hidden=true;
-  document.getElementById('fqDone').hidden=false;document.getElementById('founderFeedbackScroll').scrollTop=0;
+  const form=document.getElementById('founderFeedbackForm');
+  const err=document.getElementById('fqSubmitErr');
+  const btn=document.getElementById('fqSubmit');
+  if(err) err.textContent='';
+  if(btn) btn.disabled=true;
+  try{
+    const res=await fetch('https://cc-usage-log.courseandcalling.workers.dev/founder',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(founderFeedbackPayload(form)),mode:'cors',credentials:'omit'});
+    if(res.ok){form.hidden=true;document.getElementById('fqDone').hidden=false;document.getElementById('founderFeedbackScroll').scrollTop=0;return;}
+    if(err) err.textContent='We could not send your response. Please try again.';
+  }catch(e){ if(err) err.textContent='We could not send your response. Please try again.'; }
+  finally{ if(btn) btn.disabled=false; }
 }
 document.getElementById('founderFeedbackForm').addEventListener('change',event=>{
   const input=event.target;
