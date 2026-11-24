@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="hsh-version" content="v10.10"/>
+<meta name="hsh-version" content="v10.12"/>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 
@@ -22,7 +22,7 @@
 <script>
 // APP_VERSION: single source of truth for the visible version (page title, gate label, #cc-ver, Profile footer).
 // On each release: bump this AND the CACHE name in sw.js. (Also update the static <title> fallback above.)
-const APP_VERSION='10.11';
+const APP_VERSION='10.12';
 document.title='Course & Calling (v'+APP_VERSION+') | A Learning Compass Company';
 // v10.5: hidden demo reset. courseandcalling.com/#reset wipes ALL saved app data for this origin
 // (localStorage + sessionStorage: gate unlock, role, journey, family, application drafts, investor gate, everything),
@@ -146,6 +146,13 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:linear-gradient(145de
 .demo-tools{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:6px 16px;background:var(--cream);border-bottom:1px solid rgba(27,42,74,.18);color:var(--navy)}
 .demo-tools[hidden]{display:none}
 .demo-tools-label{font-size:12px;font-weight:700}
+/* v10.12: readable version label. Kept out of the iOS status-bar band (it blurred there): on demo screens it sits in the
+   in-flow demo bar under "Demo"; on splash/welcome/gate it is a small navy pill below the safe area, under the About pill. */
+.demo-tools-label{display:inline-flex;flex-direction:column;align-items:flex-start;gap:3px;line-height:1}
+.dt-ver{display:inline-block;font:600 10.5px/1 'DM Sans',system-ui,sans-serif;color:#fff;background:var(--navy);border-radius:999px;padding:3px 7px;letter-spacing:.02em;-webkit-font-smoothing:antialiased}
+#cc-ver{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 66px);right:14px;z-index:9000;pointer-events:none;font:600 11px/1 'DM Sans',system-ui,sans-serif;color:#fff;background:rgba(27,42,74,.85);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:4px 8px;letter-spacing:.02em;-webkit-font-smoothing:antialiased}
+body.ver-in-bar #cc-ver{display:none}
+body:has(#aboutViewer:not(.hidden)) #cc-ver{display:none}
 /* v10.11 state switch (Arizona | Florida) */
 .st-sw{display:inline-flex;align-items:center;gap:6px}.st-sw .st-l{font:700 9px 'DM Sans',system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
 .st-sw .st-seg{display:inline-flex;background:var(--cream-dark);border:1px solid rgba(27,42,74,.14);border-radius:999px;padding:2px}
@@ -550,7 +557,7 @@ body.cc-unlocked #cc-gate{display:none}
 <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="Course &amp; Calling"/></picture>
 <h1>Welcome</h1><p>Enter the access password to continue.</p>
 <input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
-<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.11</div>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.12</div>
 </form></div>
 <script>document.getElementById('cc-gate-ver').textContent='v'+APP_VERSION;</script>
 <script>
@@ -584,7 +591,7 @@ if(label){try{localStorage.setItem(K,H);if(label===GL){localStorage.setItem(GK,S
 </div>
 <div class="app" id="app">
   <div class="demo-tools" id="demoTools" role="group" aria-label="Demo controls" hidden>
-    <span class="demo-tools-label">Demo</span>
+    <span class="demo-tools-label">Demo<span class="dt-ver" data-app-ver></span></span>
     <div data-state-sw></div>
     <button type="button" class="demo-restart" onclick="demoRestartAsk()">↺ Restart demo</button>
   </div>
@@ -3170,6 +3177,7 @@ function go(screen){
   // Keep welcome uncluttered; restart sits above all other demo screens,
   // including orientation and assessments, outside their scrolling content.
   document.getElementById('demoTools').hidden=['splash','welcome'].includes(screen);
+  document.body.classList.toggle('ver-in-bar',!document.getElementById('demoTools').hidden);   // v10.12: version shows in the demo bar
 
   updateTabBar(screen);
 
@@ -6555,7 +6563,7 @@ window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); 
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 2px);right:10px;z-index:9000;font:600 9px/10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.10</div>
-<script>document.getElementById('cc-ver').textContent='v'+APP_VERSION;</script>
+<div id="cc-ver" aria-hidden="true">v10.12</div>
+<script>document.getElementById('cc-ver').textContent='v'+APP_VERSION;document.querySelectorAll('[data-app-ver]').forEach(function(e){e.textContent='v'+APP_VERSION});</script>
 </body>
 </html>
