@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="hsh-version" content="v10.12"/>
+<meta name="hsh-version" content="v10.13"/>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 
@@ -22,7 +22,7 @@
 <script>
 // APP_VERSION: single source of truth for the visible version (page title, gate label, #cc-ver, Profile footer).
 // On each release: bump this AND the CACHE name in sw.js. (Also update the static <title> fallback above.)
-const APP_VERSION='10.12';
+const APP_VERSION='10.13';   // Release checklist: also bump version.json, sw.js VERSION/CACHE and the hsh-version meta (drives auto-update).
 document.title='Course & Calling (v'+APP_VERSION+') | A Learning Compass Company';
 // v10.5: hidden demo reset. courseandcalling.com/#reset wipes ALL saved app data for this origin
 // (localStorage + sessionStorage: gate unlock, role, journey, family, application drafts, investor gate, everything),
@@ -557,7 +557,7 @@ body.cc-unlocked #cc-gate{display:none}
 <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="Course &amp; Calling"/></picture>
 <h1>Welcome</h1><p>Enter the access password to continue.</p>
 <input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
-<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.12</div>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.13</div>
 </form></div>
 <script>document.getElementById('cc-gate-ver').textContent='v'+APP_VERSION;</script>
 <script>
@@ -6550,11 +6550,7 @@ window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); 
     document.documentElement.classList.add('standalone');
     document.body.classList.add('is-app');
   }
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=9-2').catch(()=>{});
-    });
-  }
+  // v10.13: service worker registration + update checks live in ccUpdater() (script below).
   // v10.1: no install banner or popup; a quiet tip line on the opening screens, hidden once installed.
   if (mq) document.documentElement.classList.add('installed');
 })();
@@ -6563,7 +6559,54 @@ window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); 
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" aria-hidden="true">v10.12</div>
+<script>
+/* v10.13 (HOM-5): seamless updates, no reinstall.
+   On launch, on resume (iOS home-screen apps resume without reloading), on focus and on bfcache restore:
+   - ask the service worker to check for a new sw.js (registered with updateViaCache:'none');
+   - fetch version.json with cache:'no-store'; if it is newer than APP_VERSION, reload into the new version.
+   Reloads happen only right after launch/resume and only if nothing was typed in the last 2 minutes; otherwise a toast
+   says the update will load next time. Loop guard: at most one reload per target version per 2 minutes (sessionStorage).
+   localStorage (cc_gate_ok, cc_guest_until, cc_state, cc_role, ...) is untouched; a reload keeps all of it. */
+function ccUpdater(){
+  var UPD='cc_upd', reg=null, lastCheck=0, lastInput=0, resumedAt=Date.now(), hadCtrl=false, busy=false;
+  function cmp(a,b){a=String(a).split('.').map(Number);b=String(b).split('.').map(Number);for(var i=0;i<Math.max(a.length,b.length);i++){var x=a[i]||0,y=b[i]||0;if(x!==y)return x>y?1:-1}return 0}
+  function say(m){try{if(typeof toast==='function')toast(m)}catch(e){}}
+  function guard(){try{return JSON.parse(sessionStorage.getItem(UPD)||'null')}catch(e){return null}}
+  function guardOk(t){var g=guard();return !(g&&g.to===t&&Date.now()-g.at<120000)}
+  function reloadTo(t){if(!guardOk(t))return;try{sessionStorage.setItem(UPD,JSON.stringify({to:t,at:Date.now()}))}catch(e){}location.reload()}
+  function apply(t){
+    if(!guardOk(t))return;
+    var hidden=document.visibilityState==='hidden', fresh=Date.now()-resumedAt<15000, typed=Date.now()-lastInput<120000;
+    if(hidden){reloadTo(t);return}
+    if(fresh&&!typed){say('Updating to v'+t+'…');setTimeout(function(){reloadTo(t)},600);return}
+    say('A new version (v'+t+') will load next time you open the app.');
+  }
+  function check(force){
+    var now=Date.now(); if(busy||(!force&&now-lastCheck<20000))return; lastCheck=now; busy=true;
+    try{if(reg)reg.update().catch(function(){})}catch(e){}
+    fetch('./version.json?t='+now,{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
+      busy=false; if(j&&j.version&&cmp(j.version,APP_VERSION)>0)apply(String(j.version));
+    }).catch(function(){busy=false});
+  }
+  document.addEventListener('input',function(){lastInput=Date.now()},true);
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){resumedAt=Date.now();check(true)}});
+  window.addEventListener('focus',function(){check(false)});
+  window.addEventListener('pageshow',function(e){if(e.persisted){resumedAt=Date.now();check(true)}});
+  window.addEventListener('online',function(){check(true)});
+  // Just updated? Say so once.
+  var g=guard(); if(g&&g.to===APP_VERSION){try{sessionStorage.removeItem(UPD)}catch(e){} setTimeout(function(){say('Updated to v'+APP_VERSION)},900)}
+  if('serviceWorker' in navigator){
+    hadCtrl=!!navigator.serviceWorker.controller;
+    // A new service worker took over (skipWaiting + claim): check whether the page itself is out of date.
+    navigator.serviceWorker.addEventListener('controllerchange',function(){if(hadCtrl)check(true);hadCtrl=true});
+    window.addEventListener('load',function(){
+      navigator.serviceWorker.register('./sw.js?v=9-2',{updateViaCache:'none'}).then(function(r){reg=r;check(true)}).catch(function(){check(true)});
+    });
+  } else window.addEventListener('load',function(){check(true)});
+}
+ccUpdater();
+</script>
+<div id="cc-ver" aria-hidden="true">v10.13</div>
 <script>document.getElementById('cc-ver').textContent='v'+APP_VERSION;document.querySelectorAll('[data-app-ver]').forEach(function(e){e.textContent='v'+APP_VERSION});</script>
 </body>
 </html>
