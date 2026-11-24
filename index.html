@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="hsh-version" content="v10.9"/>
+<meta name="hsh-version" content="v10.10"/>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 
@@ -18,11 +18,11 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512.png" />
 
-<title>Course &amp; Calling (v10.9) | A Learning Compass Company</title>
+<title>Course &amp; Calling (v10.10) | A Learning Compass Company</title>
 <script>
 // APP_VERSION: single source of truth for the visible version (page title, gate label, #cc-ver, Profile footer).
 // On each release: bump this AND the CACHE name in sw.js. (Also update the static <title> fallback above.)
-const APP_VERSION='10.9';
+const APP_VERSION='10.10';
 document.title='Course & Calling (v'+APP_VERSION+') | A Learning Compass Company';
 // v10.5: hidden demo reset. courseandcalling.com/#reset wipes ALL saved app data for this origin
 // (localStorage + sessionStorage: gate unlock, role, journey, family, application drafts, investor gate, everything),
@@ -543,17 +543,23 @@ body.cc-unlocked #cc-gate{display:none}
 <picture><source media="(prefers-reduced-motion: reduce)" srcset="brand/primary-dark-bg-static.svg"/><img src="brand/primary-dark-bg.svg?v=10-3" alt="Course &amp; Calling"/></picture>
 <h1>Welcome</h1><p>Enter the access password to continue.</p>
 <input id="cc-gate-pw" type="password" placeholder="Password" aria-label="Password" autofocus/>
-<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.9</div>
+<button type="submit">Unlock</button><div class="err" id="cc-gate-err" role="alert"></div><div style="margin-top:18px;font-size:11px;opacity:.55;letter-spacing:.05em" id="cc-gate-ver">v10.10</div>
 </form></div>
 <script>document.getElementById('cc-gate-ver').textContent='v'+APP_VERSION;</script>
 <script>
 (function(){var H='5197ebd5d2c687a104c17e435283b3f04b73ffa3f3986c7dfeea7b8e6a641c9f',L='3d957c58cf3965895342b4a9fdf801f0e7f55ab74ff5f1cb15329d090b161220',K='cc_gate_ok';
-try{if(localStorage.getItem(K)===H){document.body.classList.add('cc-unlocked');}}catch(e){}
+/* v10.10: time-limited guest code. Works through Dec 24, 2026 (America/New_York); rejected from 2026-12-25T05:00:00Z.
+   A guest unlock also stores cc_guest_until so the gate returns after expiry; shared/Lisa unlocks clear that marker. */
+var G='555c800838832d37a51f46c150f107c963058efcd7a25e492ac15a0dfd21d1ab',GL='Guest Dec 2026',GX=Date.parse('2026-12-25T05:00:00Z'),GK='cc_guest_until';
+function guestExpired(){try{var g=localStorage.getItem(GK);if(g!=null&&Date.now()>=(Number(g)||0)){localStorage.removeItem(K);localStorage.removeItem(GK);return true}}catch(e){}return false}
+try{if(!guestExpired()&&localStorage.getItem(K)===H){document.body.classList.add('cc-unlocked');}}catch(e){}
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&guestExpired()){document.body.classList.remove('cc-unlocked')}});
 async function sha(t){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')}
 function logUnlock(label){try{fetch('https://cc-usage-log.courseandcalling.workers.dev/log',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({label:label}),keepalive:true,mode:'cors',credentials:'omit'}).catch(function(){})}catch(e){}}
 document.getElementById('cc-gate-form').addEventListener('submit',async function(e){e.preventDefault();var i=document.getElementById('cc-gate-pw'),er=document.getElementById('cc-gate-err');
-var h=await sha(i.value),label=h===H?'shared':h===L?'Lisa Nelson':null;
-if(label){try{localStorage.setItem(K,H)}catch(x){}document.body.classList.add('cc-unlocked');er.textContent='';logUnlock(label)}else{er.textContent='Incorrect password. Please try again.';i.value='';i.focus()}});})();
+var h=await sha(i.value),label=h===H?'shared':h===L?'Lisa Nelson':h===G?GL:null;
+if(label===GL&&Date.now()>=GX){er.textContent='This guest code has expired.';i.value='';i.focus();return}
+if(label){try{localStorage.setItem(K,H);if(label===GL){localStorage.setItem(GK,String(GX))}else{localStorage.removeItem(GK)}}catch(x){}document.body.classList.add('cc-unlocked');er.textContent='';logUnlock(label)}else{er.textContent='Incorrect password. Please try again.';i.value='';i.focus()}});})();
 </script>
 
 <div class="phone-shell">
@@ -3485,10 +3491,10 @@ function demoRestartAsk(){
 }
 function demoRestartClose(){ const ov=document.getElementById('rsOv'); if(ov) ov.remove(); }
 function demoRestart(){
-  const K='cc_gate_ok'; let gate=null;
-  try{ gate=localStorage.getItem(K); }catch(e){}
-  try{ Object.keys(localStorage).forEach(k=>{ if(k!==K) localStorage.removeItem(k); }); }catch(e){ try{localStorage.clear();}catch(x){} }
-  try{ if(gate!=null) localStorage.setItem(K,gate); }catch(e){}
+  const K='cc_gate_ok', GK='cc_guest_until'; let gate=null, guest=null;
+  try{ gate=localStorage.getItem(K); guest=localStorage.getItem(GK); }catch(e){}
+  try{ Object.keys(localStorage).forEach(k=>{ if(k!==K && k!==GK) localStorage.removeItem(k); }); }catch(e){ try{localStorage.clear();}catch(x){} }
+  try{ if(gate!=null) localStorage.setItem(K,gate); if(guest!=null) localStorage.setItem(GK,guest); }catch(e){}
   try{ sessionStorage.clear(); }catch(e){}
   try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){}
   location.reload();
@@ -5913,7 +5919,7 @@ window.addEventListener('pageshow',e=>{ if(e.persisted) showReturningWelcome(); 
 <script>
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('#assessContent .q-card,#assessContent .fold-opt');if(b)b.classList.add('selected');},true);
 </script>
-<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 2px);right:10px;z-index:9000;font:600 9px/10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.9</div>
+<div id="cc-ver" style="position:fixed;top:calc(env(safe-area-inset-top) + 2px);right:10px;z-index:9000;font:600 9px/10px 'DM Sans',system-ui,sans-serif;color:#8a94a6;opacity:.7;pointer-events:none">v10.10</div>
 <script>document.getElementById('cc-ver').textContent='v'+APP_VERSION;</script>
 </body>
 </html>
